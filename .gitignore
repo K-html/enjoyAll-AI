@@ -1,0 +1,8 @@
+
+vectordb
+.venv
+.idx
+.vscode
+devserver.sh
+__pycache__
+.env
