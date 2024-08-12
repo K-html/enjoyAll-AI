@@ -6,3 +6,4 @@ vectordb
 devserver.sh
 __pycache__
 .env
+ffmpeg-7.0.2
