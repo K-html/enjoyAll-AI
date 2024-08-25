@@ -3,3 +3,11 @@ autopep8
 Flask==3.0.3
 gunicorn==22.0.0
 Werkzeug==3.0.3
+
+#Naver Clova RAG
+pymilvus==2.4.0
+tqdm==4.66.2
+langchain==0.1.14
+langchain-community==0.0.31
+langchain-core==0.1.40
+langchain-text-splitters==0.0.1
