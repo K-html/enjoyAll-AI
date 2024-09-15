@@ -12,22 +12,22 @@
 <meta name="description" content="     .custom {         background-color: #008d8d;         color: white;         padding: 0.25em 0.5…">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="위키독스">
-<meta property="og:title" content="06. Runnable">
+<meta property="og:title" content="06. LCEL 인터페이스">
 <meta property="og:description" content="     .custom {         background-color: #008d8d;         color: white;         padding: 0.25em 0.5…">
-<meta property="og:image" content="https://wikidocs.net/images/book/langchain-note_vK7AYH8_FG1lT63_Cku4I60_1lMKdvo_Kwg4Zmu_oE1mjY6_zUttX9t_fdzK55Z_paWa_KCbBwtA.png">
-<meta property="og:url" content="https://wikidocs.net/233346">
+<meta property="og:image" content="https://wikidocs.net/images/book/langchain-note_vK7AYH8_FG1lT63_Cku4I60_1lMKdvo_Kwg4Zmu_oE1mjY6_zUttX9t_fdzK55Z_paWa_vQKeAyT.png">
+<meta property="og:url" content="https://wikidocs.net/233345">
 
     <link rel="shortcut icon" type="image/x-icon" href="/static/img/favicon.ico">
     <link rel="canonical" href="https://wikidocs.net/book/1">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap">
-    <title>06. Runnable - &lt;랭체인LangChain 노트&gt; - LangChain 한국어 튜토리얼🇰🇷</title>
+    <title>06. LCEL 인터페이스 - &lt;랭체인LangChain 노트&gt; - LangChain 한국어 튜토리얼🇰🇷</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     
 
     
-    <link type="text/css" id="theme-stylesheet" href="/static/book/css/style_stack.css?v=11" rel="stylesheet"  media="screen" />
+    <link type="text/css" id="main-stylesheet" href="/static/book/css/style_stack.css?v=13" rel="stylesheet"  media="screen" />
     
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
@@ -50,12 +50,20 @@
     }
     </script>
     
-    
+
+<!-- 자동광고 -->
+
+<!-- 포인트 광고 -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9470517771012578" crossorigin="anonymous"></script>
+
+
+
+
 
 <link type="text/css" href="/static/apprise/apprise.min.css" rel="stylesheet"  />
 
-<link type="text/css" id="theme-stylesheet" href="/static/book/css/markdown_stack.css?v=8" rel="stylesheet" />
-<link rel="stylesheet" id="theme-stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/default.min.css">
+<link type="text/css" id="markdown-stylesheet" href="/static/book/css/markdown_stack.css?v=13" rel="stylesheet" />
+<link rel="stylesheet" id="highlight-stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/default.min.css">
 
 <link type="text/css" href="/static/treeview/bootstrap-treeview.min.css" rel="stylesheet" />
 <link type="text/css" href="/static/book/css/copycode.css" rel="stylesheet" />
@@ -181,7 +189,7 @@ $(document).ready(function () {
         }catch(e) {
         }
     });
-    var is_mobile = "False";
+    var is_mobile = "True";
     let _trigger = 'click';  // focus(다른 곳 클릭시 팝업 닫힘), click 
     let _hide = 0;  // focus일 때는 200이 적당
     if (is_mobile == "True") {
@@ -342,19 +350,39 @@ function report_modal(comment_id) {
     $("#comment_id").val(comment_id);
     $('#reportModal').modal('show')
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    var page = document.querySelector('.page');
+    var adContainers = document.querySelectorAll('.ad-container');
+    
+    function checkWidth() {
+        var pageWidth = page.offsetWidth;
+        adContainers.forEach(function(container) {
+            var secondAd = container.querySelector('.second-ad');
+            var firstAd = container.querySelector('.first-ad');
+            if (secondAd && firstAd) {
+                var containerWidth = container.offsetWidth;
+                var firstAdWidth = firstAd.offsetWidth;
+                var secondAdWidth = secondAd.offsetWidth;
+                
+                if (containerWidth < firstAdWidth + secondAdWidth + 50) {
+                    secondAd.style.display = 'none';
+                } else {
+                    secondAd.style.display = 'block';
+                }
+            }
+        });
+    }
+    
+    // 초기 실행
+    checkWidth();
+    
+    // 창 크기가 변경될 때마다 실행
+    // window.addEventListener('resize', checkWidth);
+});
 </script>
 
 
-    <script type="text/javascript">
-      var _gaq = _gaq || [];
-      _gaq.push(['_setAccount', 'UA-2686629-3']);
-      _gaq.push(['_trackPageview']);
-      (function() {
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-      })();
-    </script>
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-6N5MJRGLWG"></script>
     <script>
@@ -366,27 +394,7 @@ function report_modal(comment_id) {
 </head>
 <body>
 
-    <!-- PC -->
-
-    
-        <!-- 위키독스 포인트 광고 -->
-        <!-- 오른쪽 플로팅 고정광고 시작-->
-        <aside id="asideRight" class="asideRight">
-            <div id="chaseRight" style="top:20px;">
-                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9470517771012578" crossorigin="anonymous"></script>
-                <!-- wikidocs_sidebar -->
-                <ins class="adsbygoogle"
-                    style="display:inline-block;width:200px;height:600px"
-                    data-ad-client="ca-pub-9470517771012578"
-                    data-ad-slot="3449798337"
-                    data-ad-channel="6628864207"></ins>
-                <script>
-                    (adsbygoogle = window.adsbygoogle || []).push({});
-                </script>
-            </div>
-        </aside>
-        <!-- 오른쪽 플로팅 고정광고 끝 -->
-    
+<!-- PC -->
 
 
 
@@ -401,6 +409,18 @@ function report_modal(comment_id) {
 <div class="row">
     <div class="col-sm-3 sidebar" style="padding:0;margin:0;overflow-x: hidden;">
         
+        <div class="row" style="display:none;">
+            <div class="col-xs-12" style="border-bottom:solid 1px #ddd;">
+                <button id="toggle_toc_btn" class="btn btn-sm btn-default" style="margin:10px;">목차보기</button>
+                <label for="toc_on" class="small">
+                    <input type="radio" id="toc_on" name="toc_on_off" value="show"> Show
+                </label>
+                <label for="toc_off" class="small">
+                    <input type="radio" id="toc_off" name="toc_on_off" value="hide"> Hide
+                </label>
+            </div>
+        </div>
+        
         <div class="toc toc-checker">
             <div class="row">
                 <div class="col-xs-12" style="padding:0;">
@@ -410,13 +430,6 @@ function report_modal(comment_id) {
                             <ul id="search-results" class="dropdown-menu" aria-labelledby="kw"></ul>
                         </div>
                         <div class="pull-right">
-                            
-                            <button class="btn btn-xs btn-default find-btn" style="margin-top:12px;">
-                                <i class="glyphicon glyphicon-search" title="찾기"></i>
-                            </button>
-                            <button class="btn btn-xs btn-default menu_link menu-toggle" style="margin-right:20px;margin-top:12px;">
-                                <i class="glyphicon glyphicon-menu-hamburger" title="메뉴"></i>
-                            </button>
                             
                         </div>
                     </div>
@@ -442,62 +455,72 @@ function report_modal(comment_id) {
                     </span>
                 </a>
                 
-                <a href="javascript:page(233342)" class="list-group-item ">
+                <a href="javascript:page(257836)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="01. OpenAI API 키 발급 및 테스트">
+                          title="01. 설치 영상보고 따라하기">
                         <span style="padding-left:20px">
                         
-                        01. OpenAI API 키 발급 및 테스트
+                        01. 설치 영상보고 따라하기
+                        </span>
+                    </span>
+                </a>
+                
+                <a href="javascript:page(233342)" class="list-group-item ">
+                    <span style="white-space:nowrap;overflow:hidden;display:block;"
+                          title="02. OpenAI API 키 발급 및 테스트">
+                        <span style="padding-left:20px">
+                        
+                        02. OpenAI API 키 발급 및 테스트
                         </span>
                     </span>
                 </a>
                 
                 <a href="javascript:page(250954)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="02. LangSmith 추적 설정">
+                          title="03. LangSmith 추적 설정">
                         <span style="padding-left:20px">
                         
-                        02. LangSmith 추적 설정
+                        03. LangSmith 추적 설정
                         </span>
                     </span>
                 </a>
                 
                 <a href="javascript:page(233343)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="03. OpenAI API 사용(GPT-4o 멀티모달)">
+                          title="04. OpenAI API 사용(GPT-4o 멀티모달)">
                         <span style="padding-left:20px">
                         
-                        03. OpenAI API 사용(GPT-4o 멀티모달)
+                        04. OpenAI API 사용(GPT-4o 멀티모달)
                         </span>
                     </span>
                 </a>
                 
                 <a href="javascript:page(233344)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="04. LangChain Expression Language(LCEL)">
+                          title="05. LangChain Expression Language(LCEL)">
                         <span style="padding-left:20px">
                         
-                        04. LangChain Expression Language(LCEL)
+                        05. LangChain Expression Language(LCEL)
                         </span>
                     </span>
                 </a>
                 
-                <a href="javascript:page(233345)" class="list-group-item ">
+                <a href="javascript:page(233345)" class="list-group-item active">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="05. LCEL 인터페이스">
+                          title="06. LCEL 인터페이스">
                         <span style="padding-left:20px">
                         
-                        05. LCEL 인터페이스
+                        06. LCEL 인터페이스
                         </span>
                     </span>
                 </a>
                 
-                <a href="javascript:page(233346)" class="list-group-item active">
+                <a href="javascript:page(233346)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="06. Runnable">
+                          title="07. Runnable">
                         <span style="padding-left:20px">
                         
-                        06. Runnable
+                        07. Runnable
                         </span>
                     </span>
                 </a>
@@ -1224,10 +1247,10 @@ function report_modal(comment_id) {
                 
                 <a href="javascript:page(234016)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="01. 벡터저장소 지원 검색기(VectorStore-backed Retriever)">
+                          title="01. 벡터스토어 기반 검색기(VectorStore-backed Retriever)">
                         <span style="padding-left:20px">
                         
-                        01. 벡터저장소 지원 검색기(VectorStore-backed Retriever)
+                        01. 벡터스토어 기반 검색기(VectorStore-backed Retriever)
                         </span>
                     </span>
                 </a>
@@ -1444,70 +1467,70 @@ function report_modal(comment_id) {
                 
                 <a href="javascript:page(235580)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="01. RunnablePassthrough: 데이터 전달">
+                          title="01. RunnablePassthrough">
                         <span style="padding-left:20px">
                         
-                        01. RunnablePassthrough: 데이터 전달
+                        01. RunnablePassthrough
                         </span>
                     </span>
                 </a>
                 
                 <a href="javascript:page(235884)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="02. Runnable 구조(그래프) 확인">
+                          title="02. Runnable 구조(그래프) 검토">
                         <span style="padding-left:20px">
                         
-                        02. Runnable 구조(그래프) 확인
+                        02. Runnable 구조(그래프) 검토
                         </span>
                     </span>
                 </a>
                 
                 <a href="javascript:page(235705)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="03. RunnableLambda: 사용자 정의 함수">
+                          title="03. RunnableLambda">
                         <span style="padding-left:20px">
                         
-                        03. RunnableLambda: 사용자 정의 함수
+                        03. RunnableLambda
                         </span>
                     </span>
                 </a>
                 
                 <a href="javascript:page(235882)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="04. RunnableBranch: 라우팅(Routing)">
+                          title="04. LLM 체인 라우팅(RunnableLambda, RunnableBranch)">
                         <span style="padding-left:20px">
                         
-                        04. RunnableBranch: 라우팅(Routing)
+                        04. LLM 체인 라우팅(RunnableLambda, RunnableBranch)
                         </span>
                     </span>
                 </a>
                 
                 <a href="javascript:page(235883)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="05. RunnableParallel: 병렬 처리">
+                          title="05. RunnableParallel">
                         <span style="padding-left:20px">
                         
-                        05. RunnableParallel: 병렬 처리
+                        05. RunnableParallel
                         </span>
                     </span>
                 </a>
                 
                 <a href="javascript:page(235704)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="06. configurable_fields, configurable_alternatives">
+                          title="06. 동적 속성 지정(configurable_fields, configurable_alternatives)">
                         <span style="padding-left:20px">
                         
-                        06. configurable_fields, configurable_alternatives
+                        06. 동적 속성 지정(configurable_fields, configurable_alternatives)
                         </span>
                     </span>
                 </a>
                 
                 <a href="javascript:page(235703)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="07. @chain 데코레이터로 Runnable 생성">
+                          title="07. @chain 데코레이터로 Runnable 구성">
                         <span style="padding-left:20px">
                         
-                        07. @chain 데코레이터로 Runnable 생성
+                        07. @chain 데코레이터로 Runnable 구성
                         </span>
                     </span>
                 </a>
@@ -1582,6 +1605,16 @@ function report_modal(comment_id) {
                     </span>
                 </a>
                 
+                <a href="javascript:page(256983)" class="list-group-item ">
+                    <span style="white-space:nowrap;overflow:hidden;display:block;"
+                          title="03. 구조화된 출력 체인(with_structered_output)">
+                        <span style="padding-left:20px">
+                        
+                        03. 구조화된 출력 체인(with_structered_output)
+                        </span>
+                    </span>
+                </a>
+                
                 <a href="javascript:page(233782)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
                           title="CH15 에이전트(Agent)">
@@ -1612,22 +1645,12 @@ function report_modal(comment_id) {
                     </span>
                 </a>
                 
-                <a href="javascript:page(233783)" class="list-group-item ">
-                    <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="CH16 파인튜닝(Fine Tuning)">
-                        <span style="padding-left:0px">
-                        
-                        CH16 파인튜닝(Fine Tuning)
-                        </span>
-                    </span>
-                </a>
-                
                 <a href="javascript:page(233785)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="CH17 LangGraph">
+                          title="CH16 LangGraph">
                         <span style="padding-left:0px">
                         
-                        CH17 LangGraph
+                        CH16 LangGraph
                         </span>
                     </span>
                 </a>
@@ -1642,12 +1665,6 @@ function report_modal(comment_id) {
                     </span>
                 </a>
                 
-            </div>
-        </div>
-        
-        <div class="row toc-footer">
-            <div class="small" style="border-top:solid 1px #ccc;padding:15px 15px 30px 15px;font-family:consolas;">
-                <a href="/" style="padding-left:15px;">Published with WikiDocs</a>
             </div>
         </div>
         
@@ -1719,6 +1736,26 @@ $(document).ready(function () {
         }
     });
     
+    $("input[name=toc_on_off]").on("click", function() {
+        var result = $(this).val();
+        if (typeof(Storage) !== "undefined") {
+            localStorage.toc = result;
+        }
+    });
+    if (typeof(Storage) !== "undefined") {
+        if (localStorage.getItem("toc") === null) {  // init value
+            localStorage.toc = "hide";
+        }
+        if(localStorage.toc == "hide") {
+            $('#toc_off').prop('checked', true);
+            $(".toc-checker").hide();
+        }else {
+            $('#toc_on').prop('checked', true);
+            $(".toc-checker").removeClass("hide");
+            $(".toc-checker").show();
+        }
+    }
+    
     $("#load_content").show();
 });
 
@@ -1753,7 +1790,7 @@ function page(no) {
     $("#load_content").load(url, function(responseTxt, statusTxt, xhr){
         if(statusTxt == "success") {
             $("#load_content").scrollTop(0);
-            window.history.pushState("object or string", "06. Runnable", "/"+no);
+            window.history.pushState("object or string", "06. LCEL 인터페이스", "/"+no);
         }
         if(statusTxt == "error") {
             alert("Error: " + xhr.status + ": " + xhr.statusText);
@@ -1883,12 +1920,16 @@ $(document).ready(function() {
         
         <li><small><a href="/233341">CH01 LangChain 시작하기</a></small></li>
         
-        <li><small><a href="/233346">06. Runnable</a></small></li>
+        <li><small><a href="/233345">06. LCEL 인터페이스</a></small></li>
         
     </ol>
     
     <ol class="breadcrumb pull-right">
         
+<li>
+    <a href="/257903" class="btn btn-xs btn-danger" style="color:#fff"><i class="glyphicon glyphicon-gift"></i> 도서 증정 이벤트 !!</a>
+</li>
+
 
         
         <li>
@@ -1899,12 +1940,32 @@ $(document).ready(function() {
 </div>
 
 <h1 class="page-subject">
-    06. Runnable
-    
-        
+    06. LCEL 인터페이스
     
 </h1>
 <!-- google adsense -->
+<!-- PC -->
+
+
+<!-- Mobile -->
+
+    
+        <div style="margin:20px 0;">
+            <!-- 위키독스 포인트 광고 -->
+            <!-- 위키독스모바일2020 -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9470517771012578" crossorigin="anonymous"></script>
+<ins class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-9470517771012578"
+        data-ad-slot="4465552259"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
+<script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+        </div>
+    
+
 
 <!-- google adsense -->
 <div class="page-content tex2jax_process">
@@ -1927,228 +1988,202 @@ $(document).ready(function() {
     }
 </style>
 
-<pre><code class="language-python"># .env 파일을 읽어서 환경변수로 설정
+<h2 id="lcel">LCEL 인터페이스</h2>
+<p>사용자 정의 체인을 가능한 쉽게 만들 수 있도록, <a href="https://api.python.langchain.com/en/stable/runnables/langchain_core.runnables.base.Runnable.html#langchain_core.runnables.base.Runnable"><code>Runnable</code></a> 프로토콜을 구현했습니다. </p>
+<p><code>Runnable</code> 프로토콜은 대부분의 컴포넌트에 구현되어 있습니다.</p>
+<p>이는 표준 인터페이스로, 사용자 정의 체인을 정의하고 표준 방식으로 호출하는 것을 쉽게 만듭니다.
+표준 인터페이스에는 다음이 포함됩니다.</p>
+<ul>
+<li><a href="#stream"><code>stream</code></a>: 응답의 청크를 스트리밍합니다.</li>
+<li><a href="#invoke"><code>invoke</code></a>: 입력에 대해 체인을 호출합니다.</li>
+<li><a href="#batch"><code>batch</code></a>: 입력 목록에 대해 체인을 호출합니다.</li>
+</ul>
+<p>비동기 메소드도 있습니다.</p>
+<ul>
+<li><a href="#async-stream"><code>astream</code></a>: 비동기적으로 응답의 청크를 스트리밍합니다.</li>
+<li><a href="#async-invoke"><code>ainvoke</code></a>: 비동기적으로 입력에 대해 체인을 호출합니다.</li>
+<li><a href="#async-batch"><code>abatch</code></a>: 비동기적으로 입력 목록에 대해 체인을 호출합니다.</li>
+<li><a href="#async-stream-intermediate-steps"><code>astream_log</code></a>: 최종 응답뿐만 아니라 발생하는 중간 단계를 스트리밍합니다.</li>
+</ul>
+<pre><code class="language-python"># API KEY를 환경변수로 관리하기 위한 설정 파일
 from dotenv import load_dotenv
 
-# 토큰 정보로드
+# API KEY 정보로드
 load_dotenv()
 </code></pre>
 <pre class="custom">True</pre>
 
 <pre><code class="language-python"># LangSmith 추적을 설정합니다. https://smith.langchain.com
-# !pip install -qU langchain-teddynote
 from langchain_teddynote import logging
 
 # 프로젝트 이름을 입력합니다.
 logging.langsmith(&quot;CH01-Basic&quot;)
 </code></pre>
-<pre class="custom">LangSmith 추적을 시작합니다.
-[프로젝트명]
-CH01-Basic
-</pre>
-<h2 id="_1">데이터를 효과적으로 전달하는 방법</h2>
-<ul>
-<li><code>RunnablePassthrough</code> 는 입력을 변경하지 않거나 추가 키를 더하여 전달할 수 있습니다. </li>
-<li><code>RunnablePassthrough()</code> 가 단독으로 호출되면, 단순히 입력을 받아 그대로 전달합니다.</li>
-<li><code>RunnablePassthrough.assign(...)</code> 방식으로 호출되면, 입력을 받아 assign 함수에 전달된 추가 인수를 추가합니다.</li>
-</ul>
-<h3 id="runnablepassthrough">RunnablePassthrough</h3>
-<pre><code class="language-python">from langchain_core.prompts import PromptTemplate
-from langchain_openai import ChatOpenAI
+<p>LCEL 문법을 사용하여 chain 을 생성합니다.</p>
+<pre><code class="language-python">from langchain_openai import ChatOpenAI
+from langchain_core.prompts import PromptTemplate
+from langchain_core.output_parsers import StrOutputParser
 
-
-# prompt 와 llm 을 생성합니다.
-prompt = PromptTemplate.from_template(&quot;{num} 의 10배는?&quot;)
-llm = ChatOpenAI(temperature=0)
-
-# chain 을 생성합니다.
-chain = prompt | llm
+# ChatOpenAI 모델을 인스턴스화합니다.
+model = ChatOpenAI()
+# 주어진 토픽에 대한 농담을 요청하는 프롬프트 템플릿을 생성합니다.
+prompt = PromptTemplate.from_template(&quot;{topic} 에 대하여 3문장으로 설명해줘.&quot;)
+# 프롬프트와 모델을 연결하여 대화 체인을 생성합니다.
+chain = prompt | model | StrOutputParser()
 </code></pre>
-<p>chain 을 <code>invoke()</code> 하여 실행할 때는 입력 데이터의 타입이 딕셔너리여야 합니다.</p>
-<pre><code class="language-python"># chain 을 실행합니다.
-chain.invoke({&quot;num&quot;: 5})
+<h2 id="stream">stream: 실시간 출력</h2>
+<p>이 함수는 <code>chain.stream</code> 메서드를 사용하여 주어진 토픽에 대한 데이터 스트림을 생성하고, 이 스트림을 반복하여 각 데이터의 내용(<code>content</code>)을 즉시 출력합니다. <code>end=""</code> 인자는 출력 후 줄바꿈을 하지 않도록 설정하며, <code>flush=True</code> 인자는 출력 버퍼를 즉시 비우도록 합니다. </p>
+<pre><code class="language-python"># chain.stream 메서드를 사용하여 '멀티모달' 토픽에 대한 스트림을 생성하고 반복합니다.
+for token in chain.stream({&quot;topic&quot;: &quot;멀티모달&quot;}):
+    # 스트림에서 받은 데이터의 내용을 출력합니다. 줄바꿈 없이 이어서 출력하고, 버퍼를 즉시 비웁니다.
+    print(token, end=&quot;&quot;, flush=True)
 </code></pre>
-<pre class="custom">AIMessage(content='50입니다.', response_metadata={'token_usage': {'completion_tokens': 3, 'prompt_tokens': 16, 'total_tokens': 19}, 'model_name': 'gpt-3.5-turbo', 'system_fingerprint': None, 'finish_reason': 'stop', 'logprobs': None}, id='run-29242a8b-01c0-41ad-8f5b-7613e6876dc5-0', usage_metadata={'input_tokens': 16, 'output_tokens': 3, 'total_tokens': 19})</pre>
-<p>하지만, langchain 라이브러리가 업데이트 되면서 1개의 변수만 템플릿에 포함하고 있다면, 값만 전달하는 것도 가능합니다.</p>
-<pre><code class="language-python"># chain 을 실행합니다.
-chain.invoke(5)
+<pre class="custom">멀티모달은 여러 가지 다른 형태의 커뮤니케이션 수단을 통해 정보를 전달하고 상호작용하는 기술을 의미합니다. 예를 들어 음성, 텍스트, 이미지, 동영상 등 다양한 매체를 활용하여 사용자와 상호작용할 수 있습니다. 멀티모달 기술은 사용자 경험을 향상시키고 정보 전달의 효율성을 높이는데 도움을 줄 수 있습니다.</pre>
+<h2 id="invoke">invoke: 호출</h2>
+<p><code>chain</code> 객체의 <code>invoke</code> 메서드는 주제를 인자로 받아 해당 주제에 대한 처리를 수행합니다.</p>
+<pre><code class="language-python"># chain 객체의 invoke 메서드를 호출하고, 'ChatGPT'라는 주제로 딕셔너리를 전달합니다.
+chain.invoke({&quot;topic&quot;: &quot;ChatGPT&quot;})
 </code></pre>
-<pre class="custom">AIMessage(content='50', response_metadata={'token_usage': {'completion_tokens': 1, 'prompt_tokens': 16, 'total_tokens': 17}, 'model_name': 'gpt-3.5-turbo', 'system_fingerprint': None, 'finish_reason': 'stop', 'logprobs': None}, id='run-44f606db-2437-4d1f-9cee-ddfc69428745-0', usage_metadata={'input_tokens': 16, 'output_tokens': 1, 'total_tokens': 17})</pre>
-<p>아래는 <code>RunnablePassthrough</code> 를 사용한 예제입니다.</p>
-<p><code>RunnablePassthrough</code> 는 <code>runnable</code> 객체이며, <code>runnable</code> 객체는 <code>invoke()</code> 메소드를 사용하여 별도 실행이 가능합니다.</p>
-<pre><code class="language-python">from langchain_core.runnables import RunnablePassthrough
-
-# runnable
-RunnablePassthrough().invoke({&quot;num&quot;: 10})
+<pre class="custom">'ChatGPT는 OpenAI에서 개발한 대화형 인공지능 모델로, 다양한 주제에 대한 대화를 자연스럽게 이어나갈 수 있습니다. 사용자들은 ChatGPT를 통해 질문에 답변을 받거나 대화를 이어가며 새로운 정보를 습득할 수 있습니다. 또한 ChatGPT는 사용자의 입력을 학습하여 점차적으로 더욱 유창하고 자연스러운 대화를 제공합니다.'</pre>
+<h2 id="batch">batch: 배치(단위 실행)</h2>
+<p>함수 <code>chain.batch</code>는 여러 개의 딕셔너리를 포함하는 리스트를 인자로 받아, 각 딕셔너리에 있는 <code>topic</code> 키의 값을 사용하여 일괄 처리를 수행합니다.</p>
+<pre><code class="language-python"># 주어진 토픽 리스트를 batch 처리하는 함수 호출
+chain.batch([{&quot;topic&quot;: &quot;ChatGPT&quot;}, {&quot;topic&quot;: &quot;Instagram&quot;}])
 </code></pre>
-<pre class="custom">{'num': 10}</pre>
-<p>아래는 <code>RunnablePassthrough</code> 로 체인을 구성하는 예제입니다.</p>
-<pre><code class="language-python">runnable_chain = {&quot;num&quot;: RunnablePassthrough()} | prompt | ChatOpenAI()
-
-# dict 값이 RunnablePassthrough() 로 변경되었습니다.
-runnable_chain.invoke(10)
+<pre class="custom">['ChatGPT는 인공지능 챗봇으로 자연어 처리 기술을 사용하여 대화를 수행합니다. 사용자들과 자연스럽게 상호작용하며 다양한 주제에 대해 대화할 수 있습니다. ChatGPT는 정보 제공, 질문 응답, 상담 및 엔터테인먼트 등 다양한 용도로 활용될 수 있습니다.', 'Instagram은 사진과 동영상을 공유하고 다른 사람들과 소통하는 소셜 미디어 플랫폼이다. 해시태그를 통해 관심사나 주제별로 사진을 검색하고 팔로워들과 소통할 수 있다. 인기 있는 인플루언서나 브랜드가 활발하게 활동하는 플랫폼으로 세계적으로 인기가 높다.']</pre>
+<p><code>max_concurrency</code> 매개변수를 사용하여 동시 요청 수를 설정할 수 있습니다</p>
+<p><code>config</code> 딕셔너리는 <code>max_concurrency</code> 키를 통해 동시에 처리할 수 있는 최대 작업 수를 설정합니다. 여기서는 최대 3개의 작업을 동시에 처리하도록 설정되어 있습니다.</p>
+<pre><code class="language-python">chain.batch(
+    [
+        {&quot;topic&quot;: &quot;ChatGPT&quot;},
+        {&quot;topic&quot;: &quot;Instagram&quot;},
+        {&quot;topic&quot;: &quot;멀티모달&quot;},
+        {&quot;topic&quot;: &quot;프로그래밍&quot;},
+        {&quot;topic&quot;: &quot;머신러닝&quot;},
+    ],
+    config={&quot;max_concurrency&quot;: 3},
+)
 </code></pre>
-<pre class="custom">AIMessage(content='100입니다.', response_metadata={'token_usage': {'completion_tokens': 3, 'prompt_tokens': 16, 'total_tokens': 19}, 'model_name': 'gpt-3.5-turbo', 'system_fingerprint': None, 'finish_reason': 'stop', 'logprobs': None}, id='run-66270ca2-4d62-4c71-859b-de6318f29909-0', usage_metadata={'input_tokens': 16, 'output_tokens': 3, 'total_tokens': 19})</pre>
-<p>다음은 <code>RunnablePassthrough.assign()</code> 을 사용하는 경우와 비교한 결과입니다.</p>
-<pre><code class="language-python">RunnablePassthrough().invoke({&quot;num&quot;: 1})
+<pre class="custom">['ChatGPT는 인공지능 챗봇으로, 자연어 처리 기술을 사용하여 대화 상대와 상호작용합니다. 사용자의 질문에 응답하고 대화를 이어가며 다양한 주제에 대해 대화할 수 있습니다. ChatGPT는 사용자와 자연스럽게 대화를 나누는 데 도움을 줄 뿐만 아니라 정보를 제공하고 문제 해결을 돕기도 합니다.', 'Instagram은 사진과 동영상을 공유하고 다른 사람들과 소통할 수 있는 소셜 미디어 플랫폼이다. 다양한 필터와 편집 기능을 제공하여 사용자가 쉽게 멋진 사진을 업로드할 수 있으며 해시태그를 통해 관심사에 맞는 콘텐츠를 찾을 수 있다. 인기 있는 인플루언서들의 활동과 광고가 많이 이루어지는 플랫폼이기도 하다.', '멀티모달은 여러 가지의 다른 형태의 정보를 함께 제공하거나 처리하는 기술이다. 이는 텍스트, 이미지, 음성, 비디오 등 여러 형태의 데이터를 통합하여 효과적으로 전달하고 상호작용할 수 있게 한다. 멀티모달은 사용자 경험을 향상시키고 정보를 보다 쉽게 이해하고 활용할 수 있도록 도와준다.', '프로그래밍은 컴퓨터에게 실행할 작업을 지시하는 일종의 커뮤니케이션 방법이다. 이를 위해 프로그래머가 사용하는 언어는 컴퓨터가 이해할 수 있는 형태여야 하며, 문법과 로직을 통해 원하는 결과를 얻을 수 있다. 프로그래밍을 통해 소프트웨어를 개발하고 문제를 해결하는 등 다양한 분야에서 활용할 수 있다.', '머신러닝은 컴퓨터 시스템이 데이터에서 학습하고 패턴을 발견하여 예측하거나 결정을 내리는 인공지능의 한 분야입니다. 이를 통해 컴퓨터는 사람의 개입 없이 스스로 학습하고 문제를 해결할 수 있습니다. 머신러닝은 이미지 및 음성 인식, 자율 주행 자동차, 헬스케어 등 다양한 분야에서 활용되고 있습니다.']</pre>
+<h2 id="async-stream">async stream: 비동기 스트림</h2>
+<p>함수 <code>chain.astream</code>은 비동기 스트림을 생성하며, 주어진 토픽에 대한 메시지를 비동기적으로 처리합니다.</p>
+<p>비동기 for 루프(<code>async for</code>)를 사용하여 스트림에서 메시지를 순차적으로 받아오고, <code>print</code> 함수를 통해 메시지의 내용(<code>s.content</code>)을 즉시 출력합니다. <code>end=""</code>는 출력 후 줄바꿈을 하지 않도록 설정하며, <code>flush=True</code>는 출력 버퍼를 강제로 비워 즉시 출력되도록 합니다.</p>
+<pre><code class="language-python"># 비동기 스트림을 사용하여 'YouTube' 토픽의 메시지를 처리합니다.
+async for token in chain.astream({&quot;topic&quot;: &quot;YouTube&quot;}):
+    # 메시지 내용을 출력합니다. 줄바꿈 없이 바로 출력하고 버퍼를 비웁니다.
+    print(token, end=&quot;&quot;, flush=True)
 </code></pre>
-<pre class="custom">{'num': 1}</pre>
-<p><code>RunnablePassthrough.assign()</code></p>
-<ul>
-<li>입력 값으로 들어온 값의 key/value 쌍과 새롭게 할당된 key/value 쌍을 합칩니다.</li>
-</ul>
-<pre><code class="language-python"># 입력 키: num, 할당(assign) 키: new_num
-(RunnablePassthrough.assign(new_num=lambda x: x[&quot;num&quot;] * 3)).invoke({&quot;num&quot;: 1})
+<pre class="custom">YouTube 는 동영상을 공유하고 시청할 수 있는 온라인 동영상 플랫폼이다. 누구나 자신의 동영상을 업로드하여 다른 사람들과 공유할 수 있고, 영상 콘텐츠를 시청하며 다양한 정보나 즐길거리를 찾을 수 있다. 또한 유명한 크리에이터들의 영상을 통해 엔터테인먼트와 정보를 얻을 수 있다.</pre>
+<h2 id="async-invoke">async invoke: 비동기 호출</h2>
+<p><code>chain</code> 객체의 <code>ainvoke</code> 메서드는 비동기적으로 주어진 인자를 사용하여 작업을 수행합니다. 여기서는 <code>topic</code>이라는 키와 <code>NVDA</code>(엔비디아의 티커) 라는 값을 가진 딕셔너리를 인자로 전달하고 있습니다. 이 메서드는 특정 토픽에 대한 처리를 비동기적으로 요청하는 데 사용될 수 있습니다.</p>
+<pre><code class="language-python"># 비동기 체인 객체의 'ainvoke' 메서드를 호출하여 'NVDA' 토픽을 처리합니다.
+my_process = chain.ainvoke({&quot;topic&quot;: &quot;NVDA&quot;})
 </code></pre>
-<pre class="custom">{'num': 1, 'new_num': 3}</pre>
-<h2 id="runnableparallel">RunnableParallel</h2>
+<pre><code class="language-python"># 비동기로 처리되는 프로세스가 완료될 때까지 기다립니다.
+await my_process
+</code></pre>
+<pre class="custom">'NVDA는 엔비디아의 주식 코드로, 미국의 반도체 기업인 엔비디아(NVIDIA)의 주식을 말합니다. 엔비디아는 그래픽 처리 유닛(GPU)을 전문으로 하는 기업으로, 인공지능, 가상현실, 자율주행차 등 다양한 분야에서 기술을 제공하고 있습니다. NVDA 주식은 기술 산업의 성장과 함께 높은 수익을 창출하고 있습니다.'</pre>
+<h2 id="async-batch">async batch: 비동기 배치</h2>
+<p>함수 <code>abatch</code>는 비동기적으로 일련의 작업을 일괄 처리합니다.</p>
+<p>이 예시에서는 <code>chain</code> 객체의 <code>abatch</code> 메서드를 사용하여 <code>topic</code> 에 대한 작업을 비동기적으로 처리하고 있습니다.</p>
+<p><code>await</code> 키워드는 해당 비동기 작업이 완료될 때까지 기다리는 데 사용됩니다.</p>
+<pre><code class="language-python"># 주어진 토픽에 대해 비동기적으로 일괄 처리를 수행합니다.
+my_abatch_process = chain.abatch(
+    [{&quot;topic&quot;: &quot;YouTube&quot;}, {&quot;topic&quot;: &quot;Instagram&quot;}, {&quot;topic&quot;: &quot;Facebook&quot;}]
+)
+</code></pre>
+<pre><code class="language-python"># 비동기로 처리되는 일괄 처리 프로세스가 완료될 때까지 기다립니다.
+await my_abatch_process
+</code></pre>
+<pre class="custom">['YouTube는 동영상 공유 플랫폼으로 사용자들이 영상을 업로드하고 시청할 수 있는 서비스입니다. 다양한 콘텐츠를 제공하며 사용자는 무료로 영상을 시청할 수 있습니다. 유명한 유튜버들이 활동하고 수익을 창출할 수 있는 플랫폼으로도 알려져 있습니다.', '인스타그램은 사진과 동영상을 공유하는 소셜 미디어 플랫폼으로, 사용자들은 다양한 필터와 효과를 이용해 자신의 콘텐츠를 멋지게 꾸밀 수 있습니다. 또한 팔로워들과 소통하고, 다른 사용자의 게시물을 좋아하거나 댓글을 남기며 커뮤니케이션을 할 수 있습니다. 인스타그램은 비즈니스나 개인 브랜딩에도 활용되며, 많은 사람들이 일상 속 소소한 순간부터 특별한 순간까지를 공유하고 있습니다.', 'Facebook은 미국의 소셜 네트워크 서비스로, 사용자들이 커뮤니케이션하고 정보를 공유할 수 있는 플랫폼이다. 현재 전 세계적으로 약 30억 명 이상의 사용자가 활동하고 있으며, 광고 및 비즈니스 활동에도 널리 활용되고 있다. 또한 개인정보 보호 문제와 가짜 뉴스 등 여러 논란을 빚어왔으나, 여전히 많은 사람들이 이용하고 있는 대표적인 SNS 서비스이다.']</pre>
+<h2 id="parallel">Parallel: 병렬성</h2>
+<p>LangChain Expression Language가 병렬 요청을 지원하는 방법을 살펴봅시다.
+예를 들어, <code>RunnableParallel</code>을 사용할 때(자주 사전 형태로 작성됨), 각 요소를 병렬로 실행합니다.</p>
+<p><code>langchain_core.runnables</code> 모듈의 <code>RunnableParallel</code> 클래스를 사용하여 두 가지 작업을 병렬로 실행하는 예시를 보여줍니다.</p>
+<p><code>ChatPromptTemplate.from_template</code> 메서드를 사용하여 주어진 <code>country</code>에 대한 <strong>수도</strong> 와 <strong>면적</strong> 을 구하는 두 개의 체인(<code>chain1</code>, <code>chain2</code>)을 만듭니다.</p>
+<p>이 체인들은 각각 <code>model</code>과 파이프(<code>|</code>) 연산자를 통해 연결됩니다. 마지막으로, <code>RunnableParallel</code> 클래스를 사용하여 이 두 체인을 <code>capital</code>와 <code>area</code>이라는 키로 결합하여 동시에 실행할 수 있는 <code>combined</code> 객체를 생성합니다.</p>
 <pre><code class="language-python">from langchain_core.runnables import RunnableParallel
 
-# RunnableParallel 인스턴스를 생성합니다. 이 인스턴스는 여러 Runnable 인스턴스를 병렬로 실행할 수 있습니다.
-runnable = RunnableParallel(
-    # RunnablePassthrough 인스턴스를 'passed' 키워드 인자로 전달합니다. 이는 입력된 데이터를 그대로 통과시키는 역할을 합니다.
-    passed=RunnablePassthrough(),
-    # 'extra' 키워드 인자로 RunnablePassthrough.assign을 사용하여, 'mult' 람다 함수를 할당합니다. 이 함수는 입력된 딕셔너리의 'num' 키에 해당하는 값을 3배로 증가시킵니다.
-    extra=RunnablePassthrough.assign(mult=lambda x: x[&quot;num&quot;] * 3),
-    # 'modified' 키워드 인자로 람다 함수를 전달합니다. 이 함수는 입력된 딕셔너리의 'num' 키에 해당하는 값에 1을 더합니다.
-    modified=lambda x: x[&quot;num&quot;] + 1,
-)
-
-# runnable 인스턴스에 {'num': 1} 딕셔너리를 입력으로 전달하여 invoke 메소드를 호출합니다.
-runnable.invoke({&quot;num&quot;: 1})
-</code></pre>
-<pre class="custom">{'passed': {'num': 1}, 'extra': {'num': 1, 'mult': 3}, 'modified': 2}</pre>
-<p>Chain 도 RunnableParallel 적용할 수 있습니다.</p>
-<pre><code class="language-python">chain1 = (
-    {&quot;country&quot;: RunnablePassthrough()}
-    | PromptTemplate.from_template(&quot;{country} 의 수도는?&quot;)
-    | ChatOpenAI()
-)
-chain2 = (
-    {&quot;country&quot;: RunnablePassthrough()}
-    | PromptTemplate.from_template(&quot;{country} 의 면적은?&quot;)
-    | ChatOpenAI()
-)
-</code></pre>
-<pre><code class="language-python">combined_chain = RunnableParallel(capital=chain1, area=chain2)
-combined_chain.invoke(&quot;대한민국&quot;)
-</code></pre>
-<pre class="custom">{'capital': AIMessage(content='서울입니다.', response_metadata={'token_usage': {'completion_tokens': 5, 'prompt_tokens': 19, 'total_tokens': 24}, 'model_name': 'gpt-3.5-turbo', 'system_fingerprint': None, 'finish_reason': 'stop', 'logprobs': None}, id='run-d9324c24-9670-4430-97d6-1272f5dbe0f2-0', usage_metadata={'input_tokens': 19, 'output_tokens': 5, 'total_tokens': 24}), 'area': AIMessage(content='대한민국의 총 면적은 약 100,363 km²입니다.', response_metadata={'token_usage': {'completion_tokens': 24, 'prompt_tokens': 20, 'total_tokens': 44}, 'model_name': 'gpt-3.5-turbo', 'system_fingerprint': None, 'finish_reason': 'stop', 'logprobs': None}, id='run-f27442a3-fc9c-4d08-9fdf-189c1b4585c8-0', usage_metadata={'input_tokens': 20, 'output_tokens': 24, 'total_tokens': 44})}</pre>
-<h2 id="runnablelambda">RunnableLambda</h2>
-<p>RunnableLambda 를 사용하여 사용자 정의 함수를 맵핑할 수 있습니다.</p>
-<pre><code class="language-python">from langchain_core.output_parsers import StrOutputParser
-from langchain_core.prompts import PromptTemplate
-from langchain_openai import ChatOpenAI
-from datetime import datetime
-
-
-def get_today(a):
-    # 오늘 날짜를 가져오기
-    return datetime.today().strftime(&quot;%b-%d&quot;)
-
-
-# 오늘 날짜를 출력
-get_today(None)
-</code></pre>
-<pre class="custom">'Jun-19'</pre>
-
-<pre><code class="language-python">from langchain_core.runnables import RunnableLambda, RunnablePassthrough
-
-# prompt 와 llm 을 생성합니다.
-prompt = PromptTemplate.from_template(
-    &quot;{today} 가 생일인 유명인 {n} 명을 나열하세요. 생년월일을 표기해 주세요.&quot;
-)
-llm = ChatOpenAI(temperature=0, model_name=&quot;gpt-4o&quot;)
-
-# chain 을 생성합니다.
-chain = (
-    {&quot;today&quot;: RunnableLambda(get_today), &quot;n&quot;: RunnablePassthrough()}
-    | prompt
-    | llm
+# {country} 의 수도를 물어보는 체인을 생성합니다.
+chain1 = (
+    PromptTemplate.from_template(&quot;{country} 의 수도는 어디야?&quot;)
+    | model
     | StrOutputParser()
 )
-</code></pre>
-<pre><code class="language-python"># 출력
-print(chain.invoke(3))
-</code></pre>
-<pre class="custom">다음은 6월 19일이 생일인 몇몇 유명인들입니다:
 
-1. 폴 도노반 (Paul Dano) - 1984년 6월 19일
-2. 디렉 노박 조코비치 (Novak Djokovic) - 1987년 6월 19일
-3. 필리페 쿠티뉴 (Philippe Coutinho) - 1992년 6월 19일
-
-이들은 각각 배우, 테니스 선수, 축구 선수로서 다양한 분야에서 활동하고 있습니다.
-</pre>
-<p><code>itemgetter</code> 를 사용하여 특정 키를 추출합니다.</p>
-<pre><code class="language-python">from operator import itemgetter
-
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.runnables import RunnableLambda
-from langchain_openai import ChatOpenAI
-
-
-# 문장의 길이를 반환하는 함수입니다.
-def length_function(text):
-    return len(text)
-
-
-# 두 문장의 길이를 곱한 값을 반환하는 함수입니다.
-def _multiple_length_function(text1, text2):
-    return len(text1) * len(text2)
-
-
-# _multiple_length_function 함수를 사용하여 두 문장의 길이를 곱한 값을 반환하는 함수입니다.
-def multiple_length_function(_dict):
-    return _multiple_length_function(_dict[&quot;text1&quot;], _dict[&quot;text2&quot;])
-
-
-prompt = ChatPromptTemplate.from_template(&quot;{a} + {b} 는 무엇인가요?&quot;)
-model = ChatOpenAI()
-
-chain1 = prompt | model
-
-chain = (
-    {
-        &quot;a&quot;: itemgetter(&quot;word1&quot;) | RunnableLambda(length_function),
-        &quot;b&quot;: {&quot;text1&quot;: itemgetter(&quot;word1&quot;), &quot;text2&quot;: itemgetter(&quot;word2&quot;)}
-        | RunnableLambda(multiple_length_function),
-    }
-    | prompt
+# {country} 의 면적을 물어보는 체인을 생성합니다.
+chain2 = (
+    PromptTemplate.from_template(&quot;{country} 의 면적은 얼마야?&quot;)
     | model
+    | StrOutputParser()
 )
+
+# 위의 2개 체인을 동시에 생성하는 병렬 실행 체인을 생성합니다.
+combined = RunnableParallel(capital=chain1, area=chain2)
 </code></pre>
-<pre><code class="language-python">chain.invoke({&quot;word1&quot;: &quot;hello&quot;, &quot;word2&quot;: &quot;world&quot;})
+<p><code>chain1.invoke()</code> 함수는 <code>chain1</code> 객체의 <code>invoke</code> 메서드를 호출합니다.</p>
+<p>이때, <code>country</code>이라는 키에 <code>대한민국</code>라는 값을 가진 딕셔너리를 인자로 전달합니다.</p>
+<pre><code class="language-python"># chain1 를 실행합니다.
+chain1.invoke({&quot;country&quot;: &quot;대한민국&quot;})
 </code></pre>
-<pre class="custom">AIMessage(content='5 + 25 = 30입니다.', response_metadata={'token_usage': {'completion_tokens': 9, 'prompt_tokens': 22, 'total_tokens': 31}, 'model_name': 'gpt-3.5-turbo', 'system_fingerprint': None, 'finish_reason': 'stop', 'logprobs': None}, id='run-5db9b475-09ee-4edb-af9d-b37b320bee1e-0', usage_metadata={'input_tokens': 22, 'output_tokens': 9, 'total_tokens': 31})</pre>
+<pre class="custom">'대한민국의 수도는 서울이다.'</pre>
+<p>이번에는 <code>chain2.invoke()</code> 를 호출합니다. <code>country</code> 키에 다른 국가인 <code>미국</code> 을 전달합니다.</p>
+<pre><code class="language-python"># chain2 를 실행합니다.
+chain2.invoke({&quot;country&quot;: &quot;미국&quot;})
+</code></pre>
+<pre class="custom">'미국의 면적은 약 9,826,675 제곱 킬로미터입니다.'</pre>
+<p><code>combined</code> 객체의 <code>invoke</code> 메서드는 주어진 <code>country</code>에 대한 처리를 수행합니다.</p>
+<p>이 예제에서는 <code>대한민국</code>라는 주제를 <code>invoke</code> 메서드에 전달하여 실행합니다.</p>
+<pre><code class="language-python"># 병렬 실행 체인을 실행합니다.
+combined.invoke({&quot;country&quot;: &quot;대한민국&quot;})
+</code></pre>
+<pre class="custom">{'capital': '대한민국의 수도는 서울입니다.', 'area': '대한민국의 면적은 약 100,363.4 제곱 킬로미터 입니다.'}</pre>
+<h3 id="_1">배치에서의 병렬 처리</h3>
+<p>병렬 처리는 다른 실행 가능한 코드와 결합될 수 있습니다.
+배치와 병렬 처리를 사용해 보도록 합시다.</p>
+<p><code>chain1.batch</code> 함수는 여러 개의 딕셔너리를 포함하는 리스트를 인자로 받아, 각 딕셔너리에 있는 "topic" 키에 해당하는 값을 처리합니다. 이 예시에서는 "대한민국"와 "미국"라는 두 개의 토픽을 배치 처리하고 있습니다.</p>
+<pre><code class="language-python"># 배치 처리를 수행합니다.
+chain1.batch([{&quot;country&quot;: &quot;대한민국&quot;}, {&quot;country&quot;: &quot;미국&quot;}])
+</code></pre>
+<pre class="custom">['대한민국의 수도는 서울이에요.', '미국의 수도는 워싱턴 D.C.입니다.']</pre>
+<p><code>chain2.batch</code> 함수는 여러 개의 딕셔너리를 리스트 형태로 받아, 일괄 처리(batch)를 수행합니다.</p>
+<p>이 예시에서는 <code>대한민국</code>와 <code>미국</code>라는 두 가지 국가에 대한 처리를 요청합니다.</p>
+<pre><code class="language-python"># 배치 처리를 수행합니다.
+chain2.batch([{&quot;country&quot;: &quot;대한민국&quot;}, {&quot;country&quot;: &quot;미국&quot;}])
+</code></pre>
+<pre class="custom">['대한민국의 총 면적은 약 100,363 제곱킬로미터 입니다.', '미국의 면적은 약 9,834,000km² 입니다.']</pre>
+<p><code>combined.batch</code> 함수는 주어진 데이터를 배치로 처리하는 데 사용됩니다. 이 예시에서는 두 개의 딕셔너리 객체를 포함하는 리스트를 인자로 받아 각각 <code>대한민국</code>와 <code>미국</code> 두 나라에 대한 데이터를 배치 처리합니다.</p>
+<pre><code class="language-python"># 주어진 데이터를 배치로 처리합니다.
+combined.batch([{&quot;country&quot;: &quot;대한민국&quot;}, {&quot;country&quot;: &quot;미국&quot;}])
+</code></pre>
+<pre class="custom">[{'capital': '대한민국의 수도는 서울이다.', 'area': '대한민국의 면적은 약 100,363km² 입니다.'}, {'capital': '미국의 수도는 워싱턴 D.C.입니다.', 'area': '미국의 면적은 약 9,833,520 km² 입니다.'}]</pre>
 </div>
 <div class="muted text-right" style="font-size: 0.9em;margin:10px 0;">
     
-    마지막 편집일시 : 2024년 6월 19일 10:59 오후
+    마지막 편집일시 : 2024년 9월 5일 9:18 오전
     
 </div>
 <!-- google adsense -->
 <!-- PC -->
 
+<!-- Mobile -->
+
     
-        <div style="margin:30px 0;">
+        <div style="margin:20px 0;">
             <!-- 위키독스 포인트 광고 -->
-            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9470517771012578"
-                    crossorigin="anonymous"></script>
-            <!-- 위키독스 일반 -->
-            <ins class="adsbygoogle"
-                    style="display:block"
-                    data-ad-client="ca-pub-9470517771012578"
-                    data-ad-slot="9169493836"
-                    data-ad-format="auto"
-                    data-ad-channel="6628864207"
-                    data-full-width-responsive="true"></ins>
-            <script>
-                    (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
+            <!-- 위키독스모바일2020 -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9470517771012578" crossorigin="anonymous"></script>
+<ins class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-9470517771012578"
+        data-ad-slot="4465552259"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
+<script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
         </div>
     
-
-<!-- Mobile -->
 
 
 <!-- google adsense -->
@@ -2177,10 +2212,10 @@ chain = (
     <div class="pull-left">
         <ul>
             
-                <li><strong>이전글</strong> : <a href="javascript:page(233345)">05. LCEL 인터페이스</a></li>
+                <li><strong>이전글</strong> : <a href="javascript:page(233344)">05. LangChain Expression Language(LCEL)</a></li>
             
             
-                <li><strong>다음글</strong> : <a href="javascript:page(233347)">CH02 프롬프트(Prompt)</a></li>
+                <li><strong>다음글</strong> : <a href="javascript:page(233346)">07. Runnable</a></li>
             
         </ul>
     </div>
@@ -2191,13 +2226,11 @@ chain = (
 
 
 
+<a href="#" class="btn btn-primary toc-to mobile-toc">
+    <span class="glyphicon glyphicon-list"></span>
+    목차보기
+</a>
 
-<a id="toggle-theme" class="label label-default dark_btn" data-toggle="popover" data-placement="left" data-content="다크모드">
-    <span class="glyphicon glyphicon-adjust"></span>
-</a>
-<a href="#top" class="label label-default back-to-top" data-toggle="popover" data-placement="left" data-content="맨위로">
-    <span class="glyphicon glyphicon-arrow-up"></span>
-</a>
 
 <!-- 책갈피 모달 -->
 <div class="modal fade" id="bookmarkModal" tabindex="-1" role="dialog" aria-labelledby="bookmarkModalLabel">
@@ -2218,7 +2251,7 @@ chain = (
     </div>
 </div>
 <script>
-var is_mobile = "False";
+var is_mobile = "True";
 $(document).ready(function () {
     if (is_mobile == "True") {
         if($(window).width() >= 768) {
@@ -2285,6 +2318,7 @@ $(document).ready(function () {
     });
 
     // 다크모드 토글 버튼 클릭 이벤트 처리
+    /*
     $('#toggle-theme').click(function(e) {
         const urlParams = new URLSearchParams(window.location.search);
         
@@ -2292,6 +2326,7 @@ $(document).ready(function () {
         
         window.location.search = urlParams.toString();
     });
+    */
 
     $('[data-toggle="popover"]').popover({
         trigger: 'hover', // 마우스를 올렸을 때 popover 표시
@@ -2305,7 +2340,7 @@ function deleteBookmark(bookmarkId) {
             url: '/bookmark/delete/' + bookmarkId + '/',
             type: 'POST',
             data: {
-                'csrfmiddlewaretoken': 'XUCmrflLAEO3vpPPAhh5uM7uSV2kNgPXQM44Bg4mh1b7UyLfFtyrErEXId5I00PA'
+                'csrfmiddlewaretoken': 'ZqReiqiX1equueIZ6bnYPort3T7NJhNc72cDdOB8F0pxMxUES87I9d65kd1fnwPL'
             },
             success: function(response) {
                 $('#bookmarkModal .modal-body').html(response);
@@ -2317,6 +2352,72 @@ function deleteBookmark(bookmarkId) {
         });
     }
 }
+
+$(document).ready(function() {
+    // 현재 다크모드 상태 확인
+    let isDarkMode = false;
+
+    // 다크모드 토글 함수
+    function toggleDarkMode() {
+        isDarkMode = !isDarkMode;
+        updateTheme();
+        saveDarkModePreference();
+    }
+
+    // 테마 업데이트 함수
+    function updateTheme() {
+        const mainStylesheet = $('#main-stylesheet');
+        const markdownStylesheet = $('#markdown-stylesheet');
+        const highlightStylesheet = $('#highlight-stylesheet');
+
+        if (isDarkMode) {
+            mainStylesheet.attr('href', "/static/book/css/style_stack_dark.css?v=13");
+            markdownStylesheet.attr('href', "/static/book/css/markdown_stack_dark.css?v=13");
+            highlightStylesheet.attr('href', "//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/atom-one-dark.min.css");
+        } else {
+            mainStylesheet.attr('href', "/static/book/css/style_stack.css?v=13");
+            markdownStylesheet.attr('href', "/static/book/css/markdown_stack.css?v=13");
+            highlightStylesheet.attr('href', "//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/default.min.css");
+        }
+    }
+
+    // Ajax를 사용하여 다크모드 설정 저장
+    function saveDarkModePreference() {
+        $.ajax({
+            url: '/set_darkmode/',  // Django URL을 여기에 지정
+            method: 'POST',
+            data: {
+                'darkmode': isDarkMode ? 'on' : 'off'
+            },
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')  // CSRF 토큰
+            }
+        });
+    }
+
+    // CSRF 토큰을 쿠키에서 가져오는 함수
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // 토글 버튼 클릭 이벤트
+    $('#toggle-theme').click(toggleDarkMode);
+
+    // 초기 테마 설정
+    // updateTheme();
+});
+
 </script>
     
 
@@ -2324,12 +2425,12 @@ function deleteBookmark(bookmarkId) {
 </div>
 <div style="display:none" class="prev_next_indicator">
     
-    <a class="prev_icon" href="javascript:page(233345)" role="button">
+    <a class="prev_icon" href="javascript:page(233344)" role="button">
         <span class="glyphicon glyphicon-chevron-left" style="font-size:2em;"></span>
     </a>
 
 
-    <a class="next_icon" href="javascript:page(233347)" role="button">
+    <a class="next_icon" href="javascript:page(233346)" role="button">
         <span class="glyphicon glyphicon-chevron-right" style="font-size:2em;"></span>
     </a>
 
@@ -2346,7 +2447,7 @@ function deleteBookmark(bookmarkId) {
             </div>
             <div class="modal-body">
                 <form class="form" role="form">
-                    <input type="hidden" name="page_id" id="page_id" value="233346" />
+                    <input type="hidden" name="page_id" id="page_id" value="233345" />
                     <div class="form-group">
                         <label class="control-label" for="email">답장받을 이메일 주소</label>
                         <div class="">

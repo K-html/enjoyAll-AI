@@ -1,0 +1,1278 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ko" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>LLMs를 활용한 문서 요약 가이드: Stuff, Map-Reduce, Refine 방법 총정리 - 테디노트</title>
+<meta name="description" content="문서 요약에 어려움을 겪고 계신가요? LLMs를 활용하여 문서를 효과적으로 요약하는 방법을 배워보세요. 이 글에서는 Stuff, Map-Reduce, Refine 등 다양한 접근 방식을 상세히 설명합니다.">
+
+
+  <meta name="author" content="Teddy">
+  
+  <meta property="article:author" content="Teddy">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:site_name" content="테디노트">
+<meta property="og:title" content="LLMs를 활용한 문서 요약 가이드: Stuff, Map-Reduce, Refine 방법 총정리">
+<meta property="og:url" content="https://teddylee777.github.io/langchain/summarize-chain/">
+
+
+  <meta property="og:description" content="문서 요약에 어려움을 겪고 계신가요? LLMs를 활용하여 문서를 효과적으로 요약하는 방법을 배워보세요. 이 글에서는 Stuff, Map-Reduce, Refine 등 다양한 접근 방식을 상세히 설명합니다.">
+
+
+
+  <meta property="og:image" content="https://teddylee777.github.io/images/logo.png">
+
+
+
+
+
+  <meta property="article:published_time" content="2024-02-04T00:00:00+00:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://teddylee777.github.io/langchain/summarize-chain/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "테디노트",
+      "url": "https://teddylee777.github.io/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="테디노트 Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<meta name="google-site-verification" content="nYT-sVwbhCkzWrPIKtWHGo6rDW29JpXuHxkdgni3egg" />
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5548835221228418"
+     crossorigin="anonymous"></script>
+
+
+     <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        TeX: {
+          equationNumbers: {
+            autoNumber: "AMS"
+          }
+        },
+        tex2jax: {
+        inlineMath: [ ['$', '$'] ],
+        displayMath: [ ['$$', '$$'] ],
+        processEscapes: true,
+      }
+    });
+    MathJax.Hub.Register.MessageHook("Math Processing Error",function (message) {
+          alert("Math Processing Error: "+message[1]);
+        });
+    MathJax.Hub.Register.MessageHook("TeX Jax - parse error",function (message) {
+          alert("Math Processing Error: "+message[1]);
+        });
+    </script>
+<script type="text/javascript" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+<!-- end custom head snippets -->
+
+<link href="/assets/css/syntax.css" rel="stylesheet" >
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          테디노트
+          <span class="site-subtitle">데이터와 인공지능을 좋아하는 개발자 노트</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/search/">검색</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/">카테고리</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/">태그</a>
+            </li><li class="masthead__menu-item">
+              <a href="/year-archive/">연도</a>
+            </li><li class="masthead__menu-item">
+              <a href="/lectures/">강의</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">어바웃미</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">토글 메뉴</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+
+  
+    
+
+
+
+<nav class="breadcrumbs">
+  <ol itemscope itemtype="https://schema.org/BreadcrumbList">
+    
+    
+    
+      
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+          <a href="/" itemprop="item"><span itemprop="name">Home</span></a>
+
+          <meta itemprop="position" content="1" />
+        </li>
+        <span class="sep">/</span>
+      
+      
+        
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+          <a href="/categories/#langchain" itemprop="item"><span itemprop="name">Langchain</span></a>
+          <meta itemprop="position" content="2" />
+        </li>
+        <span class="sep">/</span>
+      
+    
+      
+      
+        <li class="current">LLMs를 활용한 문서 요약 가이드: Stuff, Map-Reduce, Refine 방법 총정리</li>
+      
+    
+  </ol>
+</nav>
+
+  
+
+
+<div id="main" role="main">
+  
+
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="LLMs를 활용한 문서 요약 가이드: Stuff, Map-Reduce, Refine 방법 총정리">
+    <meta itemprop="description" content="이번 글은 LangChain 을 활용하여 문서를 요약하는 방법에 대하여 다룹니다. 특히, 문서 요약의 3가지 방식은 Stuff, Map-Reduce, Refine 방식에 대하여 알아보고, 각각의 방식 간의 차이점에 대하여 다룹니다.">
+    <meta itemprop="datePublished" content="2024-02-04T00:00:00+00:00">
+    
+
+    <div class="page__inner-wrap">
+      <p class="notice--info" style="font-size: 1rem !important;"><strong>🔥알림🔥</strong>
+    <br>
+    ① 테디노트 <strong>유튜브</strong> - 
+    <a href="https://www.youtube.com/@teddynote">구경하러 가기!</a>
+    <br>
+    ② LangChain <strong>한국어 튜토리얼</strong>
+    <a href="https://github.com/teddylee777/langchain-kr">바로가기 👀</a>
+    <br>
+    ③ 랭체인 노트 <strong>무료 전자책</strong>(wikidocs) 
+    <a href="https://wikidocs.net/book/14314">바로가기 🙌</a>
+    <br>
+    ④ RAG 비법노트 LangChain <strong>강의오픈</strong>
+    <a href="https://bit.ly/4e1h8zO">바로가기 🙌</a>
+    <br>
+    ⑤ 서울대 <strong>PyTorch 딥러닝 강의</strong>
+    <a href="https://snui.snu.ac.kr/el/course/course_info_form.acl?COURSE_SEQ=496&LECTURE_SEQ=768">바로가기 🙌</a>
+</p>
+      
+        <header>
+          <h1 id="page-title" class="page__title p-name" itemprop="headline">
+            <a href="https://teddylee777.github.io/langchain/summarize-chain/" class="u-url" itemprop="url">LLMs를 활용한 문서 요약 가이드: Stuff, Map-Reduce, Refine 방법 총정리
+</a>
+          </h1>
+          
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2024-02-04T00:00:00+00:00">2024년 02월 04일</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          21 분 소요
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+          <aside class="sidebar__right sticky">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-fas fa-thumbtack"></i> 목차</h4></header>
+              <ul class="toc__menu"><li><a href="#개요">개요</a></li><li><a href="#load_summarize_chain">load_summarize_chain</a></li><li><a href="#방법1-stuff">방법1. Stuff</a></li><li><a href="#방법2-map-reduce">방법2. Map-Reduce</a><ul><li><a href="#더-깊이-들어가기">더 깊이 들어가기</a></li></ul></li><li><a href="#방법3-refine">방법3. Refine</a></li><li><a href="#analyzedocumentchain-한-번의-체인으로-분할-및-요약">AnalyzeDocumentChain: 한 번의 체인으로 분할 및 요약</a></li><li><a href="#reference">Reference</a></li></ul>
+
+            </nav>
+          </aside>
+        
+        <p>이번 글은 LangChain 을 활용하여 문서를 요약하는 방법에 대하여 다룹니다. 특히, 문서 요약의 3가지 방식은 Stuff, Map-Reduce, Refine 방식에 대하여 알아보고, 각각의 방식 간의 차이점에 대하여 다룹니다.</p>
+
+<head>
+  <style>
+    table.dataframe {
+      white-space: normal;
+      width: 100%;
+      height: 240px;
+      display: block;
+      overflow: auto;
+      font-family: Arial, sans-serif;
+      font-size: 0.9rem;
+      line-height: 20px;
+      text-align: center;
+      border: 0px !important;
+    }
+
+    table.dataframe th {
+      text-align: center;
+      font-weight: bold;
+      padding: 8px;
+    }
+    
+    table.dataframe td {
+      text-align: center;
+      padding: 8px;
+    }
+    
+    table.dataframe tr:hover {
+      background: #b8d1f3; 
+    }
+    
+    .output_prompt {
+      overflow: auto;
+      font-size: 0.9rem;
+      line-height: 1.45;
+      border-radius: 0.3rem;
+      -webkit-overflow-scrolling: touch;
+      padding: 0.8rem;
+      margin-top: 0;
+      margin-bottom: 15px;
+      font: 1rem Consolas, "Liberation Mono", Menlo, Courier, monospace;
+      color: $code-text-color;
+      border: solid 1px $border-color;
+      border-radius: 0.3rem;
+      word-break: normal;
+      white-space: pre;
+    }
+
+  .dataframe tbody tr th:only-of-type {
+      vertical-align: middle;
+  }
+
+  .dataframe tbody tr th {
+      vertical-align: top;
+  }
+
+  .dataframe thead th {
+      text-align: center !important;
+      padding: 8px;
+  }
+
+  .page__content p {
+      margin: 0 0 1.3rem !important;
+  }
+
+  .page__content li > p {
+      margin: 0 0 0.6rem !important;
+  }
+
+  .page__content p > strong {
+    font-size: 1.0rem !important;
+  }
+
+  </style>
+</head>
+
+<h2 id="개요">개요</h2>
+
+<p>문서 집합(PDF, Notion 페이지, 고객 질문 등)을 가지고 있고, 내용을 요약하고 싶다고 가정해 보세요.LLMs는 텍스트를 이해하고 종합하는 데 능숙하기 때문에 이를 위한 훌륭한 도구입니다.</p>
+
+<p>이 안내서에서는 LLMs를 사용하여 문서 요약을 수행하는 방법에 대해 살펴보겠습니다.</p>
+
+<p>요약기를 구축할 때 중심적인 질문은 문서를 LLM의 컨텍스트 창에 어떻게 전달할 것인가입니다. 이를 위한 두 가지 일반적인 접근 방식은 다음과 같습니다:</p>
+
+<ol>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">Stuff</code>: 단순히 모든 문서를 단일 프롬프트로 “넣는” 방식입니다. 이는 가장 간단한 접근 방식입니다.</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">Map-reduce</code>: 각 문서를 “map” 단계에서 개별적으로 요약한 다음, “reduce” 단계에서 요약본들을 최종 요약본으로 합치는 방식입니다.</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">Refine</code>: 입력 문서를 순회하며 반복적으로 답변을 업데이트하여 응답을 구성합니다. 각 문서에 대해, 모든 비문서 입력, 현재 문서, 그리고 최신 중간 답변을 LLM chain에 전달하여 새로운 답변을 얻습니다.</p>
+  </li>
+</ol>
+
+<h2 id="load_summarize_chain">load_summarize_chain</h2>
+
+<p>미리보기를 제공하기 위해, 어떤 파이프라인도 단일 객체로 래핑될 수 있습니다: <code class="language-plaintext highlighter-rouge">load_summarize_chain</code>.</p>
+
+<p>블로그 포스트를 요약하고 싶다고 가정해 봅시다. 몇 줄의 코드로 이를 생성할 수 있습니다.</p>
+
+<p>먼저 환경 변수를 설정하고 패키지를 설치하세요:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># API KEY를 환경변수로 관리하기 위한 설정 파일
+</span><span class="kn">from</span> <span class="nn">dotenv</span> <span class="kn">import</span> <span class="n">load_dotenv</span>
+
+<span class="c1"># API KEY 정보로드
+</span><span class="n">load_dotenv</span><span class="p">()</span>
+</code></pre></div></div>
+
+<pre>
+True
+</pre>
+<p><code class="language-plaintext highlighter-rouge">chain_type="stuff"</code>를 사용할 수 있습니다.</p>
+
+<p><code class="language-plaintext highlighter-rouge">chain_type="map_reduce"</code> 또는 <code class="language-plaintext highlighter-rouge">chain_type="refine"</code>도 제공할 수 있습니다.</p>
+
+<p>이 코드는 웹에서 문서를 로드하고, 이를 요약하기 위해 <code class="language-plaintext highlighter-rouge">langchain</code> 라이브러리와 OpenAI의 GPT 모델을 사용합니다.</p>
+
+<p>먼저, <code class="language-plaintext highlighter-rouge">WebBaseLoader</code>를 사용하여 지정된 URL에서 문서를 로드합니다. 그 다음, <code class="language-plaintext highlighter-rouge">ChatOpenAI</code>를 사용하여 GPT-3.5 모델을 초기화합니다.</p>
+
+<p><code class="language-plaintext highlighter-rouge">load_summarize_chain</code> 함수를 통해 요약 작업을 위한 체인을 로드합니다.</p>
+
+<p>마지막으로, 로드된 문서에 대해 요약 체인을 실행합니다. 이 과정은 AI를 활용하여 웹 문서를 요약하는 효율적인 방법을 제시합니다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">langchain.chains.summarize</span> <span class="kn">import</span> <span class="n">load_summarize_chain</span>
+<span class="kn">from</span> <span class="nn">langchain_community.document_loaders</span> <span class="kn">import</span> <span class="n">WebBaseLoader</span>
+<span class="kn">from</span> <span class="nn">langchain_openai</span> <span class="kn">import</span> <span class="n">ChatOpenAI</span>
+<span class="kn">from</span> <span class="nn">langchain.callbacks.base</span> <span class="kn">import</span> <span class="n">BaseCallbackHandler</span>
+
+<span class="c1"># 웹 기반 문서 로더를 초기화합니다.
+</span><span class="n">loader</span> <span class="o">=</span> <span class="n">WebBaseLoader</span><span class="p">(</span><span class="s">"https://lilianweng.github.io/posts/2023-06-23-agent/"</span><span class="p">)</span>
+
+<span class="c1"># 문서를 로드합니다.
+</span><span class="n">docs</span> <span class="o">=</span> <span class="n">loader</span><span class="p">.</span><span class="n">load</span><span class="p">()</span>
+
+
+<span class="k">class</span> <span class="nc">StreamCallback</span><span class="p">(</span><span class="n">BaseCallbackHandler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">on_llm_new_token</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"</span><span class="si">{</span><span class="n">token</span><span class="si">}</span><span class="s">"</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s">""</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+
+<span class="c1"># OpenAI의 Chat 모델을 초기화합니다. 여기서는 온도를 0으로 설정하고 모델 이름을 지정합니다.
+</span><span class="n">llm</span> <span class="o">=</span> <span class="n">ChatOpenAI</span><span class="p">(</span>
+    <span class="n">temperature</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">model_name</span><span class="o">=</span><span class="s">"gpt-3.5-turbo-16k"</span><span class="p">,</span>
+    <span class="n">streaming</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+    <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="n">StreamCallback</span><span class="p">()],</span>
+<span class="p">)</span>
+<span class="c1"># 요약 체인을 로드합니다. 체인 타입을 'stuff'로 지정합니다.
+</span><span class="n">chain</span> <span class="o">=</span> <span class="n">load_summarize_chain</span><span class="p">(</span><span class="n">llm</span><span class="p">,</span> <span class="n">chain_type</span><span class="o">=</span><span class="s">"stuff"</span><span class="p">)</span>
+
+<span class="c1"># 문서에 대해 요약 체인을 실행합니다.
+</span><span class="n">answer</span> <span class="o">=</span> <span class="n">chain</span><span class="p">.</span><span class="n">invoke</span><span class="p">({</span><span class="s">"input_documents"</span><span class="p">:</span> <span class="n">docs</span><span class="p">})</span>
+<span class="k">print</span><span class="p">(</span><span class="n">answer</span><span class="p">[</span><span class="s">"output_text"</span><span class="p">])</span>
+</code></pre></div></div>
+
+<pre>
+The article discusses the concept of building autonomous agents powered by large language models (LLMs). It explores the components of such agents, including planning, memory, and tool use. The article provides case studies and examples of proof-of-concept demos, highlighting the challenges and limitations of LLM-powered agents. The author also provides citations and references for further reading.The article discusses the concept of building autonomous agents powered by large language models (LLMs). It explores the components of such agents, including planning, memory, and tool use. The article provides case studies and examples of proof-of-concept demos, highlighting the challenges and limitations of LLM-powered agents. The author also provides citations and references for further reading.
+</pre>
+<h2 id="방법1-stuff">방법1. Stuff</h2>
+
+<p><code class="language-plaintext highlighter-rouge">chain_type="stuff"</code>로 <code class="language-plaintext highlighter-rouge">load_summarize_chain</code>을 사용할 때, <code class="language-plaintext highlighter-rouge">StuffDocumentsChain</code> 을 사용합니다.</p>
+
+<p>체인은 문서 목록을 가져와서 모두 프롬프트에 삽입한 후, 그 프롬프트를 LLM에 전달합니다:</p>
+
+<ol>
+  <li>
+    <p>먼저, <code class="language-plaintext highlighter-rouge">PromptTemplate</code>를 사용하여 요약문 작성을 위한 프롬프트를 정의합니다.</p>
+  </li>
+  <li>
+    <p>그 다음, <code class="language-plaintext highlighter-rouge">LLMChain</code>을 사용하여 지정된 모델(<code class="language-plaintext highlighter-rouge">gpt-3.5-turbo-16k</code>)과 온도 설정(0)을 사용하는 언어 모델 체인을 생성합니다.</p>
+  </li>
+  <li>
+    <p>이 체인은 입력된 텍스트에 대한 요약문을 생성하는 데 사용됩니다.</p>
+  </li>
+  <li>
+    <p>마지막으로, <code class="language-plaintext highlighter-rouge">StuffDocumentsChain</code>을 사용하여 문서들을 결합하고, 이를 <code class="language-plaintext highlighter-rouge">LLMChain</code>을 통해 요약합니다.</p>
+  </li>
+  <li>
+    <p>이 과정은 <code class="language-plaintext highlighter-rouge">loader.load()</code>로 로드된 문서들에 대해 실행되며, 결과는 실시간 출력됩니다.</p>
+  </li>
+</ol>
+
+<p>[참고]</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">load_summarize_chain</code> 대신 <code class="language-plaintext highlighter-rouge">StuffDocumentsChain</code> 을 사용하는 이점은 <strong>사용자 정의 프롬프트</strong> 입니다.</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">langchain.chains.combine_documents.stuff</span> <span class="kn">import</span> <span class="n">StuffDocumentsChain</span>
+<span class="kn">from</span> <span class="nn">langchain.chains.llm</span> <span class="kn">import</span> <span class="n">LLMChain</span>
+<span class="kn">from</span> <span class="nn">langchain.prompts</span> <span class="kn">import</span> <span class="n">PromptTemplate</span>
+<span class="kn">from</span> <span class="nn">langchain</span> <span class="kn">import</span> <span class="n">hub</span>
+
+<span class="c1"># 요약문을 작성하기 위한 프롬프트 정의 (직접 프롬프트를 작성하는 경우)
+# prompt_template = """Please summarize the sentence according to the following REQUEST.
+# REQUEST:
+# 1. Summarize the main points in bullet points in KOREAN.
+# 2. Each summarized sentence must start with an emoji that fits the meaning of the each sentence.
+# 3. Use various emojis to make the summary more interesting.
+# 4. Translate the summary into Korean if it is written in English.
+# 5. DO NOT translate any technical terms.
+# 6. DO NOT include any unnecessary information.
+# CONTEXT:
+# {context}
+</span>
+<span class="c1"># SUMMARY:"
+# """
+# prompt = PromptTemplate.from_template(prompt_template)
+</span>
+<span class="c1"># 원격 저장소에서 프롬프트를 가져오는 경우
+</span><span class="n">prompt</span> <span class="o">=</span> <span class="n">hub</span><span class="p">.</span><span class="n">pull</span><span class="p">(</span><span class="s">"teddynote/summary-stuff-documents-korean"</span><span class="p">)</span>
+
+<span class="c1"># LLM 체인 정의
+</span><span class="n">llm</span> <span class="o">=</span> <span class="n">ChatOpenAI</span><span class="p">(</span>
+    <span class="n">temperature</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">model_name</span><span class="o">=</span><span class="s">"gpt-3.5-turbo-16k"</span><span class="p">,</span>
+    <span class="n">streaming</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+    <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="n">StreamCallback</span><span class="p">()],</span>
+<span class="p">)</span>
+
+<span class="c1"># LLMChain 정의
+</span><span class="n">llm_chain</span> <span class="o">=</span> <span class="n">LLMChain</span><span class="p">(</span><span class="n">llm</span><span class="o">=</span><span class="n">llm</span><span class="p">,</span> <span class="n">prompt</span><span class="o">=</span><span class="n">prompt</span><span class="p">)</span>
+
+<span class="c1"># StuffDocumentsChain 정의
+</span><span class="n">stuff_chain</span> <span class="o">=</span> <span class="n">StuffDocumentsChain</span><span class="p">(</span><span class="n">llm_chain</span><span class="o">=</span><span class="n">llm_chain</span><span class="p">,</span> <span class="n">document_variable_name</span><span class="o">=</span><span class="s">"context"</span><span class="p">)</span>
+
+<span class="n">docs</span> <span class="o">=</span> <span class="n">loader</span><span class="p">.</span><span class="n">load</span><span class="p">()</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">stuff_chain</span><span class="p">.</span><span class="n">invoke</span><span class="p">({</span><span class="s">"input_documents"</span><span class="p">:</span> <span class="n">docs</span><span class="p">})</span>
+</code></pre></div></div>
+
+<pre>
+🤖 LLM을 사용한 자율 에이전트 시스템은 LLM을 에이전트의 뇌로 사용하고 계획, 메모리, 도구 사용과 같은 여러 구성 요소로 보완됩니다.
+📝 계획 구성 요소는 큰 작업을 작은 하위 목표로 분해하고 에이전트가 과거 행동을 자가 비판하고 반영하여 최종 결과의 품질을 향상시킵니다.
+🧠 메모리 구성 요소는 감각 메모리, 단기 메모리, 장기 메모리로 구성되며, 외부 벡터 저장소와 빠른 검색을 통해 정보를 보존하고 검색할 수 있습니다.
+🔧 도구 사용 구성 요소는 외부 API를 호출하여 모델 가중치에 없는 추가 정보를 얻을 수 있습니다.
+🔍 이러한 구성 요소를 사용하여 과학적 발견 에이전트, 생성 에이전트 시뮬레이션, 개념 증명 예제 등을 구축할 수 있습니다.
+🚀 그러나 유한한 컨텍스트 길이, 장기적인 계획 및 작업 분해의 어려움, 자연어 인터페이스의 신뢰성 등 몇 가지 제한 사항이 있습니다.
+</pre>
+<p>좋습니다! 우리는 <code class="language-plaintext highlighter-rouge">load_summarize_chain</code>을 사용하여 이전 결과를 재현할 수 있음을 확인할 수 있습니다.</p>
+
+<h2 id="방법2-map-reduce">방법2. Map-Reduce</h2>
+
+<p><img src="/images/2024-02-04-summarize-chain/summarization_use_case_2.png" alt="summarization_use_case_2" /></p>
+
+<blockquote>
+  <p>출처: https://python.langchain.com/docs/use_cases/summarization</p>
+</blockquote>
+
+<p>Map reduce 접근 방식을 자세히 살펴보겠습니다. 이를 위해, 우리는 먼저 각 문서를 개별 요약으로 매핑하기 위해 <code class="language-plaintext highlighter-rouge">LLMChain</code>을 사용할 것입니다. 그런 다음 <code class="language-plaintext highlighter-rouge">ReduceDocumentsChain</code>을 사용하여 그 요약들을 하나의 전역 요약으로 결합할 것입니다.</p>
+
+<p>먼저, 각 문서를 개별 요약으로 매핑하기 위해 사용할 LLMChain을 지정합니다.</p>
+
+<ol>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">ChatOpenAI</code> 인스턴스를 생성하고, 이를 사용하여 문서 집합에 대한 주요 테마를 식별하는 맵(map) 작업을 정의합니다.</p>
+  </li>
+  <li>
+    <p>맵 작업은 <code class="language-plaintext highlighter-rouge">map_template</code>을 사용하여 정의되며, 이 템플릿은 문서 집합을 입력으로 받아 주요 테마를 식별하도록 요청합니다.</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">PromptTemplate.from_template</code> 메서드를 사용하여 <code class="language-plaintext highlighter-rouge">map_template</code>에서 프롬프트 템플릿을 생성하고, <code class="language-plaintext highlighter-rouge">LLMChain</code>을 사용하여 맵 작업을 실행합니다.</p>
+  </li>
+</ol>
+
+<p>Prompt Hub를 사용하여 프롬프트를 저장하고 가져올 수도 있습니다.</p>
+
+<p>예를 들어, 여기에서 맵 프롬프트를 확인하세요 <a href="https://smith.langchain.com/hub/teddynote/map-prompt">여기</a>.</p>
+
+<p><code class="language-plaintext highlighter-rouge">langchain</code> 라이브러리를 사용하여 특정 자원을 가져오고, 이를 활용해 <code class="language-plaintext highlighter-rouge">LLMChain</code> 인스턴스를 생성하는 과정을 설명합니다. <code class="language-plaintext highlighter-rouge">hub.pull</code> 메소드를 통해 ‘rlm/map-prompt’ 자원을 가져오고, 이를 <code class="language-plaintext highlighter-rouge">LLMChain</code>의 생성자에 전달하여 인스턴스를 초기화합니다. 이 과정에서 <code class="language-plaintext highlighter-rouge">llm</code> 변수는 사전에 정의되어 있어야 합니다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">langchain.chains</span> <span class="kn">import</span> <span class="n">MapReduceDocumentsChain</span><span class="p">,</span> <span class="n">ReduceDocumentsChain</span>
+<span class="kn">from</span> <span class="nn">langchain.text_splitter</span> <span class="kn">import</span> <span class="n">RecursiveCharacterTextSplitter</span>
+<span class="kn">from</span> <span class="nn">langchain</span> <span class="kn">import</span> <span class="n">hub</span>
+
+
+<span class="n">llm</span> <span class="o">=</span> <span class="n">ChatOpenAI</span><span class="p">(</span>
+    <span class="n">temperature</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">model_name</span><span class="o">=</span><span class="s">"gpt-3.5-turbo"</span><span class="p">,</span>
+    <span class="n">streaming</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+    <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="n">StreamCallback</span><span class="p">()],</span>
+<span class="p">)</span>
+
+<span class="c1"># # map-prompt 를 직접 정의하는 경우 다음의 예시를 참고하세요.
+# map_template = """The following is a set of documents
+# {docs}
+# Based on this list of docs, please identify the main themes
+# Helpful Answer:"""
+# map_prompt = PromptTemplate.from_template(map_template)
+</span>
+<span class="c1"># langchain 허브에서 'rlm/map-prompt'를 가져옵니다.
+</span><span class="n">map_prompt</span> <span class="o">=</span> <span class="n">hub</span><span class="p">.</span><span class="n">pull</span><span class="p">(</span><span class="s">"teddynote/map-prompt"</span><span class="p">)</span>
+<span class="n">map_prompt</span>
+</code></pre></div></div>
+
+<pre>
+PromptTemplate(input_variables=['documents'], template='You are a helpful expert journalist in extracting the main themes from a GIVEN DOCUMENTS below.\nPlease provide a comprehensive summary of the GIVEN DOCUMENTS in numbered list format. \nThe summary should cover all the key points and main ideas presented in the original text, while also condensing the information into a concise and easy-to-understand format. \nPlease ensure that the summary includes relevant details and examples that support the main ideas, while avoiding any unnecessary information or repetition. \nThe length of the summary should be appropriate for the length and complexity of the original text, providing a clear and accurate overview without omitting any important information.\n\nGIVEN DOCUMENTS:\n{documents}\n\nFORMAT:\n1. main theme 1\n2. main theme 2\n3. main theme 3\n...\n\nCAUTION:\n- DO NOT list more than 5 main themes.\n\nHelpful Answer:\n')
+</pre>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># LLMChain 인스턴스를 생성하며, 이때 LLM과 프롬프트로 'map_prompt'를 사용합니다.
+</span><span class="n">map_chain</span> <span class="o">=</span> <span class="n">LLMChain</span><span class="p">(</span><span class="n">llm</span><span class="o">=</span><span class="n">llm</span><span class="p">,</span> <span class="n">prompt</span><span class="o">=</span><span class="n">map_prompt</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">ReduceDocumentsChain</code>은 문서 매핑 결과를 가져와 단일 출력으로 축소하는 역할을 합니다. 일반적인 <code class="language-plaintext highlighter-rouge">CombineDocumentsChain</code> (예: <code class="language-plaintext highlighter-rouge">StuffDocumentsChain</code>)을 감싸지만, 누적 크기가 <code class="language-plaintext highlighter-rouge">token_max</code>를 초과하는 경우 문서를 축소하여 <code class="language-plaintext highlighter-rouge">CombineDocumentsChain</code>에 전달할 수 있는 기능을 추가합니다. 이 예에서, 우리는 문서를 결합하기 위해 사용한 체인을 문서를 축소하는 데에도 재사용할 수 있습니다.</p>
+
+<p>따라서 우리가 매핑한 문서의 누적 토큰 수가 4000 토큰을 초과하는 경우, 우리는 4000 토큰 미만의 배치로 문서를 재귀적으로 <code class="language-plaintext highlighter-rouge">StuffDocumentsChain</code>에 전달하여 배치 요약을 생성합니다. 그리고 이러한 배치 요약이 누적으로 4000 토큰 미만이 되면, 마지막으로 모든 문서를 <code class="language-plaintext highlighter-rouge">StuffDocumentsChain</code>에 한 번 더 전달하여 최종 요약을 생성합니다.</p>
+
+<p>이 코드는 요약들을 통합하여 주요 테마의 최종 요약을 생성하는 과정을 정의합니다. <code class="language-plaintext highlighter-rouge">reduce_template</code> 변수는 요약들의 집합을 입력으로 받아, 이를 하나의 통합된 요약으로 축약하는 템플릿 문자열을 저장합니다. 이 템플릿은 <code class="language-plaintext highlighter-rouge">{docs}</code>를 요약들의 자리 표시자로 사용하며, 최종적으로 <code class="language-plaintext highlighter-rouge">PromptTemplate.from_template</code> 함수를 사용하여 <code class="language-plaintext highlighter-rouge">reduce_prompt</code> 변수에 템플릿을 초기화합니다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># reduce-prompt 를 직접 정의하는 경우 다음의 예시를 참고하세요.
+# reduce_template = """The following is set of summaries:
+# {docs}
+# Take these and distill it into a final, consolidated summary of the main themes.
+# Helpful Answer:"""
+# reduce_prompt = PromptTemplate.from_template(reduce_template)
+</span></code></pre></div></div>
+
+<p>이 코드는 <code class="language-plaintext highlighter-rouge">hub.pull</code> 함수를 사용하여 <code class="language-plaintext highlighter-rouge">rlm/map-prompt</code>라는 리소스를 <code class="language-plaintext highlighter-rouge">prompt hub</code>에서 가져오는 과정을 보여줍니다. <code class="language-plaintext highlighter-rouge">hub.pull</code> 메소드는 지정된 리소스를 로컬 환경으로 가져오는 데 사용됩니다. 여기서 <code class="language-plaintext highlighter-rouge">reduce_prompt</code> 변수는 가져온 리소스를 저장하는 데 사용됩니다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># prompt hub에서도 얻을 수 있음을 위에서 언급했듯이
+</span><span class="n">reduce_prompt</span> <span class="o">=</span> <span class="n">hub</span><span class="p">.</span><span class="n">pull</span><span class="p">(</span><span class="s">"teddynote/reduce-prompt-korean"</span><span class="p">)</span>
+<span class="n">reduce_prompt</span>
+</code></pre></div></div>
+
+<pre>
+PromptTemplate(input_variables=['doc_summaries'], template='You are a helpful expert in summary writing.\nYou are given numbered lists of summaries.\nExtract top 10 most important insights from the summaries.\nThen, write a summary of the insights in KOREAN.\n\nLIST OF SUMMARIES:\n{doc_summaries}\n\nHelpful Answer:\n')
+</pre>
+<p>이 문서는 <code class="language-plaintext highlighter-rouge">LLMChain</code>, <code class="language-plaintext highlighter-rouge">StuffDocumentsChain</code>, <code class="language-plaintext highlighter-rouge">ReduceDocumentsChain</code> 클래스를 사용하여 문서 처리 파이프라인을 구성하는 방법을 보여줍니다. <code class="language-plaintext highlighter-rouge">LLMChain</code>은 초기 처리 단계로, 특정 프롬프트를 사용하여 언어 모델(<code class="language-plaintext highlighter-rouge">llm</code>)을 실행합니다. <code class="language-plaintext highlighter-rouge">StuffDocumentsChain</code>은 여러 문서를 하나의 문자열로 결합하여 <code class="language-plaintext highlighter-rouge">LLMChain</code>에 전달하는 역할을 합니다. 마지막으로, <code class="language-plaintext highlighter-rouge">ReduceDocumentsChain</code>은 문서들을 결합하고, 지정된 토큰 수(<code class="language-plaintext highlighter-rouge">token_max</code>)를 초과하지 않도록 반복적으로 축소하는 과정을 담당합니다. 이 과정에서, 문서들이 <code class="language-plaintext highlighter-rouge">StuffDocumentsChain</code>의 컨텍스트를 초과할 경우, 동일한 체인(<code class="language-plaintext highlighter-rouge">collapse_documents_chain</code>)을 사용하여 처리합니다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 연쇄 실행
+</span><span class="n">reduce_chain</span> <span class="o">=</span> <span class="n">LLMChain</span><span class="p">(</span><span class="n">llm</span><span class="o">=</span><span class="n">llm</span><span class="p">,</span> <span class="n">prompt</span><span class="o">=</span><span class="n">reduce_prompt</span><span class="p">)</span>
+
+<span class="c1"># 문서 리스트를 받아 하나의 문자열로 결합한 후 LLMChain에 전달
+</span><span class="n">combine_documents_chain</span> <span class="o">=</span> <span class="n">StuffDocumentsChain</span><span class="p">(</span>
+    <span class="n">llm_chain</span><span class="o">=</span><span class="n">reduce_chain</span><span class="p">,</span> <span class="n">document_variable_name</span><span class="o">=</span><span class="s">"doc_summaries"</span>
+<span class="p">)</span>
+
+<span class="c1"># 매핑된 문서들을 결합하고 반복적으로 축소
+</span><span class="n">reduce_documents_chain</span> <span class="o">=</span> <span class="n">ReduceDocumentsChain</span><span class="p">(</span>
+    <span class="c1"># 최종적으로 호출되는 체인입니다.
+</span>    <span class="n">combine_documents_chain</span><span class="o">=</span><span class="n">combine_documents_chain</span><span class="p">,</span>
+    <span class="c1"># `StuffDocumentsChain`의 컨텍스트를 초과하는 문서들을 처리
+</span>    <span class="n">collapse_documents_chain</span><span class="o">=</span><span class="n">combine_documents_chain</span><span class="p">,</span>
+    <span class="c1"># 문서들을 그룹화할 최대 토큰 수.
+</span>    <span class="n">token_max</span><span class="o">=</span><span class="mi">4096</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>우리의 map과 reduce 체인을 하나로 결합해 봅시다.</p>
+
+<p>이 코드는 문서들을 매핑하고 리듀스하는 과정을 통해 결합하는 <code class="language-plaintext highlighter-rouge">MapReduceDocumentsChain</code> 객체를 생성하고, 문자 기반으로 텍스트를 분할하는 <code class="language-plaintext highlighter-rouge">CharacterTextSplitter</code> 객체를 사용하여 문서들을 분할합니다. <code class="language-plaintext highlighter-rouge">MapReduceDocumentsChain</code>은 매핑 체인(<code class="language-plaintext highlighter-rouge">llm_chain</code>), 리듀스 체인(<code class="language-plaintext highlighter-rouge">reduce_documents_chain</code>), 문서를 저장할 변수 이름(<code class="language-plaintext highlighter-rouge">document_variable_name</code>), 그리고 매핑 단계의 중간 결과를 반환할지 여부(<code class="language-plaintext highlighter-rouge">return_intermediate_steps</code>)를 설정하여 초기화됩니다. <code class="language-plaintext highlighter-rouge">CharacterTextSplitter</code>는 <code class="language-plaintext highlighter-rouge">from_tiktoken_encoder</code> 메소드를 통해 초기화되며, 이는 분할할 청크의 크기(<code class="language-plaintext highlighter-rouge">chunk_size</code>)와 청크 간 겹침(<code class="language-plaintext highlighter-rouge">chunk_overlap</code>)을 설정합니다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 문서들을 매핑하여 체인을 거친 후 결과를 결합하는 과정
+</span><span class="n">map_reduce_chain</span> <span class="o">=</span> <span class="n">MapReduceDocumentsChain</span><span class="p">(</span>
+    <span class="c1"># 매핑 체인
+</span>    <span class="n">llm_chain</span><span class="o">=</span><span class="n">map_chain</span><span class="p">,</span>
+    <span class="c1"># 리듀스 체인
+</span>    <span class="n">reduce_documents_chain</span><span class="o">=</span><span class="n">reduce_documents_chain</span><span class="p">,</span>
+    <span class="c1"># llm_chain에서 문서들을 넣을 변수 이름
+</span>    <span class="n">document_variable_name</span><span class="o">=</span><span class="s">"documents"</span><span class="p">,</span>
+    <span class="c1"># 매핑 단계의 결과를 출력에 포함시킴
+</span>    <span class="n">return_intermediate_steps</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># 문자를 기준으로 텍스트를 분할하는 객체 생성
+</span><span class="n">text_splitter</span> <span class="o">=</span> <span class="n">RecursiveCharacterTextSplitter</span><span class="p">(</span>
+    <span class="n">chunk_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+    <span class="n">chunk_overlap</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+    <span class="n">separators</span><span class="o">=</span><span class="p">[</span><span class="s">"</span><span class="se">\n\n</span><span class="s">"</span><span class="p">,</span> <span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="s">"(?&lt;=\. )"</span><span class="p">,</span> <span class="s">" "</span><span class="p">,</span> <span class="s">""</span><span class="p">],</span>
+    <span class="n">length_function</span><span class="o">=</span><span class="nb">len</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># 문서들을 분할
+</span><span class="n">split_docs</span> <span class="o">=</span> <span class="n">text_splitter</span><span class="p">.</span><span class="n">split_documents</span><span class="p">(</span><span class="n">docs</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">map_reduce_chain.run(split_docs)</code>는 <code class="language-plaintext highlighter-rouge">split_docs</code>를 인자로 받아 <code class="language-plaintext highlighter-rouge">map_reduce_chain</code>의 <code class="language-plaintext highlighter-rouge">run</code> 메서드를 실행하고, 그 결과를 출력합니다. 이는 MapReduce 패턴을 활용하여 데이터를 처리하는 과정을 간략하게 보여줍니다. 여기서 <code class="language-plaintext highlighter-rouge">split_docs</code>는 처리할 데이터를 나타내며, <code class="language-plaintext highlighter-rouge">map_reduce_chain</code>은 해당 데이터에 적용할 MapReduce 연산의 체인을 나타냅니다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># split_docs를 map_reduce_chain의 run 메서드에 전달하여 실행한 결과를 출력합니다.
+</span><span class="n">summary_result</span> <span class="o">=</span> <span class="n">map_reduce_chain</span><span class="p">.</span><span class="n">invoke</span><span class="p">({</span><span class="s">"input_documents"</span><span class="p">:</span> <span class="n">split_docs</span><span class="p">})</span>
+</code></pre></div></div>
+
+<pre>
+1. The document discusses LLM Powered Autonomous Agents, providing an overview of the agent system and its components.
+2. The first component discussed is planning, which involves task decomposition and self-reflection.
+3. The second component is memory, which includes different types of memory and the use of Maximum Inner Product Search (MIPS).
+4. The third component is tool use, with case studies on a scientific discovery agent and generative agents simulation, as well as proof-of-concept examples.
+5. The document also highlights the challenges associated with LLM Powered Autonomous Agents and provides citations and references for further reading.1. Building agents with LLM as the core controller is a concept that has been demonstrated through proof-of-concept demos like AutoGPT, GPT-Engineer, and BabyAGI.
+2. LLM has the potential to go beyond generating well-written copies, stories, essays, and programs and can be used as a powerful general problem solver.
+3. In a LLM-powered autonomous agent system, LLM functions as the agent's brain and is complemented by key components such as planning and memory.
+4. Planning involves breaking down large tasks into smaller subgoals to efficiently handle complex tasks.
+5. Memory allows the agent to engage in self-criticism, self-reflection, and learning from past actions to improve the quality of future results.1. The use of short-term memory in machine learning models allows for in-context learning and quick acquisition of new information.
+2. Long-term memory enables machine learning models to retain and recall vast amounts of information over extended periods of time, often by utilizing external storage and efficient retrieval methods.
+3. External APIs are utilized by machine learning models to access additional information that may be missing from the model's pre-trained weights, such as real-time data, code execution capabilities, and proprietary information sources.
+
+
+(중략...)
+
+
+요약:
+LLM에 대한 적대적 공격은 LLM의 입력을 조작하여 오도하는 출력을 생성하는 것을 의미합니다. Prompt 엔지니어링은 LLM의 행동을 안내하고 편견이나 유해한 응답을 피하기 위해 중요합니다. NLP와 언어 모델은 다양한 응용 분야에서 중요한 역할을 합니다. 언어 모델은 인간과 유사한 텍스트를 생성하는 알고리즘입니다. LLM의 에이전트는 특정 목표나 의도와 일치하는 텍스트를 생성하는 능력을 의미합니다. 스티어러빌리티는 에이전트가 원하는 출력으로 제어되거나 안내될 수 있는 정도를 나타냅니다. LLM의 스티어러빌리티를 향상시키기 위한 기술에 대해 논의되었습니다. LLM은 보다 넓은 영향과 미래 방향을 가지고 있습니다. LLM의 사용에는 잠재적인 위험과 윤리적 고려 사항이 있습니다. 이러한 도전에 대응하기 위해 추가적인 연구와 개발이 필요합니다.
+</pre>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">print</span><span class="p">(</span><span class="n">summary_result</span><span class="p">[</span><span class="s">"output_text"</span><span class="p">])</span>
+</code></pre></div></div>
+
+<pre>
+요약:
+LLM에 대한 적대적 공격은 LLM의 입력을 조작하여 오도하는 출력을 생성하는 것을 의미합니다. Prompt 엔지니어링은 LLM의 행동을 안내하고 편견이나 유해한 응답을 피하기 위해 중요합니다. NLP와 언어 모델은 다양한 응용 분야에서 중요한 역할을 합니다. 언어 모델은 인간과 유사한 텍스트를 생성하는 알고리즘입니다. LLM의 에이전트는 특정 목표나 의도와 일치하는 텍스트를 생성하는 능력을 의미합니다. 스티어러빌리티는 에이전트가 원하는 출력으로 제어되거나 안내될 수 있는 정도를 나타냅니다. LLM의 스티어러빌리티를 향상시키기 위한 기술에 대해 논의되었습니다. LLM은 보다 넓은 영향과 미래 방향을 가지고 있습니다. LLM의 사용에는 잠재적인 위험과 윤리적 고려 사항이 있습니다. 이러한 도전에 대응하기 위해 추가적인 연구와 개발이 필요합니다.
+</pre>
+<h3 id="더-깊이-들어가기">더 깊이 들어가기</h3>
+
+<p><strong>맞춤 설정</strong></p>
+
+<ul>
+  <li>위에서 보여진 것처럼, map과 reduce 단계에 대한 LLMs와 프롬프트를 맞춤 설정할 수 있습니다.</li>
+</ul>
+
+<p><strong>실제 사용 사례</strong></p>
+
+<ul>
+  <li>
+    <p>LangChain 문서에 대한 질문(사용자 상호작용 분석)에 대한 사례 연구로 <a href="https://blog.langchain.dev/llms-to-improve-documentation/">이 블로그 포스트</a>를 참조하세요!</p>
+  </li>
+  <li>
+    <p>블로그 포스트와 관련된 <a href="https://github.com/mendableai/QA_clustering">repo</a>는 요약 수단으로 클러스터링을 도입합니다.</p>
+  </li>
+  <li>
+    <p>이는 <code class="language-plaintext highlighter-rouge">stuff</code> 또는 <code class="language-plaintext highlighter-rouge">map-reduce</code> 접근 방식을 넘어서 고려할 가치가 있는 세 번째 경로를 열어줍니다.</p>
+  </li>
+</ul>
+
+<h2 id="방법3-refine">방법3. Refine</h2>
+
+<p><img src="/images/2024-02-04-summarize-chain/summarization_use_case_3.png" alt="summarization_use_case_3" /></p>
+
+<blockquote>
+  <p>출처: https://python.langchain.com/docs/use_cases/summarization</p>
+</blockquote>
+
+<p><code class="language-plaintext highlighter-rouge">RefineDocumentsChain</code>은 map-reduce와 유사합니다:</p>
+
+<blockquote>
+  <p>Refine documents chain은 입력 문서를 순회하며 반복적으로 답변을 업데이트하여 응답을 구성합니다. 각 문서에 대해, 모든 비문서 입력, 현재 문서, 그리고 최신 중간 답변을 LLM chain에 전달하여 새로운 답변을 얻습니다.</p>
+</blockquote>
+
+<p>이는 <code class="language-plaintext highlighter-rouge">chain_type="refine"</code>이 지정되어 있으면 쉽게 실행할 수 있습니다.</p>
+
+<p>이 함수는 <code class="language-plaintext highlighter-rouge">load_summarize_chain</code>을 사용하여 특정 유형의 요약 체인을 로드하고, 이를 <code class="language-plaintext highlighter-rouge">run</code> 메소드를 통해 실행합니다. 여기서 <code class="language-plaintext highlighter-rouge">llm</code>은 언어 모델을 나타내며, <code class="language-plaintext highlighter-rouge">chain_type="refine"</code>은 요약 과정에서 세부 조정을 위한 체인 유형을 지정합니다. <code class="language-plaintext highlighter-rouge">split_docs</code>는 처리할 문서들을 나타냅니다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># llm을 사용하여 'refine' 유형의 요약 체인을 로드합니다.
+</span><span class="n">chain</span> <span class="o">=</span> <span class="n">load_summarize_chain</span><span class="p">(</span><span class="n">llm</span><span class="p">,</span> <span class="n">chain_type</span><span class="o">=</span><span class="s">"refine"</span><span class="p">)</span>
+<span class="c1"># split_docs를 처리하기 위해 체인을 실행합니다.
+</span><span class="n">chain</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="n">split_docs</span><span class="p">)</span>
+</code></pre></div></div>
+
+<pre>
+This text discusses various aspects of using Databricks, including its benefits, partnerships, and solutions in different industries. It highlights features such as data integration, governance, real-time analysis, AI, and open marketplaces. The text also mentions the pricing and cost estimation for using Databricks in different cloud environments.This text discusses various aspects of using Databricks, including its benefits, partnerships, and solutions in different industries. It highlights features such as data integration, governance, real-time analysis, AI, and open marketplaces. The text also mentions the pricing and cost estimation for using Databricks in different cloud environments. Additionally, it provides information on professional services, education and certification, events, and customer support offered by Databricks. 
+
+(중략...)
+
+It includes figures showing Model Bandwidth Utilization (MBU) and Model Flop Utilization (MFU) in different hardware configurations and provides insights into token generation time, GPU parallel processing, and batch size's impact on latency. The text further discusses batching inference requests, the use of Grouped Query Attention (GQA) and Multi-Query Attention (MQA) in LLM models, and the quantization of KV cache memory. It concludes by mentioning the importance of measuring end-to-end server performance and the availability of Databricks for LLM inference deployment.
+</pre>
+
+<p>프롬프트를 제공하고 중간 단계를 반환하는 것도 가능합니다.</p>
+
+<p><code class="language-plaintext highlighter-rouge">Refine</code> 방법으로 텍스트 요약 작업을 위한 프로세스를 설정합니다.</p>
+
+<p><code class="language-plaintext highlighter-rouge">PromptTemplate.from_template</code> 메소드를 사용하여 요약 및 요약 다듬기 작업에 사용될 템플릿을 생성합니다.</p>
+
+<p><code class="language-plaintext highlighter-rouge">load_summarize_chain</code> 함수는 요약 생성 및 다듬기 과정을 관리하는 체인을 로드합니다. 이 체인은 초기 요약 생성(<code class="language-plaintext highlighter-rouge">prompt</code>)과 기존 요약의 개선(<code class="language-plaintext highlighter-rouge">refine_prompt</code>) 단계를 포함합니다.</p>
+
+<p>마지막으로, <code class="language-plaintext highlighter-rouge">chain</code> 함수는 주어진 문서(<code class="language-plaintext highlighter-rouge">input_documents</code>)에 대한 최종 요약 결과를 반환합니다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">prompt_template</span> <span class="o">=</span> <span class="s">"""Write a concise summary of the following:
+{text}
+CONCISE SUMMARY:"""</span>
+<span class="n">prompt</span> <span class="o">=</span> <span class="n">PromptTemplate</span><span class="p">.</span><span class="n">from_template</span><span class="p">(</span><span class="n">prompt_template</span><span class="p">)</span>
+
+<span class="n">refine_template</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s">"Your job is to produce a final summary</span><span class="se">\n</span><span class="s">"</span>
+    <span class="s">"We have provided an existing summary up to a certain point: {existing_answer}</span><span class="se">\n</span><span class="s">"</span>
+    <span class="s">"We have the opportunity to refine the existing summary"</span>
+    <span class="s">"(only if needed) with some more context below.</span><span class="se">\n</span><span class="s">"</span>
+    <span class="s">"------------</span><span class="se">\n</span><span class="s">"</span>
+    <span class="s">"{text}</span><span class="se">\n</span><span class="s">"</span>
+    <span class="s">"------------</span><span class="se">\n</span><span class="s">"</span>
+    <span class="s">"Given the new context, refine the original summary in Korean"</span>
+    <span class="s">"If the context isn't useful, return the original summary."</span>
+<span class="p">)</span>
+<span class="n">refine_prompt</span> <span class="o">=</span> <span class="n">PromptTemplate</span><span class="p">.</span><span class="n">from_template</span><span class="p">(</span><span class="n">refine_template</span><span class="p">)</span>
+<span class="n">chain</span> <span class="o">=</span> <span class="n">load_summarize_chain</span><span class="p">(</span>
+    <span class="n">llm</span><span class="o">=</span><span class="n">llm</span><span class="p">,</span>
+    <span class="n">chain_type</span><span class="o">=</span><span class="s">"refine"</span><span class="p">,</span>
+    <span class="n">question_prompt</span><span class="o">=</span><span class="n">prompt</span><span class="p">,</span>
+    <span class="n">refine_prompt</span><span class="o">=</span><span class="n">refine_prompt</span><span class="p">,</span>
+    <span class="n">return_intermediate_steps</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+    <span class="n">input_key</span><span class="o">=</span><span class="s">"input_documents"</span><span class="p">,</span>
+    <span class="n">output_key</span><span class="o">=</span><span class="s">"output_text"</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">chain</span><span class="p">.</span><span class="n">invoke</span><span class="p">({</span><span class="s">"input_documents"</span><span class="p">:</span> <span class="n">split_docs</span><span class="p">},</span> <span class="n">return_only_outputs</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</code></pre></div></div>
+
+<pre>
+이 기사는 인간의 개입 없이 작업을 수행할 수 있는 지능형 시스템인 LLM 기반 자율 에이전트에 대해 논의한다. 에이전트는 계획, 기억 및 도구 사용이라는 세 가지 주요 구성 요소로 구성된다. 계획 구성 요소는 작업 분해와 자기 반성을 포함한다. 기억 구성 요소에는 다양한 유형의 기억과 최대 내적 제품 검색(MIPS)의 사용이 포함된다. 도구 사용 구성 요소는 과학적 발견 에이전트 및 생성 에이전트 시뮬레이션과 같은 사례 연구를 통해 시연된다. 이 기사는 또한 LLM 기반 자율 에이전트를 구현하는 데 직면하는 도전과제를 강조한다.이 기사는 인간의 개입 없이 작업을 수행할 수 있는 지능형 시스템인 LLM 기반 자율 에이전트에 대해 논의한다. 에이전트는 계획, 기억 및 도구 사용이라는 세 가지 주요 구성 요소로 구성된다. 계획 구성 요소는 작업 분해와 자기 반성을 포함한다. 기억 구성 요소에는 다양한 유형의 기억과 최대 내적 제품 검색(MIPS)의 사용이 포함된다. 도구 사용 구성 요소는 과학적 발견 에이전트 및 생성 에이전트 시뮬레이션과 같은 사례 연구를 통해 시연된다. 
+
+(중략)
+
+이 기사는 LLM 기반 자율 에이전트의 아키텍처를 코드로 구현하는 방법에 대한 설명을 포함하고 있으며, 추가적인 컨텍스트와 함께 제공됩니다. 이외에도 참고할만한 자료로는 Joon Sung Park 등의 논문 [16]과 AutoGPT [17], GPT-Engineer [18]의 GitHub 링크가 있습니다.이 기사는 LLM 기반 자율 에이전트의 아키텍처를 코드로 구현하는 방법에 대한 설명을 포함하고 있으며, 대화 샘플을 통해 추가적인 컨텍스트를 제공합니다. 또한, Joon Sung Park 등의 논문 [16]과 AutoGPT [17], GPT-Engineer [18]의 GitHub 링크를 참고할 수 있습니다. LLM-centered agents의 주요 아이디어와 데모를 통해 나타나는 몇 가지 공통적인 제한 사항에 대해 설명하고 있습니다. 이 기사에서는 LLM 기반 자율 에이전트의 제한된 컨텍스트 용량과 관련된 도전과 문제점을 다루고 있습니다. 또한, LLM과 메모리, 도구 등 외부 구성 요소 간의 자연어 인터페이스에 의존하는 현재의 에이전트 시스템의 한계와 신뢰성 문제를 다루고 있습니다. 이 기사는 LLM 기반 자율 에이전트의 아키텍처를 코드로 구현하는 방법에 대한 설명을 포함하고 있으며, 추가적인 컨텍스트와 함께 제공됩니다.
+</pre>
+
+<p><code class="language-plaintext highlighter-rouge">print(result["output_text"])</code>는 결과 딕셔너리 <code class="language-plaintext highlighter-rouge">result</code>에서 <code class="language-plaintext highlighter-rouge">'output_text'</code> 키에 해당하는 값을 출력합니다. 이 구문은 딕셔너리 내 특정 키의 값을 검색하고, 그 값을 콘솔에 출력하는 기본적인 Python 코드 예시입니다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">print</span><span class="p">(</span>
+    <span class="n">result</span><span class="p">[</span><span class="s">"output_text"</span><span class="p">]</span>
+<span class="p">)</span>  <span class="c1"># 결과 딕셔너리에서 'output_text' 키에 해당하는 값을 출력합니다.
+</span></code></pre></div></div>
+
+<pre>
+이 기사는 LLM 기반 자율 에이전트의 아키텍처를 코드로 구현하는 방법에 대한 설명을 포함하고 있으며, 대화 샘플을 통해 추가적인 컨텍스트를 제공합니다. 또한, Joon Sung Park 등의 논문 [16]과 AutoGPT [17], GPT-Engineer [18]의 GitHub 링크를 참고할 수 있습니다. LLM-centered agents의 주요 아이디어와 데모를 통해 나타나는 몇 가지 공통적인 제한 사항에 대해 설명하고 있습니다. 이 기사에서는 LLM 기반 자율 에이전트의 제한된 컨텍스트 용량과 관련된 도전과 문제점을 다루고 있습니다. 또한, LLM과 메모리, 도구 등 외부 구성 요소 간의 자연어 인터페이스에 의존하는 현재의 에이전트 시스템의 한계와 신뢰성 문제를 다루고 있습니다. 이 기사는 LLM 기반 자율 에이전트의 아키텍처를 코드로 구현하는 방법에 대한 설명을 포함하고 있으며, 추가적인 컨텍스트와 함께 제공됩니다.
+</pre>
+
+<p>이 함수는 <code class="language-plaintext highlighter-rouge">result</code> 딕셔너리의 <code class="language-plaintext highlighter-rouge">'intermediate_steps'</code> 키에 저장된 리스트에서 처음 세 요소를 선택하고, 이들 사이에 두 줄바꿈(<code class="language-plaintext highlighter-rouge">\n\n</code>)을 삽입하여 연결한 문자열을 출력합니다. 이는 중간 계산 단계나 결과를 시각적으로 구분하여 표시할 때 유용합니다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">print</span><span class="p">(</span><span class="s">"</span><span class="se">\n\n</span><span class="s">"</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s">"intermediate_steps"</span><span class="p">][:</span><span class="mi">3</span><span class="p">]))</span>
+</code></pre></div></div>
+
+<pre>
+This article discusses LLM powered autonomous agents, which are intelligent systems that can perform tasks without human intervention. The agents consist of three main components: planning, memory, and tool use. The planning component involves task decomposition and self-reflection. The memory component includes different types of memory and the use of Maximum Inner Product Search (MIPS). The tool use component is demonstrated through case studies, such as a scientific discovery agent and generative agents simulation. The article also highlights the challenges of implementing LLM powered autonomous agents.
+
+이 기사는 인간의 개입 없이 작업을 수행할 수 있는 지능형 시스템인 LLM 기반 자율 에이전트에 대해 논의한다. 에이전트는 계획, 기억 및 도구 사용이라는 세 가지 주요 구성 요소로 구성된다. 계획 구성 요소는 작업 분해와 자기 반성을 포함한다. 기억 구성 요소에는 다양한 유형의 기억과 최대 내적 제품 검색(MIPS)의 사용이 포함된다. 도구 사용 구성 요소는 과학적 발견 에이전트 및 생성 에이전트 시뮬레이션과 같은 사례 연구를 통해 시연된다. 이 기사는 또한 LLM 기반 자율 에이전트를 구현하는 데 직면하는 도전과제를 강조한다.
+
+이 기사는 인간의 개입 없이 작업을 수행할 수 있는 지능형 시스템인 LLM 기반 자율 에이전트에 대해 논의한다. 에이전트는 계획, 기억 및 도구 사용이라는 세 가지 주요 구성 요소로 구성된다. 계획 구성 요소는 작업 분해와 자기 반성을 포함한다. 기억 구성 요소에는 다양한 유형의 기억과 최대 내적 제품 검색(MIPS)의 사용이 포함된다. 도구 사용 구성 요소는 과학적 발견 에이전트 및 생성 에이전트 시뮬레이션과 같은 사례 연구를 통해 시연된다. 이 기사는 또한 LLM 기반 자율 에이전트를 구현하는 데 직면하는 도전과제를 강조한다. 에이전트는 단기 기억과 장기 기억을 활용하여 학습하며, 외부 API를 호출하여 추가 정보를 얻고, 모델 가중치 이후에 변경하기 어려운 현재 정보, 코드 실행 능력, 독점 정보 소스에 접근하는 등의 기능을 갖추게 된다.
+</pre>
+<h2 id="analyzedocumentchain-한-번의-체인으로-분할-및-요약">AnalyzeDocumentChain: 한 번의 체인으로 분할 및 요약</h2>
+
+<p>편의를 위해, 우리는 긴 문서의 텍스트 분할과 요약을 단일 <code class="language-plaintext highlighter-rouge">AnalyzeDocumentsChain</code>으로 묶을 수 있습니다.</p>
+
+<p><code class="language-plaintext highlighter-rouge">AnalyzeDocumentChain</code> 클래스는 문서 분석 및 요약 작업을 위한 체인을 생성합니다. 이 예제에서는 <code class="language-plaintext highlighter-rouge">AnalyzeDocumentChain</code> 인스턴스를 생성하고, <code class="language-plaintext highlighter-rouge">combine_docs_chain</code>과 <code class="language-plaintext highlighter-rouge">text_splitter</code>를 인자로 전달하여 초기화합니다. 이후, 첫 번째 문서(<code class="language-plaintext highlighter-rouge">docs[0]</code>)의 <code class="language-plaintext highlighter-rouge">page_content</code>를 사용하여 문서 요약 프로세스를 실행합니다. 이 과정은 문서의 내용을 분석하고 요약하는 데 사용됩니다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">langchain.chains</span> <span class="kn">import</span> <span class="n">AnalyzeDocumentChain</span>
+
+<span class="c1"># AnalyzeDocumentChain 인스턴스를 생성합니다. 이때, combine_docs_chain과 text_splitter를 인자로 전달합니다.
+</span><span class="n">summarize_document_chain</span> <span class="o">=</span> <span class="n">AnalyzeDocumentChain</span><span class="p">(</span>
+    <span class="n">combine_docs_chain</span><span class="o">=</span><span class="n">chain</span><span class="p">,</span> <span class="n">text_splitter</span><span class="o">=</span><span class="n">text_splitter</span>
+<span class="p">)</span>
+<span class="c1"># 첫 번째 문서의 페이지 내용을 사용하여 문서 요약 프로세스를 실행합니다.
+</span><span class="n">summarized_result</span> <span class="o">=</span> <span class="n">summarize_document_chain</span><span class="p">.</span><span class="n">invoke</span><span class="p">(</span>
+    <span class="p">{</span><span class="s">"input_document"</span><span class="p">:</span> <span class="n">docs</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">page_content</span><span class="p">}</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<pre>
+이 기사는 인간의 개입 없이 작업을 수행할 수 있는 지능형 시스템인 LLM 기반 자율 에이전트에 대해 논의한다. 에이전트는 계획, 기억 및 도구 사용이라는 세 가지 주요 구성 요소로 구성된다. 계획 구성 요소는 작업 분해와 자기 반성을 포함한다. 기억 구성 요소에는 다양한 유형의 기억과 최대 내적 제품 검색(MIPS)의 사용이 포함된다. 도구 사용 구성 요소는 과학적 발견 에이전트 및 생성 에이전트 시뮬레이션과 같은 사례 연구를 통해 시연된다. 
+
+(중략...)
+
+그런 다음 필요한 경우 도구를 사용하여 사용자가 제공한 프롬프트에 답변하도록 지시됩니다. 지시는 ReAct 형식을 따르도록 모델에게 알려줍니다 - 생각, 동작, 동작 입력, 관찰. 하지만 LLM을 사용하여 도메인 전문성이 필요한 작업의 성능을 평가할 때, LLM 기반 평가와 전문가 평가의 결과가 다를 수 있습니다. 이는 LLM이 자체적으로 도메인 전문성을 갖지 않기 때문에 발생하는 문제일 수 있습니다. 따라서 LLM을 사용하여 작업 결과의 정확성을 평가할 때는 주의가 필요합니다. 또한, 새로운 context에 따라서 "improve_code", "write_tests", "execute_python_file", "generate_image" 등의 작업을 수행할 수 있습니다. 이러한 작업은 LLM의 다양한 도구 사용 능력을 보여주는 예시입니다. 또한, Joon Sung Park 등은 "Generative Agents: Interactive Simulacra of Human Behavior"에서 인간 행동의 상호작용적인 시뮬라크인 생성 에이전트에 대해 연구하였습니다. AutoGPT와 GPT-Engineer는 ChatGPT를 개선하기 위한 프로젝트입니다. Prompt Engineering은 LLM의 성능을 향상시키기 위한 방법 중 하나입니다.
+</pre>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">print</span><span class="p">(</span><span class="n">summarized_result</span><span class="p">[</span><span class="s">"output_text"</span><span class="p">])</span>
+</code></pre></div></div>
+
+<pre>
+ChatGPT 플러그인과 OpenAI API 함수 호출은 실제로 작동하는 도구 사용 능력이 강화된 LLM의 좋은 예입니다. 도구 API의 컬렉션은 다른 개발자(플러그인의 경우) 또는 자체 정의(함수 호출의 경우)로 제공될 수 있습니다. HuggingGPT는 (Shen et al. 2023)에서 ChatGPT를 작업 계획자로 사용하여 HuggingFace 플랫폼에서 사용 가능한 모델을 선택하고 실행 결과에 기반하여 응답을 요약하는 프레임워크입니다. HuggingGPT 시스템은 4단계로 구성되어 있습니다. 첫 번째 단계는 작업 계획으로, LLM이 사용자 요청을 여러 작업으로 파싱합니다. 각 작업에는 작업 유형, ID, 종속성 및 인수와 관련된 네 가지 속성이 있습니다. LLM은 few-shot 예제를 사용하여 작업 파싱과 계획을 수행하는 데 도움을 받습니다. AI 어시스턴트는 사용자 입력을 여러 작업으로 파싱할 수 있으며, 작업은 작업 유형, ID, 종속성 및 인수와 관련된 속성을 가지고 있습니다. 작업 간에는 논리적인 관계가 있으며, 작업 순서를 유의해야 합니다. 사용자 입력을 파싱할 수 없는 경우 빈 JSON으로 응답해야 합니다. LLM은 모델 선택 단계에서 전문 모델에 작업을 분배하고, 요청을 다중 선택 질문으로 구성합니다. LLM은 선택할 수 있는 모델 목록을 제시받습니다. 제한된 문맥 길이로 인해 작업 유형에 기반한 필터링이 필요합니다. AI 어시스턴트는 사용자 요청을 처리하기 위해 모델 목록에서 적합한 모델을 선택하는 데 도움을 줍니다. AI 어시스턴트는 가장 적합한 모델의 모델 ID만 출력합니다. 출력은 엄격한 JSON 형식이어야 하며, "id": "id", "reason": "선택 이유에 대한 자세한 설명"과 같은 형식을 따라야 합니다. AI 어시스턴트는 사용자의 요청에 직접적으로 응답한 후, 작업 과정을 설명하고 분석 및 모델 추론 결과를 사용자에게 제시해야 합니다. 추론 결과에 파일 경로가 포함된 경우, 사용자에게 완전한 파일 경로를 알려주어야 합니다. HuggingGPT를 실제 환경에서 사용하기 위해서는 몇 가지 문제를 해결해야 합니다. 첫째, LLM 추론 라운드와 다른 모델과의 상호작용이 프로세스를 느리게 만드는 효율성 개선이 필요합니다. 둘째, 복잡한 작업 내용을 전달하기 위해 긴 문맥 창을 필요로 합니다. 셋째, LLM 출력과 외부 모델 서비스의 안정성을 개선해야 합니다. API-Bank (Li et al. 2023)은 도구 강화된 LLM의 성능을 평가하기 위한 벤치마크입니다. 이 벤치마크에는 53개의 일반적으로 사용되는 API 도구, 완전한 도구 강화된 LLM 워크플로우 및 568개의 API 호출이 포함된 264개의 주석이 달린 대화가 포함되어 있습니다. API의 선택은 검색 엔진, 계산기, 캘린더 쿼리, 스마트 홈 제어, 일정 관리, 건강 데이터 관리, 계정 인증 워크플로우 등 다양한 API를 포함하고 있습니다. 많은 수의 API가 있기 때문에, LLM은 먼저 API 검색 엔진에 접근하여 호출할 적절한 API를 찾은 다음 해당 문서를 사용하여 호출합니다. API-Bank 워크플로우에서 LLM은 몇 가지 결정을 내려야 합니다. 각 단계에서 결정의 정확성을 평가할 수 있습니다. 이 결정에는 다음이 포함됩니다: API 호출이 필요한지 여부, 호출할 적절한 API 식별, API 결과에 기반한 응답. 이 벤치마크는 에이전트의 도구 사용 능력을 세 가지 수준에서 평가합니다. Level-1은 API 호출 능력을 평가하며, Level-2는 API 검색 능력을, Level-3은 API 검색과 호출 이상의 계획 능력을 평가합니다. ChemCrow (Bran et al. 2023)는 LLM이 유기 합성, 약물 개발 및 재료 설계와 같은 작업을 수행하기 위해 13개의 전문가가 설계한 도구로 보강된 도메인 특정 예입니다. LangChain에서 구현된 워크플로우는 이전에 설명한 ReAct와 MRKLs를 결합한 CoT 추론과 작업에 관련된 도구를 결합합니다. LLM은 도구 이름 목록, 유틸리티 설명 및 예상 입력/출력에 대한 세부 정보를 제공받습니다. 그런 다음 필요한 경우 도구를 사용하여 사용자가 제공한 프롬프트에 답변하도록 지시됩니다. 지시는 ReAct 형식을 따르도록 모델에게 알려줍니다 - 생각, 동작, 동작 입력, 관찰. 하지만 LLM을 사용하여 도메인 전문성이 필요한 작업의 성능을 평가할 때, LLM 기반 평가와 전문가 평가의 결과가 다를 수 있습니다. 이는 LLM이 자체적으로 도메인 전문성을 갖지 않기 때문에 발생하는 문제일 수 있습니다. 따라서 LLM을 사용하여 작업 결과의 정확성을 평가할 때는 주의가 필요합니다. 또한, 새로운 context에 따라서 "improve_code", "write_tests", "execute_python_file", "generate_image" 등의 작업을 수행할 수 있습니다. 이러한 작업은 LLM의 다양한 도구 사용 능력을 보여주는 예시입니다. 또한, Joon Sung Park 등은 "Generative Agents: Interactive Simulacra of Human Behavior"에서 인간 행동의 상호작용적인 시뮬라크인 생성 에이전트에 대해 연구하였습니다. AutoGPT와 GPT-Engineer는 ChatGPT를 개선하기 위한 프로젝트입니다. Prompt Engineering은 LLM의 성능을 향상시키기 위한 방법 중 하나입니다.
+</pre>
+
+<h2 id="reference">Reference</h2>
+
+<p>본 튜토리얼은 LangChain 튜토리얼 노트북 파일을 참조하여 작성하였습니다.</p>
+
+<ul>
+  <li>본 문서의 원 저작권자는 <strong>langchain-ai</strong> 이며, 코드는 <code class="language-plaintext highlighter-rouge">MIT License</code> 에 따라 사용이 허가된 파일입니다.</li>
+  <li><a href="https://github.com/langchain-ai/">원문</a> 바로가기</li>
+</ul>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> 태그: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#chatopenai" class="page__taxonomy-item p-category" rel="tag">ChatOpenAI</a><span class="sep">, </span>
+    
+      <a href="/tags/#gpt-%EB%AA%A8%EB%8D%B8" class="page__taxonomy-item p-category" rel="tag">GPT 모델</a><span class="sep">, </span>
+    
+      <a href="/tags/#langchain" class="page__taxonomy-item p-category" rel="tag">langchain</a><span class="sep">, </span>
+    
+      <a href="/tags/#llmchain" class="page__taxonomy-item p-category" rel="tag">LLMChain</a><span class="sep">, </span>
+    
+      <a href="/tags/#llms" class="page__taxonomy-item p-category" rel="tag">LLMs</a><span class="sep">, </span>
+    
+      <a href="/tags/#load-summarize-chain" class="page__taxonomy-item p-category" rel="tag">load_summarize_chain</a><span class="sep">, </span>
+    
+      <a href="/tags/#map-reduce" class="page__taxonomy-item p-category" rel="tag">Map-Reduce</a><span class="sep">, </span>
+    
+      <a href="/tags/#prompttemplate" class="page__taxonomy-item p-category" rel="tag">PromptTemplate</a><span class="sep">, </span>
+    
+      <a href="/tags/#reducedocumentschain" class="page__taxonomy-item p-category" rel="tag">ReduceDocumentsChain</a><span class="sep">, </span>
+    
+      <a href="/tags/#refine" class="page__taxonomy-item p-category" rel="tag">Refine</a><span class="sep">, </span>
+    
+      <a href="/tags/#stuff" class="page__taxonomy-item p-category" rel="tag">Stuff</a><span class="sep">, </span>
+    
+      <a href="/tags/#webbaseloader" class="page__taxonomy-item p-category" rel="tag">WebBaseLoader</a><span class="sep">, </span>
+    
+      <a href="/tags/#%EB%AC%B8%EC%84%9C-%EC%9A%94%EC%95%BD" class="page__taxonomy-item p-category" rel="tag">문서 요약</a><span class="sep">, </span>
+    
+      <a href="/tags/#%ED%85%8D%EC%8A%A4%ED%8A%B8-%EB%B6%84%EC%84%9D" class="page__taxonomy-item p-category" rel="tag">텍스트 분석</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> 카테고리: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#langchain" class="page__taxonomy-item p-category" rel="tag">langchain</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> 업데이트:</strong> <time class="dt-published" datetime="2024-02-04T00:00:00+00:00">2024년 02월 04일</time></p>
+
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">공유하기</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=LLMs%EB%A5%BC+%ED%99%9C%EC%9A%A9%ED%95%9C+%EB%AC%B8%EC%84%9C+%EC%9A%94%EC%95%BD+%EA%B0%80%EC%9D%B4%EB%93%9C%3A+Stuff%2C+Map-Reduce%2C+Refine+%EB%B0%A9%EB%B2%95+%EC%B4%9D%EC%A0%95%EB%A6%AC%20https%3A%2F%2Fteddylee777.github.io%2Flangchain%2Fsummarize-chain%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fteddylee777.github.io%2Flangchain%2Fsummarize-chain%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fteddylee777.github.io%2Flangchain%2Fsummarize-chain%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/langchain/langchain-lcel/" class="pagination--pager" title="LangChain Expression Language(LCEL) 원리 이해와 파이프라인 구축 가이드
+">이전</a>
+    
+    
+      <a href="/langchain/metadata-tagger/" class="pagination--pager" title="자동화된 메타데이터 태깅으로 문서의 메타데이터(metadata) 생성 및 자동 라벨링
+">다음</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">댓글남기기</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h2 class="page__related-title">참고</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/poetry/poetry-tutorial/" rel="permalink">poetry 의 거의 모든것 (튜토리얼)
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2024-03-30T00:00:00+00:00">2024년 03월 30일</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+        
+          5 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Python 개발에 있어서 poetry는 매우 강력한 도구로, 프로젝트의 의존성 관리와 패키지 배포를 간소화하는 데 큰 도움을 줍니다. 지금부터 poetry 활용 튜토리얼을 살펴 보겠습니다.
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/langgraph/langgraph-agentic-rag/" rel="permalink">LangGraph Retrieval Agent를 활용한 동적 문서 검색 및 처리
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2024-03-06T00:00:00+00:00">2024년 03월 06일</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+        
+          10 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">LangGraph Retrieval Agent는 언어 처리, AI 모델 통합, 데이터베이스 관리, 그래프 기반 데이터 처리 등 다양한 기능을 제공하여 언어 기반 AI 애플리케이션 개발에 필수적인 도구입니다.
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/openai/openai-assistant-tutorial/" rel="permalink">[Assistants API] Code Interpreter, Retrieval, Functions 활용법
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2024-02-13T00:00:00+00:00">2024년 02월 13일</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+        
+          35 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">OpenAI의 새로운 Assistants API는 대화와 더불어 강력한 도구 접근성을 제공합니다. 본 튜토리얼은 OpenAI Assistants API를 활용하는 내용을 다룹니다. 특히, Assistant API 가 제공하는 도구인 Code Interpreter, Retrieval...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/langchain/langchain-agent/" rel="permalink">[LangChain] 에이전트(Agent)와 도구(tools)를 활용한 지능형 검색 시스템 구축 가이드
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2024-02-09T00:00:00+00:00">2024년 02월 09일</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+        
+          41 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">이 글에서는 LangChain 의 Agent 프레임워크를 활용하여 복잡한 검색과 데이터 처리 작업을 수행하는 방법을 소개합니다. LangSmith 를 사용하여 Agent의 추론 단계를 추적합니다. Agent가 활용할 검색 도구(Tavily Search), PDF 기반 검색 리트리버...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>팔로우:</strong></li>
+    
+
+    
+      
+        
+          <li><a href="https://www.youtube.com/c/teddynote" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-youtube" aria-hidden="true"></i> YouTube</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/teddylee777" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+          <li><a href="https://instagram.com/teddynote" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-instagram" aria-hidden="true"></i> Instagram</a></li>
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> 피드</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2024 테디노트. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XX8G0ZET3T"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-XX8G0ZET3T', { 'anonymize_ip': false});
+</script>
+
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://teddylee777.github.io/langchain/summarize-chain/";  /* Replace PAGE_URL with your page's canonical URL variable */
+      this.page.identifier = "/langchain/summarize-chain"; /* Replace PAGE_IDENTIFIER with your page's unique identifier variable */
+    };
+    (function() { /* DON'T EDIT BELOW THIS LINE */
+      var d = document, s = d.createElement('script');
+      s.src = 'https://https-teddylee777-github-io.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+
+
+  </body>
+</html>

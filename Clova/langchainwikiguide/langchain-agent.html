@@ -1,0 +1,1650 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ko" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>[LangChain] 에이전트(Agent)와 도구(tools)를 활용한 지능형 검색 시스템 구축 가이드 - 테디노트</title>
+<meta name="description" content="이 글에서는 에이전트 프레임워크를 활용하여 복잡한 검색과 데이터 처리 작업을 수행하는 방법을 소개합니다. LangSmith와 Tavily Search 같은 도구를 사용하여 에이전트를 구축하고 실행하는 과정을 단계별로 설명합니다.">
+
+
+  <meta name="author" content="Teddy">
+  
+  <meta property="article:author" content="Teddy">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:site_name" content="테디노트">
+<meta property="og:title" content="[LangChain] 에이전트(Agent)와 도구(tools)를 활용한 지능형 검색 시스템 구축 가이드">
+<meta property="og:url" content="https://teddylee777.github.io/langchain/langchain-agent/">
+
+
+  <meta property="og:description" content="이 글에서는 에이전트 프레임워크를 활용하여 복잡한 검색과 데이터 처리 작업을 수행하는 방법을 소개합니다. LangSmith와 Tavily Search 같은 도구를 사용하여 에이전트를 구축하고 실행하는 과정을 단계별로 설명합니다.">
+
+
+
+  <meta property="og:image" content="https://teddylee777.github.io/images/logo.png">
+
+
+
+
+
+  <meta property="article:published_time" content="2024-02-09T00:00:00+00:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://teddylee777.github.io/langchain/langchain-agent/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "테디노트",
+      "url": "https://teddylee777.github.io/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="테디노트 Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<meta name="google-site-verification" content="nYT-sVwbhCkzWrPIKtWHGo6rDW29JpXuHxkdgni3egg" />
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5548835221228418"
+     crossorigin="anonymous"></script>
+
+
+     <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        TeX: {
+          equationNumbers: {
+            autoNumber: "AMS"
+          }
+        },
+        tex2jax: {
+        inlineMath: [ ['$', '$'] ],
+        displayMath: [ ['$$', '$$'] ],
+        processEscapes: true,
+      }
+    });
+    MathJax.Hub.Register.MessageHook("Math Processing Error",function (message) {
+          alert("Math Processing Error: "+message[1]);
+        });
+    MathJax.Hub.Register.MessageHook("TeX Jax - parse error",function (message) {
+          alert("Math Processing Error: "+message[1]);
+        });
+    </script>
+<script type="text/javascript" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+<!-- end custom head snippets -->
+
+<link href="/assets/css/syntax.css" rel="stylesheet" >
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          테디노트
+          <span class="site-subtitle">데이터와 인공지능을 좋아하는 개발자 노트</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/search/">검색</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/">카테고리</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/">태그</a>
+            </li><li class="masthead__menu-item">
+              <a href="/year-archive/">연도</a>
+            </li><li class="masthead__menu-item">
+              <a href="/lectures/">강의</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">어바웃미</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">토글 메뉴</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+
+  
+    
+
+
+
+<nav class="breadcrumbs">
+  <ol itemscope itemtype="https://schema.org/BreadcrumbList">
+    
+    
+    
+      
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+          <a href="/" itemprop="item"><span itemprop="name">Home</span></a>
+
+          <meta itemprop="position" content="1" />
+        </li>
+        <span class="sep">/</span>
+      
+      
+        
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+          <a href="/categories/#langchain" itemprop="item"><span itemprop="name">Langchain</span></a>
+          <meta itemprop="position" content="2" />
+        </li>
+        <span class="sep">/</span>
+      
+    
+      
+      
+        <li class="current">[LangChain] 에이전트(Agent)와 도구(tools)를 활용한 지능형 검색 시스템 구축 가이드</li>
+      
+    
+  </ol>
+</nav>
+
+  
+
+
+<div id="main" role="main">
+  
+
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="[LangChain] 에이전트(Agent)와 도구(tools)를 활용한 지능형 검색 시스템 구축 가이드">
+    <meta itemprop="description" content="이 글에서는 LangChain 의 Agent 프레임워크를 활용하여 복잡한 검색과 데이터 처리 작업을 수행하는 방법을 소개합니다. LangSmith 를 사용하여 Agent의 추론 단계를 추적합니다. Agent가 활용할 검색 도구(Tavily Search), PDF 기반 검색 리트리버(Retriever) 와 같은 도구(tools) 를 사용하여 에이전트를 구축하고 실행하는 과정을 단계별로 알아보도록 하겠습니다.">
+    <meta itemprop="datePublished" content="2024-02-09T00:00:00+00:00">
+    
+
+    <div class="page__inner-wrap">
+      <p class="notice--info" style="font-size: 1rem !important;"><strong>🔥알림🔥</strong>
+    <br>
+    ① 테디노트 <strong>유튜브</strong> - 
+    <a href="https://www.youtube.com/@teddynote">구경하러 가기!</a>
+    <br>
+    ② LangChain <strong>한국어 튜토리얼</strong>
+    <a href="https://github.com/teddylee777/langchain-kr">바로가기 👀</a>
+    <br>
+    ③ 랭체인 노트 <strong>무료 전자책</strong>(wikidocs) 
+    <a href="https://wikidocs.net/book/14314">바로가기 🙌</a>
+    <br>
+    ④ RAG 비법노트 LangChain <strong>강의오픈</strong>
+    <a href="https://bit.ly/4e1h8zO">바로가기 🙌</a>
+    <br>
+    ⑤ 서울대 <strong>PyTorch 딥러닝 강의</strong>
+    <a href="https://snui.snu.ac.kr/el/course/course_info_form.acl?COURSE_SEQ=496&LECTURE_SEQ=768">바로가기 🙌</a>
+</p>
+      
+        <header>
+          <h1 id="page-title" class="page__title p-name" itemprop="headline">
+            <a href="https://teddylee777.github.io/langchain/langchain-agent/" class="u-url" itemprop="url">[LangChain] 에이전트(Agent)와 도구(tools)를 활용한 지능형 검색 시스템 구축 가이드
+</a>
+          </h1>
+          
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2024-02-09T00:00:00+00:00">2024년 02월 09일</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          41 분 소요
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+          <aside class="sidebar__right sticky">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-fas fa-thumbtack"></i> 목차</h4></header>
+              <ul class="toc__menu"><li><a href="#-agent-란">🤖 Agent 란?</a><ul><li><a href="#단계별-추적을-위한-langsmith-설정">단계별 추적을 위한 LangSmith 설정</a></li></ul></li><li><a href="#-도구tools">① 도구(Tools)</a><ul><li><a href="#검색도구-tavily-search">검색도구: Tavily Search</a></li><li><a href="#pdf-기반-문서-검색-도구-retriever">PDF 기반 문서 검색 도구: Retriever</a></li><li><a href="#agent-가-사용할-도구-목록-정의">Agent 가 사용할 도구 목록 정의</a></li></ul></li><li><a href="#-에이전트-생성">② 에이전트 생성</a></li><li><a href="#-에이전트-실행하기">③ 에이전트 실행하기</a></li><li><a href="#-메모리-추가하기">④ 메모리 추가하기</a></li><li><a href="#-전체-템플릿-코드">📍 전체 템플릿 코드</a></li><li><a href="#reference">Reference</a></li></ul>
+
+            </nav>
+          </aside>
+        
+        <p>이 글에서는 LangChain 의 Agent 프레임워크를 활용하여 복잡한 검색과 데이터 처리 작업을 수행하는 방법을 소개합니다. LangSmith 를 사용하여 Agent의 추론 단계를 추적합니다. Agent가 활용할 <strong>검색 도구(Tavily Search)</strong>, <strong>PDF 기반 검색 리트리버(Retriever)</strong> 와 같은 도구(tools) 를 사용하여 에이전트를 구축하고 실행하는 과정을 단계별로 알아보도록 하겠습니다.</p>
+
+<head>
+  <style>
+    table.dataframe {
+      white-space: normal;
+      width: 100%;
+      height: 240px;
+      display: block;
+      overflow: auto;
+      font-family: Arial, sans-serif;
+      font-size: 0.9rem;
+      line-height: 20px;
+      text-align: center;
+      border: 0px !important;
+    }
+
+    table.dataframe th {
+      text-align: center;
+      font-weight: bold;
+      padding: 8px;
+    }
+
+    table.dataframe td {
+      text-align: center;
+      padding: 8px;
+    }
+
+    table.dataframe tr:hover {
+      background: #b8d1f3; 
+    }
+
+    .output_prompt {
+      overflow: auto;
+      font-size: 0.9rem;
+      line-height: 1.45;
+      border-radius: 0.3rem;
+      -webkit-overflow-scrolling: touch;
+      padding: 0.8rem;
+      margin-top: 0;
+      margin-bottom: 15px;
+      font: 1rem Consolas, "Liberation Mono", Menlo, Courier, monospace;
+      color: $code-text-color;
+      border: solid 1px $border-color;
+      border-radius: 0.3rem;
+      word-break: normal;
+      white-space: pre;
+    }
+
+  .dataframe tbody tr th:only-of-type {
+      vertical-align: middle;
+  }
+
+  .dataframe tbody tr th {
+      vertical-align: top;
+  }
+
+  .dataframe thead th {
+      text-align: center !important;
+      padding: 8px;
+  }
+
+  .page__content p {
+      margin: 0 0 1.3rem !important;
+  }
+
+  .page__content li > p {
+      margin: 0 0 0.6rem !important;
+  }
+
+  .page__content p > strong {
+    font-size: 1.0rem !important;
+  }
+
+  </style>
+</head>
+
+<p><strong>주요내용</strong></p>
+<ul>
+  <li>🤖 에이전트의 개념과 구축 방법에 대한 설명</li>
+  <li>🔍 Tavily Search와 같은 검색 도구, PDF 기반 검색 도구를 정의하는 법</li>
+  <li>🛠 에이전트가 사용할 도구 목록 생성 및 정의</li>
+  <li>🚀 AgentExecutor를 통한 에이전트 실행 및 상호작용</li>
+  <li>🧠 상태 유지를 위한 메모리 기능 구현</li>
+  <li>📍 완성형 템플릿 코드</li>
+</ul>
+
+<h2 id="-agent-란">🤖 Agent 란?</h2>
+
+<p>에이전트 프레임워크를 가장 잘 이해하기 위해서, 온라인에서 정보를 찾는 도구 하나와 우리가 인덱스로 로드한 특정 데이터를 찾는 도구 하나를 가진 에이전트를 만들어 보겠습니다.</p>
+
+<p>아래의 링크에서 LangChain 의 Agent 프레임워크 컨셉을 자세히 살펴보실 수 있습니다.</p>
+<ul>
+  <li><a href="https://python.langchain.com/docs/modules/agents/concepts">공식 도큐먼트 - Agent Concepts</a></li>
+</ul>
+
+<h3 id="단계별-추적을-위한-langsmith-설정">단계별 추적을 위한 LangSmith 설정</h3>
+
+<p>LangChain으로 구축한 애플리케이션은 여러 단계에 걸쳐 LLM 호출을 여러 번 사용하게 됩니다.</p>
+
+<p>단계별로 호출되는 로직이 더 복잡해짐에 따라, 체인이나 에이전트 내부에서 정확히 무슨 일이 일어나고 있는지 조사할 수 있는 능력이 매우 중요해집니다. 이를 위한 최선의 방법은 <a href="https://smith.langchain.com">LangSmith</a>를 사용하는 것입니다.</p>
+
+<p>LangSmith가 필수는 아니지만, 매우 유용한 도구입니다. LangSmith를 사용하고 싶다면, 위의 링크에서 가입한 후, 로깅 추적을 시작하기 위해 환경 변수를 설정해야 합니다.</p>
+
+<h2 id="-도구tools">① 도구(Tools)</h2>
+
+<p>Agent 가 활용할 도구를 정의하여 Agent 가 추론(reasoning)을 수행할 때 활용하도록 만들 수 있습니다.</p>
+
+<p>Tavily Search 는 그 중 대표적인 <strong>검색 도구</strong> 입니다. 검색을 통해 최신 정보에 접근하여 검색 결과를 가지고 답변을 생성할 수 있습니다. 도구는 이처럼 검색 도구 뿐만아니라 Python 코드를 실행할 수 있는 도구, 직접 정의한 함수를 실행하는 도구 등 다양한 종류와 방법론을 제공합니다.</p>
+
+<h3 id="검색도구-tavily-search">검색도구: Tavily Search</h3>
+
+<p>LangChain에는 Tavily 검색 엔진을 도구로 쉽게 사용할 수 있는 내장 도구가 있습니다.</p>
+
+<p>Tavily Search 를 사용하기 위해서는 API KEY를 발급 받아야 합니다.</p>
+
+<ul>
+  <li><a href="https://app.tavily.com/sign-in">Tavily Search API 발급받기</a></li>
+</ul>
+
+<p>발급 받은 API KEY 를 다음과 같이 환경변수에 등록 합니다.</p>
+
+<p>아래 코드의 주석을 풀고 발급받은 API KEY 를 설정합니다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">os</span>
+
+<span class="c1"># TAVILY API KEY를 기입합니다.
+# os.environ["TAVILY_API_KEY"] = "TAVILY API KEY 입력"
+</span>
+<span class="c1"># 디버깅을 위한 프로젝트명을 기입합니다.
+</span><span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="s">"LANGCHAIN_PROJECT"</span><span class="p">]</span> <span class="o">=</span> <span class="s">"AGENT TUTORIAL"</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># API KEY를 환경변수로 관리하기 위한 설정 파일
+</span><span class="kn">from</span> <span class="nn">dotenv</span> <span class="kn">import</span> <span class="n">load_dotenv</span>
+
+<span class="c1"># API KEY 정보로드
+</span><span class="n">load_dotenv</span><span class="p">()</span>
+</code></pre></div></div>
+
+<pre>
+True
+</pre>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># TavilySearchResults 클래스를 langchain_community.tools.tavily_search 모듈에서 가져옵니다.
+</span><span class="kn">from</span> <span class="nn">langchain_community.tools.tavily_search</span> <span class="kn">import</span> <span class="n">TavilySearchResults</span>
+
+<span class="c1"># TavilySearchResults 클래스의 인스턴스를 생성합니다
+# k=5은 검색 결과를 5개까지 가져오겠다는 의미입니다
+</span><span class="n">search</span> <span class="o">=</span> <span class="n">TavilySearchResults</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">search.invoke</code> 함수는 주어진 문자열에 대한 검색을 실행합니다.</p>
+
+<p><code class="language-plaintext highlighter-rouge">invoke()</code> 함수에 검색하고 싶은 검색어를 넣어 검색을 수행합니다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 검색 결과를 가져옵니다.
+</span><span class="n">search</span><span class="p">.</span><span class="n">invoke</span><span class="p">(</span><span class="s">"판교 카카오 프렌즈샵 아지트점의 전화번호는 무엇인가요?"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<pre>
+[{'url': 'https://smilemonkey.tistory.com/entry/판교-아지트-건물-카카오-프렌즈-샵-오픈-예정-22년-가을',
+  'content': '카카오 신규 오피스인 판교 아지트에 위치한 카카오 프렌즈 샵이 22년 가을에 오픈 예정입니다. 아직 오픈 전이라 다른 카카오 프렌즈 샵과 차별화되는 포인트가 무엇이 될지 오픈에 대한 기대감이 있습니다.  여담이지만 카카오 직원들이 근무하는 아지트 건물에 있는 만큼 공장 도매가로 살 수 있다면 좋겠다는 생각을 잠시 해봤습니다. 현재 판교 아지트가 위치한 판교에는 현대백화점 판교점에 카카오프렌즈샵이 운영 중에  카카오프렌즈샵이\xa0현재\xa0판교\xa0아지트\xa0건물\xa01층에\xa0오픈을\xa0위해\xa0공사  행복신사 판교 아지트 건물 내에 카카오 프렌즈 샵 오픈카카오 신규 오피스인 판교 아지트에 위치한 카카오 프렌즈 샵이 22년 가을에 오픈 예정 입니다. 아직 오픈 전이라 다른 카카오 프렌즈 샵과 차별화되는 포인트가 무엇이 될지 오픈에 대한 기대감이 있습니다. # 함께 보면 좋은 글 이마트 일렉트로마트 애플 제품 - 수험생 할인 혜택/프로모션 (수험생 선물 추천) [2023년 연말정산 준비] 직장인 연말정산 총정리 (작년과 달라진 점, 환급액 늘리는 방법, 세테크) 미슐랭 가이드 서울 2023 레스토랑 리스트 총정리 (지도 위치, 신규 등극) 제주도 국제공항 내에 면세점에 입점되어 있는 카카오 프렌즈 샵과 같이 차별화된 제품 판매나 이벤트가 있으면 좋겠습니다.'},
+ {'url': 'https://m.blog.naver.com/hj961030/222923648353',
+  'content': '블로그 카테고리 이동 ♥n2u1_늘이의 여행일기♥ 카카오프렌즈 판교 아지트점 판교의 카카오프렌즈를 소개합니다. 2022. 11. 8. 21:39 카카오프렌즈 판교 아지트점 문구, 펜시 \u200b  \u200b 모두 모두 카카오프렌즈 판교 아지트점에서 만나요-! 경기도 성남시 분당구 판교역로 166 \u200b ♥n2u1_늘이의 여행일기♥ 이 블로그 경기도 카테고리 글 카테고리 이 블로그 경기도 카테고리 글  \u200b 카카오프렌즈 판교 아지트점은 2022년 11월 07일 바로 어제 오픈을 한 따끈따근한 곳이랍니다!!! 입구에 발을 들이자마자 보이는 건 아주 아주 커다란 춘식이에요~!!  아참-! 판교 아지트점에서 숨은 라이언 찾기 이벤트도 진행하고 있으니 참여하면 좋겠죠?!! 그럼 오늘은 여기까지 소개를 드리도록 하겠습니다! 직접 보면 더 예쁜 카카오프렌즈 판교 아지트점 \u200b카카오프렌즈 판교 아지트점 문구, 펜시 주소 : 경기 성남시 분당구 판교역로 166 1층 시간 : 월 - 금 10:00 - 21:00 / 토 - 일 12:00 - 20:00 주차장 : 지하 주차장이 있어요! 카카오아지트는 회차 20분 무료, 기본 30분에 1,000원 입니다! 판교역 4번출구에서 걸어서 1분 거리에 위치해요! 카카오프렌즈 판교 아지트점을 방문해야하는 이유-! 01. 어제 오픈한 따끈한 신상 매장이에요! 02. 가격에 상관없이 구매만 하면 춘식이 얼굴 풍선을 받을 수 있어요! (11월 7일 부터 소진시까지) 03. 3만원 이상 구매 시 라이언 또는 어피치 문구 세트를 받을 수 있어요! 04.'},
+ {'url': 'https://m.blog.naver.com/celina_827/222924602339',
+  'content': '판교에 드디어 카카오 프렌즈샵이 카카오 본사 아지트 건물 1층에 오픈 했어요!! \u200b 들어가는 입구는 많지만 지금 설명하는 방향은.... 흐음.... 4번출구에서부터 시작 입니다 ㅎㅎ  사원증한 프렌즈들 너무 귀엽다!!! 너무 귀여운 카카오 속 세상이예요ㅠㅠ \u200b 경기도 성남시 분당구 판교역로 166 💬카카오프렌즈샵 아지트점은 판교역 1번 출구, 4번 출구를 이용하셔도 되고,  블로그 카테고리 이동 셀리나의 DAILY EPISODE [판교] 카카오(본사) 아지트에도 사내 카카오 프렌즈샵이 오픈 완료 2022. 11. 9. 22:16 판교에 드디어 카카오 프렌즈샵이  카카오프렌즈 문구세트도 증정하고, 선착순이겠지만 춘식이 풍선도 준다고 해요◡̈ 판교에 프렌즈샵 방문했다는걸 인증하는듯 다들 퇴근길에 춘식이 하나씩 들고 가시더라구요ㅎㅎㅎ 그 모습들도 귀여움 ㅠㅠ \u200b2022. 11. 9. 22:16 이웃추가 위치 카카오프렌즈 판교아지트점 판교에 드디어 카카오 프렌즈샵이 카카오 본사 아지트 건물 1층에 오픈 했어요!! 들어가는 입구는 많지만 지금 설명하는 방향은.... 흐음.... 4번출구에서부터 시작 입니다 ㅎㅎ 존재하지 않는 이미지입니다. 저 완전 친절했죠? ٩ (•̤̀ᵕ•̤́๑)ᵍᵒᵒᵈᵎᵎ 존재하지 않는 이미지입니다. 존재하지 않는 이미지입니다. 아지트 건물로 들어가면 저 귀여운 춘식이가 길을 안내해 줍니다 ̈ 존재하지 않는 이미지입니다. 새로 생긴듯한 카카오 쇼핑 라이브 스튜디오?를 지나면 존재하지 않는 이미지입니다. 카카오 프렌즈샵이 나옵니다!!'},
+ {'url': 'https://blog.naver.com/PostView.nhn?blogId=4julove&amp;logNo=223303504755',
+  'content': "판교 카카오 아지트, 아방 베이커리 판교카카오점, 커카오 프렌즈 그리고 새로운 장소들: LA GRILLIA, Lounge'Xr', fysd flower&amp;cake/성탄절 판교 나들이 by 자메스의 대만사랑  \u200b *** \u200b 경기도 성남시 분당구 판교역로 166 1층 3호 ▲ 아방베이커리 판교카카오점 오늘의 카페 탐방, 약도로 확인을 합니다. \u200b \u200b *** \u200b \u200b \u200b ▲ 다양한 베이커리로 준비  \u200b \u200b \u200b ▲ 아방베이커리 소호판교카카오점 \u200b T. 031-601-7220 \u200b ▲ 오늘의 선택은 오트라떼(6,400), 에비앙(2,000), 에멘탈치즈바게트(4,200), 브리오슈샌드위치(3,900) \u200b *** \u200b  판교역 주변의 풍경도 담고 물론 이번은 '판교 카카오아지트'만 담아 드리는 것으로 \u200b \u200b \u200b ▲ 그래 오늘은 이곳에서 커피 한잔하자고! '아방 베이커리' 중에서는 이곳 '판교카카오점'이 최고라는 사실경기도 성남시 분당구 판교역로 166 카카오판교아지트 1층 카카오프렌즈 라그릴리아 판교점 경기도 성남시 분당구 판교역로 166 1층 일부(17)호"},
+ {'url': 'https://blog.naver.com/PostView.naver?blogId=winternew1&amp;logNo=223316189201',
+  'content': '일상을 여행하는 중 blog 판교 카카오아지트 및 프렌즈샵 판교아지트점 뉴스에서 자주 등장하는 판교 카카오. 출입증이 없어도 일부 공간은 둘러볼 수 있다. 자연 친화 녹색 조경 카카오아지트에서 본 판교역 광장.  카카오아지트에서 본 판교역 광장. 거대한 춘식이, 어피치, 튜브 조르디 빤쥬토끼, 잔망루비, 몰티즈도 있다. 플라워카페 fysd 앞의 라춘(라이언과 춘식이)  알파리움타워 알파돔타워. 카카오게임즈와 카카오 모빌리티, 카카오브레인, 카카오페이손해보험, 그라운드... m.blog.naver.com tags 검색 서재안에 글 53 neighbor ^ activity  더 궁금하신 사항은 고객센터로 문의하시면 자세히 알려드리겠습니다. 수정하신 후 다시 등록해 주세요. 회원님의 안전한 서비스 이용을 위해 비밀번호를 확인해 주세요.naver 블로그. 일상을 여행하는 중. 블로그 검색'}]
+</pre>
+<h3 id="pdf-기반-문서-검색-도구-retriever">PDF 기반 문서 검색 도구: Retriever</h3>
+
+<p>우리의 데이터에 대해 조회를 수행할 retriever도 생성합니다.</p>
+
+<p>이 코드는 웹 기반 문서 로더, 문서 분할기, 벡터 저장소, 그리고 OpenAI 임베딩을 사용하여 문서 검색 시스템을 구축합니다.</p>
+
+<p>여기서는 PDF 문서를 <code class="language-plaintext highlighter-rouge">FAISS</code> DB 에 저장하고 조회하는 retriever 를 생성합니다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">langchain.text_splitter</span> <span class="kn">import</span> <span class="n">RecursiveCharacterTextSplitter</span>
+<span class="kn">from</span> <span class="nn">langchain_community.vectorstores</span> <span class="kn">import</span> <span class="n">FAISS</span>
+<span class="kn">from</span> <span class="nn">langchain_openai</span> <span class="kn">import</span> <span class="n">OpenAIEmbeddings</span>
+<span class="kn">from</span> <span class="nn">langchain.document_loaders</span> <span class="kn">import</span> <span class="n">PyPDFLoader</span>
+
+<span class="c1"># PDF 파일 로드. 파일의 경로 입력
+</span><span class="n">loader</span> <span class="o">=</span> <span class="n">PyPDFLoader</span><span class="p">(</span><span class="s">"data/SPRI_AI_Brief_2023년12월호_F.pdf"</span><span class="p">)</span>
+
+<span class="c1"># 텍스트 분할기를 사용하여 문서를 분할합니다.
+</span><span class="n">text_splitter</span> <span class="o">=</span> <span class="n">RecursiveCharacterTextSplitter</span><span class="p">(</span><span class="n">chunk_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">chunk_overlap</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+
+<span class="c1"># 문서를 로드하고 분할합니다.
+</span><span class="n">split_docs</span> <span class="o">=</span> <span class="n">loader</span><span class="p">.</span><span class="n">load_and_split</span><span class="p">(</span><span class="n">text_splitter</span><span class="p">)</span>
+
+<span class="c1"># VectorStore를 생성합니다.
+</span><span class="n">vector</span> <span class="o">=</span> <span class="n">FAISS</span><span class="p">.</span><span class="n">from_documents</span><span class="p">(</span><span class="n">split_docs</span><span class="p">,</span> <span class="n">OpenAIEmbeddings</span><span class="p">())</span>
+
+<span class="c1"># Retriever를 생성합니다.
+</span><span class="n">retriever</span> <span class="o">=</span> <span class="n">vector</span><span class="p">.</span><span class="n">as_retriever</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>이 함수는 <code class="language-plaintext highlighter-rouge">retriever</code> 객체의 <code class="language-plaintext highlighter-rouge">get_relevant_documents</code> 메소드를 사용하여 “YouTube의 2024년부터 AI 생성콘텐츠 표시 의무화에 대한 내용을 알려줘” 와 관련된 문서들 중 첫 번째 문서를 반환합니다.</p>
+
+<p>이는 특정 쿼리에 대한 가장 <strong>관련성 높은 문서</strong> 를 찾는 데 사용됩니다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># PDf 문서에서 Query 에 대한 관련성 높은 Chunk 를 가져옵니다.
+</span><span class="n">retriever</span><span class="p">.</span><span class="n">get_relevant_documents</span><span class="p">(</span>
+    <span class="s">"YouTube의 2024년부터 AI 생성콘텐츠 표시 의무화에 대한 내용을 알려줘"</span>
+<span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+</code></pre></div></div>
+
+<pre>
+Document(page_content='SPRi AI Brief |  \n2023-12 월호\n14유튜브 , 2024년부터 AI 생성 콘텐츠 표시 의무화 \nn유튜브가 몇 달 안에 생성 AI를 사용한 콘텐츠에 AI 라벨 표시를 의무화하기로 했으며 , 이를 \n준수하지 않는 콘텐츠는 삭제하고 크리에이터에 대한 수익 배분도 중단할 수 있다고 설명\nn유튜브는 AI 생성 콘텐츠가 신원 파악이 가능한 개인을 모방한 경우 개인정보 침해 신고 \n절차에 따라 콘텐츠 삭제 요청도 받을 계획KEY Contents\n£유튜브 , 생성 AI 콘텐츠에 AI 라벨 표시 안 하면 콘텐츠 삭제\nn유튜브가 2023 년 11월 14일 공식 블로그를 통해 몇 달 안에 생성 AI를 사용한 콘텐츠에 AI \n라벨을 표시하는 새로운 규칙을 시행한다고 발표 \n∙실제로 일어나지 않은 사건을 사실적으로 묘사하거나 실제로 하지 않은 말이나 행동을 보여주는 콘텐츠와 \n같이 AI 도구를 사용해 사실적으로 변경되거나 합성된 콘텐츠에는 AI 라벨을 표시 필요\n∙유튜브는 이러한 규칙이 선거나 분쟁 상황, 공중 보건, 공직자 관련 문제와 같이 민감한 주제를 다루는 \n콘텐츠에서 특히 중요하다고 강조했으며 , 크리에이터가 AI로 제작한 콘텐츠에 AI 라벨을 표시하지 않으면 \n해당 콘텐츠는 삭제되고 광고 수익을 배분하는 유튜브 파트너 프로그램도 정지될 수 있음\n∙유튜브는 두 가지 방식으로 AI를 이용한 콘텐츠의 변경이나 합성 여부를 시청자에게 전달할 계획으로 \n동영상 설명 패널에 라벨을 표시하는 방식이 기본이며 , 민감한 주제를 다루는 특정 유형의 콘텐츠는 동영상 \n플레이어에 더욱 눈에 띄는 라벨을 적용 \n∙유튜브는 커뮤니티 정책에 위반되는 일부 합성 콘텐츠에 대해서는 라벨 지정 여부와 관계없이 삭제할 \n방침으로 , 가령 사실적인 폭력을 보여주는 합성 동영상이 시청자에게 충격이나 혐오감을 줄 수 있다면 \n삭제될 수 있음\n£유튜브 , 특정인을 모방한 AI 생성 콘텐츠에 대한 삭제 요청에도 대응 계획', metadata={'source': 'data/SPRI_AI_Brief_2023년12월호_F.pdf', 'page': 16})
+</pre>
+<p>이제 우리가 검색을 수행할 인덱스를 채웠으므로, 이를 에이전트가 제대로 사용할 수 있는 도구로 쉽게 변환할 수 있습니다.</p>
+
+<p><code class="language-plaintext highlighter-rouge">create_retriever_tool</code> 함수는 <code class="language-plaintext highlighter-rouge">langchain</code> 라이브러리의 <code class="language-plaintext highlighter-rouge">tools.retriever</code> 모듈에서 가져온다. 이 함수는 특정 데이터를 검색하기 위한 도구를 생성하는 데 사용된다. <code class="language-plaintext highlighter-rouge">langchain</code>은 언어 모델과 관련된 다양한 기능을 제공하는 라이브러리로, 이 중 검색 도구 생성 기능은 데이터 검색 및 처리 작업을 용이하게 한다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># langchain 패키지의 tools 모듈에서 retriever 도구를 생성하는 함수를 가져옵니다.
+</span><span class="kn">from</span> <span class="nn">langchain.tools.retriever</span> <span class="kn">import</span> <span class="n">create_retriever_tool</span>
+</code></pre></div></div>
+
+<p>이 함수는 <code class="language-plaintext highlighter-rouge">create_retriever_tool</code>을 호출하여 <code class="language-plaintext highlighter-rouge">retriever_tool</code>을 생성합니다. 이 도구는 <code class="language-plaintext highlighter-rouge">LangSmith</code>에 대한 정보를 검색하는 데 사용됩니다.</p>
+
+<p>사용자가 <code class="language-plaintext highlighter-rouge">LangSmith</code>에 대해 궁금한 점이 있을 때, 이 도구를 통해 질문을 해결할 수 있습니다. 함수는 <code class="language-plaintext highlighter-rouge">retriever</code> 인스턴스, 검색 도구의 이름인 <code class="language-plaintext highlighter-rouge">langsmith_search</code>, 그리고 사용자에게 도구 사용 방법을 안내하는 메시지를 인자로 받습니다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">retriever_tool</span> <span class="o">=</span> <span class="n">create_retriever_tool</span><span class="p">(</span>
+    <span class="n">retriever</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s">"pdf_search"</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s">"2023년 12월 AI 관련 정보를 PDF 문서에서 검색합니다. '2023년 12월 AI 산업동향' 과 관련된 질문은 이 도구를 사용해야 합니다!"</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="agent-가-사용할-도구-목록-정의">Agent 가 사용할 도구 목록 정의</h3>
+
+<p>이제 두 가지를 모두 만들었으므로, Agent 가 사용할 도구 목록을 만들 수 있습니다.</p>
+
+<p><code class="language-plaintext highlighter-rouge">tools</code> 리스트는 <code class="language-plaintext highlighter-rouge">search</code>와 <code class="language-plaintext highlighter-rouge">retriever_tool</code>을 포함합니다. 이 리스트는 검색 및 정보 검색 도구를 저장하는 데 사용됩니다. 각 요소는 특정 작업을 수행하는 데 필요한 기능을 제공합니다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># tools 리스트에 search와 retriever_tool을 추가합니다.
+</span><span class="n">tools</span> <span class="o">=</span> <span class="p">[</span><span class="n">search</span><span class="p">,</span> <span class="n">retriever_tool</span><span class="p">]</span>
+</code></pre></div></div>
+
+<h2 id="-에이전트-생성">② 에이전트 생성</h2>
+
+<p>이제 도구를 정의했으니 에이전트를 생성할 수 있습니다. OpenAI Functions 에이전트를 사용할 것입니다.</p>
+
+<p>먼저, 에이전트가 활용할 LLM을 정의합니다.</p>
+
+<p><code class="language-plaintext highlighter-rouge">ChatOpenAI</code> 클래스는 <code class="language-plaintext highlighter-rouge">langchain_openai</code> 모듈에서 가져온 것으로, OpenAI의 언어 모델을 활용하여 대화형 AI를 구현할 수 있게 해줍니다.</p>
+
+<p>이 예제에서는 <code class="language-plaintext highlighter-rouge">gpt-4-turbo-preview</code> 모델을 사용하며, <code class="language-plaintext highlighter-rouge">temperature</code> 매개변수를 <code class="language-plaintext highlighter-rouge">0</code>으로 설정하여 예측의 변동성을 최소화합니다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">langchain_openai</span> <span class="kn">import</span> <span class="n">ChatOpenAI</span>
+
+<span class="c1"># ChatOpenAI 클래스를 langchain_openai 모듈에서 가져옵니다.
+</span><span class="n">llm</span> <span class="o">=</span> <span class="n">ChatOpenAI</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s">"gpt-4-turbo-preview"</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>다음으로, 에이전트를 안내하기 위해 사용하고 싶은 프롬프트를 선택합니다.</p>
+
+<p>이 프롬프트의 내용을 보고 싶고 LangSmith에 접근할 수 있다면, 다음으로 이동하세요:</p>
+
+<p>다운로드 받아 활용할 프롬프트: https://smith.langchain.com/hub/hwchase17/openai-functions-agent</p>
+
+<p><code class="language-plaintext highlighter-rouge">hub.pull()</code> 함수를 사용하여 리소스를 가져온 후, <code class="language-plaintext highlighter-rouge">prompt.messages</code>를 통해 해당 리소스의 메시지에 접근합니다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">langchain</span> <span class="kn">import</span> <span class="n">hub</span>
+
+<span class="c1"># hub에서 prompt를 가져옵니다 - 이 부분을 수정할 수 있습니다!
+</span><span class="n">prompt</span> <span class="o">=</span> <span class="n">hub</span><span class="p">.</span><span class="n">pull</span><span class="p">(</span><span class="s">"hwchase17/openai-functions-agent"</span><span class="p">)</span>
+
+<span class="c1"># prompt 의 messages를 출력합니다.
+</span><span class="n">prompt</span><span class="p">.</span><span class="n">messages</span>
+</code></pre></div></div>
+
+<pre>
+[SystemMessagePromptTemplate(prompt=PromptTemplate(input_variables=[], template='You are a helpful assistant')),
+ MessagesPlaceholder(variable_name='chat_history', optional=True),
+ HumanMessagePromptTemplate(prompt=PromptTemplate(input_variables=['input'], template='{input}')),
+ MessagesPlaceholder(variable_name='agent_scratchpad')]
+</pre>
+<p>이제 LLM, 프롬프트 및 도구로 에이전트를 초기화할 수 있습니다. 에이전트는 입력을 받아 어떤 <code class="language-plaintext highlighter-rouge">Action</code> 을 취할지 결정하는 역할을 합니다.</p>
+
+<p>중요한 것은 에이전트가 <code class="language-plaintext highlighter-rouge">Action</code> 들을 실행하지 않는다는 것입니다 - 그것은 AgentExecutor(다음 단계)에 의해 수행됩니다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">langchain.agents</span> <span class="kn">import</span> <span class="n">create_openai_functions_agent</span>
+
+<span class="c1"># OpenAI 함수 기반 에이전트를 생성합니다.
+# llm, tools, prompt를 인자로 사용합니다.
+</span><span class="n">agent</span> <span class="o">=</span> <span class="n">create_openai_functions_agent</span><span class="p">(</span><span class="n">llm</span><span class="p">,</span> <span class="n">tools</span><span class="p">,</span> <span class="n">prompt</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>마지막으로, 우리는 에이전트(<code class="language-plaintext highlighter-rouge">agent</code>)를 AgentExecutor 내부의 도구들과 결합합니다(이는 반복적으로 에이전트를 호출하고 도구들을 실행할 것입니다).</p>
+
+<p>이 코드는 <code class="language-plaintext highlighter-rouge">langchain.agents</code> 모듈에서 <code class="language-plaintext highlighter-rouge">AgentExecutor</code> 클래스를 가져와 인스턴스를 생성합니다. 생성 시, <code class="language-plaintext highlighter-rouge">agent</code>, <code class="language-plaintext highlighter-rouge">tools</code> 객체를 인자로 전달하고, <code class="language-plaintext highlighter-rouge">verbose=True</code>를 설정하여 상세한 로그 출력을 활성화합니다. <code class="language-plaintext highlighter-rouge">AgentExecutor</code>는 주어진 에이전트와 도구들을 사용하여 작업을 실행하는 역할을 합니다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">langchain.agents</span> <span class="kn">import</span> <span class="n">AgentExecutor</span>
+
+<span class="c1"># AgentExecutor 클래스를 사용하여 agent와 tools를 설정하고, 상세한 로그를 출력하도록 verbose를 True로 설정합니다.
+</span><span class="n">agent_executor</span> <span class="o">=</span> <span class="n">AgentExecutor</span><span class="p">(</span><span class="n">agent</span><span class="o">=</span><span class="n">agent</span><span class="p">,</span> <span class="n">tools</span><span class="o">=</span><span class="n">tools</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="-에이전트-실행하기">③ 에이전트 실행하기</h2>
+
+<p>이제 몇 가지 질의에 대해 에이전트를 실행할 수 있습니다!</p>
+
+<p>현재 이러한 모든 질의는 <strong>상태(Stateless) 가 없는</strong> 질의입니다(이전 상호작용을 기억하지 않습니다).</p>
+
+<p><code class="language-plaintext highlighter-rouge">agent_executor</code> 객체의 <code class="language-plaintext highlighter-rouge">invoke</code> 메소드는 딕셔너리 형태의 인자를 받아 처리합니다. 이 예제에서는 <code class="language-plaintext highlighter-rouge">input</code> 키에 <code class="language-plaintext highlighter-rouge">hi!</code> 값을 할당한 딕셔너리를 인자로 전달하고 있습니다. 이는 일반적으로 AI 에이전트, 함수 실행기, 또는 명령 처리기 등의 객체에서 입력을 처리하기 위해 사용됩니다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 'agent_executor' 객체의 'invoke' 메소드를 호출하여,
+# 'input' 키와 '안녕, 반가워' 값을 가진 딕셔너리를 인자로 전달합니다.
+</span><span class="n">response</span> <span class="o">=</span> <span class="n">agent_executor</span><span class="p">.</span><span class="n">invoke</span><span class="p">({</span><span class="s">"input"</span><span class="p">:</span> <span class="s">"안녕, 반가워!"</span><span class="p">})</span>
+<span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">'답변: </span><span class="si">{</span><span class="n">response</span><span class="p">[</span><span class="s">"output"</span><span class="p">]</span><span class="si">}</span><span class="s">'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<pre>
+
+
+[1m&gt; Entering new AgentExecutor chain...[0m
+[32;1m[1;3m안녕하세요! 반가워요. 무엇을 도와드릴까요?[0m
+
+[1m&gt; Finished chain.[0m
+답변: 안녕하세요! 반가워요. 무엇을 도와드릴까요?
+</pre>
+<p><code class="language-plaintext highlighter-rouge">agent_executor</code> 객체의 <code class="language-plaintext highlighter-rouge">invoke</code> 메소드를 사용하여, 질문을 입력으로 제공합니다.</p>
+
+<blockquote>
+  <p>다음의 추적 링크에서 자세한 단계별 수행 결과를 확인할 수 있습니다</p>
+</blockquote>
+
+<p><a href="https://smith.langchain.com/public/792932be-c972-466f-b916-5c95d1ff2191/r">LangSmith 추적</a></p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 'agent_executor' 객체의 'invoke' 메소드를 호출하여, 'langsmith'가 테스팅에 어떻게 도움을 줄 수 있는지에 대한 질문을 입력으로 제공합니다.
+</span><span class="n">response</span> <span class="o">=</span> <span class="n">agent_executor</span><span class="p">.</span><span class="n">invoke</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="s">"input"</span><span class="p">:</span> <span class="s">"YouTube 2024년부터 AI 생성콘텐츠 표시 의무화에 대한 내용을 PDF 문서에서 알려줘"</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">'답변: </span><span class="si">{</span><span class="n">response</span><span class="p">[</span><span class="s">"output"</span><span class="p">]</span><span class="si">}</span><span class="s">'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<pre>
+
+
+[1m&gt; Entering new AgentExecutor chain...[0m
+[32;1m[1;3m
+Invoking: `pdf_search` with `{'query': 'YouTube 2024년 AI 생성콘텐츠 표시 의무화'}`
+
+
+[0m[33;1m[1;3mSPRi AI Brief |  
+2023-12 월호
+14유튜브 , 2024년부터 AI 생성 콘텐츠 표시 의무화 
+n유튜브가 몇 달 안에 생성 AI를 사용한 콘텐츠에 AI 라벨 표시를 의무화하기로 했으며 , 이를 
+준수하지 않는 콘텐츠는 삭제하고 크리에이터에 대한 수익 배분도 중단할 수 있다고 설명
+n유튜브는 AI 생성 콘텐츠가 신원 파악이 가능한 개인을 모방한 경우 개인정보 침해 신고 
+절차에 따라 콘텐츠 삭제 요청도 받을 계획KEY Contents
+£유튜브 , 생성 AI 콘텐츠에 AI 라벨 표시 안 하면 콘텐츠 삭제
+n유튜브가 2023 년 11월 14일 공식 블로그를 통해 몇 달 안에 생성 AI를 사용한 콘텐츠에 AI 
+라벨을 표시하는 새로운 규칙을 시행한다고 발표 
+∙실제로 일어나지 않은 사건을 사실적으로 묘사하거나 실제로 하지 않은 말이나 행동을 보여주는 콘텐츠와 
+같이 AI 도구를 사용해 사실적으로 변경되거나 합성된 콘텐츠에는 AI 라벨을 표시 필요
+∙유튜브는 이러한 규칙이 선거나 분쟁 상황, 공중 보건, 공직자 관련 문제와 같이 민감한 주제를 다루는 
+콘텐츠에서 특히 중요하다고 강조했으며 , 크리에이터가 AI로 제작한 콘텐츠에 AI 라벨을 표시하지 않으면 
+해당 콘텐츠는 삭제되고 광고 수익을 배분하는 유튜브 파트너 프로그램도 정지될 수 있음
+∙유튜브는 두 가지 방식으로 AI를 이용한 콘텐츠의 변경이나 합성 여부를 시청자에게 전달할 계획으로 
+동영상 설명 패널에 라벨을 표시하는 방식이 기본이며 , 민감한 주제를 다루는 특정 유형의 콘텐츠는 동영상 
+플레이어에 더욱 눈에 띄는 라벨을 적용 
+∙유튜브는 커뮤니티 정책에 위반되는 일부 합성 콘텐츠에 대해서는 라벨 지정 여부와 관계없이 삭제할 
+방침으로 , 가령 사실적인 폭력을 보여주는 합성 동영상이 시청자에게 충격이나 혐오감을 줄 수 있다면 
+삭제될 수 있음
+£유튜브 , 특정인을 모방한 AI 생성 콘텐츠에 대한 삭제 요청에도 대응 계획
+
+삭제될 수 있음
+£유튜브 , 특정인을 모방한 AI 생성 콘텐츠에 대한 삭제 요청에도 대응 계획
+n유튜브는 몇 달 내에 신원 파악이 가능한 개인의 얼굴이나 음성을 모방한 AI 생성 콘텐츠에 대하
+여 개인정보 침해 신고 절차를 마련해 삭제 요청을 받을 계획  
+∙단, 모든 콘텐츠가 삭제 대상은 아니며 유튜브는 콘텐츠가 패러디나 풍자인지 , 해당 영상에서 삭제 요청을 
+한 특정인을 식별할 수 있는지 , 공직자나 유명인이 등장하는지 등 다양한 요소를 고려할 예정
+∙유튜브는 음반사가 아티스트의 고유한 노래나 목소리를 모방한 AI 생성 음악에 대하여 삭제를 요청할 수 
+있는 기능도 도입할 방침
+☞ 출처 : Youtube, Our approach to responsible AI innovation, 2023.11.14.
+
+▹ 구글, 앤스로픽에 20억 달러 투자로 생성 AI 협력 강화 ················································ 11
+   ▹ IDC, 2027 년 AI 소프트웨어 매출 2,500 억 달러 돌파 전망··········································· 12
+   ▹ 빌 게이츠 , AI 에이전트로 인한 컴퓨터 사용의 패러다임 변화 전망································ 13
+   ▹ 유튜브 , 2024 년부터 AI 생성 콘텐츠 표시 의무화 ···························································· 14
+ 3. 기술/연구
+   ▹ 영국 과학혁신기술부 , AI 안전 연구소 설립 발표······························································ 15
+   ▹ 구글 딥마인드 , 범용 AI 모델의 기능과 동작에 대한 분류 체계 발표······························ 16
+   ▹ 갈릴레오의 LLM 환각 지수 평가에서 GPT-4 가 가장 우수 ··········································· 17
+   
+ 4. 인력/교육     
+   ▹ 영국 옥스퍼드 인터넷 연구소 , AI 기술자의 임금이 평균 21% 높아······························· 18
+   
+   
+ 
+Ⅱ. 주요 행사
+   ▹CES 2024 ····························································································································· 19
+
+SPRi AI Brief |  
+2023-12 월호
+4미국 법원, 예술가들이 생성 AI 기업에 제기한 저작권 소송 기각
+n미국 캘리포니아 북부지방법원은 미드저니 , 스태빌리티 AI, 디비언트아트를 대상으로 예술가 
+3인이 제기한 저작권 침해 소송을 기각
+n법원은 기각 이유로 고소장에 제시된 상당수 작품이 저작권청에 등록되지 않았으며 , AI로 
+생성된 이미지와 특정 작품 간 유사성을 입증하기 어렵다는 점을 제시 KEY Contents
+£예술가들의 AI 저작권 침해 소송, 저작권 미등록과 증거불충분으로 기각
+n미국 캘리포니아 북부지방법원의 윌리엄 오릭(W illiam Orrick) 판사는 2023년 10월 30일 미드저니
+(M idjourney),  스태빌리티 AI(Stability AI), 디비언트아트 (DeviantArt) 에 제기된 저작권 침해 소송을 기각 
+∙2023 년 1월 예술가 사라 앤더슨 (Sarah Anderson), 캘리 맥커넌 (Kelly McKernan), 칼라 
+오르티즈 (Karla Ortiz) 는 이미지 생성 AI 서비스를 개발한 3개 기업을 상대로 저작권 침해 소송을 제기
+∙예술가들은 3개 기업이 AI 모델을 학습시키기 위해 원작자 동의 없이 작품을 학습 데이터셋에 
+포함하여 저작권을 침해했다고 주장했으며 , 법원은 지난 4월 피소 기업들이 제출한 기각 신청을 
+수용해 소송을 기각 
+n오릭 판사는 판결문에서 소송을 기각한 핵심 이유로 예술가들의 저작권 미등록을 제시
+∙판결문은 소송을 제기한 캘리 맥커넌과 칼라 오르티즈가 미국 저작권청에 예술 작품에 대한 저작권을 
+제출하지 않았다는 점을 지적했으며 , 사라 앤더슨은 고소장에 인용된 수백 개의 작품 중 16개 작품에 
+대해서만 저작권을 보유
+n판결문은 또한 생성 AI 모델 훈련에 사용된 모든 이미지에 저작권이 있다거나 , 생성 AI로 만든 
+이미지가 저작물을 이용해 훈련되었으므로 저작물의 파생 이미지라는 주장은 개연성이  부족하다고  
+지적[0m[32;1m[1;3m2024년부터 YouTube는 AI를 사용하여 생성된 콘텐츠에 AI 라벨을 표시하는 것을 의무화할 예정입니다. 이 규칙을 준수하지 않는 콘텐츠는 삭제될 수 있으며, 해당 크리에이터에 대한 수익 배분도 중단될 수 있습니다. YouTube는 특히 선거, 분쟁 상황, 공중 보건, 공직자 관련 문제와 같이 민감한 주제를 다루는 콘텐츠에서 이 규칙의 중요성을 강조했습니다. AI로 제작된 콘텐츠에 AI 라벨을 표시하지 않으면 해당 콘텐츠는 삭제되고, YouTube 파트너 프로그램을 통한 광고 수익 배분도 정지될 수 있습니다.
+
+YouTube는 AI를 이용한 콘텐츠의 변경이나 합성 여부를 시청자에게 전달하기 위해 두 가지 방식을 계획하고 있습니다. 기본적으로 동영상 설명 패널에 라벨을 표시하며, 민감한 주제를 다루는 특정 유형의 콘텐츠는 동영상 플레이어에 더욱 눈에 띄는 라벨을 적용할 예정입니다. 또한, 커뮤니티 정책에 위반되는 일부 합성 콘텐츠는 라벨 지정 여부와 관계없이 삭제될 수 있습니다.
+
+YouTube는 신원 파악이 가능한 개인의 얼굴이나 음성을 모방한 AI 생성 콘텐츠에 대해 개인정보 침해 신고 절차를 마련해 삭제 요청을 받을 계획입니다. 모든 콘텐츠가 삭제 대상은 아니며, 콘텐츠가 패러디나 풍자인지, 해당 영상에서 삭제 요청을 한 특정인을 식별할 수 있는지, 공직자나 유명인이 등장하는지 등 다양한 요소를 고려할 예정입니다. 음반사는 아티스트의 고유한 노래나 목소리를 모방한 AI 생성 음악에 대하여 삭제를 요청할 수 있는 기능도 도입될 예정입니다.[0m
+
+[1m&gt; Finished chain.[0m
+답변: 2024년부터 YouTube는 AI를 사용하여 생성된 콘텐츠에 AI 라벨을 표시하는 것을 의무화할 예정입니다. 이 규칙을 준수하지 않는 콘텐츠는 삭제될 수 있으며, 해당 크리에이터에 대한 수익 배분도 중단될 수 있습니다. YouTube는 특히 선거, 분쟁 상황, 공중 보건, 공직자 관련 문제와 같이 민감한 주제를 다루는 콘텐츠에서 이 규칙의 중요성을 강조했습니다. AI로 제작된 콘텐츠에 AI 라벨을 표시하지 않으면 해당 콘텐츠는 삭제되고, YouTube 파트너 프로그램을 통한 광고 수익 배분도 정지될 수 있습니다.
+
+YouTube는 AI를 이용한 콘텐츠의 변경이나 합성 여부를 시청자에게 전달하기 위해 두 가지 방식을 계획하고 있습니다. 기본적으로 동영상 설명 패널에 라벨을 표시하며, 민감한 주제를 다루는 특정 유형의 콘텐츠는 동영상 플레이어에 더욱 눈에 띄는 라벨을 적용할 예정입니다. 또한, 커뮤니티 정책에 위반되는 일부 합성 콘텐츠는 라벨 지정 여부와 관계없이 삭제될 수 있습니다.
+
+YouTube는 신원 파악이 가능한 개인의 얼굴이나 음성을 모방한 AI 생성 콘텐츠에 대해 개인정보 침해 신고 절차를 마련해 삭제 요청을 받을 계획입니다. 모든 콘텐츠가 삭제 대상은 아니며, 콘텐츠가 패러디나 풍자인지, 해당 영상에서 삭제 요청을 한 특정인을 식별할 수 있는지, 공직자나 유명인이 등장하는지 등 다양한 요소를 고려할 예정입니다. 음반사는 아티스트의 고유한 노래나 목소리를 모방한 AI 생성 음악에 대하여 삭제를 요청할 수 있는 기능도 도입될 예정입니다.
+</pre>
+<blockquote>
+  <p>다음의 추적 링크에서 자세한 단계별 수행 결과를 확인할 수 있습니다</p>
+</blockquote>
+
+<p><a href="https://smith.langchain.com/public/f5af559e-0ddd-4108-b96d-67e967bb70a8/r">LangSmith 추적</a></p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 검색 결과를 요청 후 질문에 대한 답변을 출력합니다.
+</span><span class="n">response</span> <span class="o">=</span> <span class="n">agent_executor</span><span class="p">.</span><span class="n">invoke</span><span class="p">(</span>
+    <span class="p">{</span><span class="s">"input"</span><span class="p">:</span> <span class="s">"판교 카카오 프렌즈샵 아지트점의 전화번호를 검색하여 결과를 알려주세요."</span><span class="p">}</span>
+<span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">'답변: </span><span class="si">{</span><span class="n">response</span><span class="p">[</span><span class="s">"output"</span><span class="p">]</span><span class="si">}</span><span class="s">'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<pre>
+
+
+[1m&gt; Entering new AgentExecutor chain...[0m
+[32;1m[1;3m
+Invoking: `tavily_search_results_json` with `{'query': '판교 카카오 프렌즈샵 아지트점 전화번호'}`
+
+
+[0m[36;1m[1;3m[{'url': 'https://m.blog.naver.com/hj961030/222923648353', 'content': '블로그 카테고리 이동 ♥n2u1_늘이의 여행일기♥ 카카오프렌즈 판교 아지트점 판교의 카카오프렌즈를 소개합니다. 2022. 11. 8. 21:39 카카오프렌즈 판교 아지트점 문구, 펜시 \u200b  \u200b 카카오프렌즈 판교 아지트점은 2022년 11월 07일 바로 어제 오픈을 한 따끈따근한 곳이랍니다!!! 입구에 발을 들이자마자 보이는 건 아주 아주 커다란 춘식이에요~!!  \u200b 모두 모두 카카오프렌즈 판교 아지트점에서 만나요-! 경기도 성남시 분당구 판교역로 166 \u200b ♥n2u1_늘이의 여행일기♥ 이 블로그 경기도 카테고리 글 카테고리 이 블로그 경기도 카테고리 글  아참-! 판교 아지트점에서 숨은 라이언 찾기 이벤트도 진행하고 있으니 참여하면 좋겠죠?!! 그럼 오늘은 여기까지 소개를 드리도록 하겠습니다! 직접 보면 더 예쁜 카카오프렌즈 판교 아지트점 \u200b2022. 11. 8. 21:39 이웃추가 존재하지 않는 이미지입니다. 카카오프렌즈 판교 아지트점 문구, 펜시 주소 : 경기 성남시 분당구 판교역로 166 1층 시간 : 월 - 금 10:00 - 21:00 / 토 - 일 12:00 - 20:00 주차장 : 지하 주차장이 있어요! 카카오아지트는 회차 20분 무료, 기본 30분에 1,000원 입니다! 판교역 4번출구에서 걸어서 1분 거리에 위치해요! 카카오프렌즈 판교 아지트점을 방문해야하는 이유-! 01. 어제 오픈한 따끈한 신상 매장이에요! 02. 가격에 상관없이 구매만 하면 춘식이 얼굴 풍선을 받을 수 있어요! (11월 7일 부터 소진시까지)'}, {'url': 'https://m.blog.naver.com/celina_827/222924602339', 'content': '판교에 드디어 카카오 프렌즈샵이 카카오 본사 아지트 건물 1층에 오픈 했어요!! \u200b 들어가는 입구는 많지만 지금 설명하는 방향은.... 흐음.... 4번출구에서부터 시작 입니다 ㅎㅎ  사원증한 프렌즈들 너무 귀엽다!!! 너무 귀여운 카카오 속 세상이예요ㅠㅠ \u200b 경기도 성남시 분당구 판교역로 166 💬카카오프렌즈샵 아지트점은 판교역 1번 출구, 4번 출구를 이용하셔도 되고,  블로그 카테고리 이동 셀리나의 DAILY EPISODE [판교] 카카오(본사) 아지트에도 사내 카카오 프렌즈샵이 오픈 완료 2022. 11. 9. 22:16 판교에 드디어 카카오 프렌즈샵이  카카오프렌즈 문구세트도 증정하고, 선착순이겠지만 춘식이 풍선도 준다고 해요◡̈ 판교에 프렌즈샵 방문했다는걸 인증하는듯 다들 퇴근길에 춘식이 하나씩 들고 가시더라구요ㅎㅎㅎ 그 모습들도 귀여움 ㅠㅠ \u200b9. 22:16 이웃추가 위치 카카오프렌즈 판교아지트점 판교에 드디어 카카오 프렌즈샵이 카카오 본사 아지트 건물 1층에 오픈 했어요!! 들어가는 입구는 많지만 지금 설명하는 방향은.... 흐음.... 4번출구에서부터 시작 입니다 ㅎㅎ 존재하지 않는 이미지입니다. 저 완전 친절했죠? ٩ (•̤̀ᵕ•̤́๑)ᵍᵒᵒᵈᵎᵎ 존재하지 않는 이미지입니다. 존재하지 않는 이미지입니다. 아지트 건물로 들어가면 저 귀여운 춘식이가 길을 안내해 줍니다 ̈ 존재하지 않는 이미지입니다. 새로 생긴듯한 카카오 쇼핑 라이브 스튜디오?를 지나면 존재하지 않는 이미지입니다. 카카오 프렌즈샵이 나옵니다!! 들어가자마자 나오는 대왕 춘식이!!!! 뚜둥'}, {'url': 'https://blog.naver.com/PostView.naver?blogId=0_0hy&amp;logNo=222982732699', 'content': '\u200b \u200b \u200b \u200b 카카오프렌즈 판교아지트점 경기 성남시 분당구 판교역로 166 카카오판교아지트 1층 카카오프렌즈 평일 10:00 - 21:00, 토일 12:00 - 20:00 031-601-7225  031-601-7225 판교 카카오 본사 건물 1층에 있음 ! 오빠랑 항상 주차 편한곳만 돌아다니는데 주차 왕편했다bb \u200b \u200b 무드등 졸귀탱이잖아 ? \u200b  \u200b \u200b \u200b \u200b 지도첨부 경기도 성남시 분당구 판교역로 166 카카오판교아지트 1층 카카오프렌즈 물건 구매시, 주차 1시간 무료 ! 판교역 4번출구에서 가까우니 대중교통도 좋을듯 하다  하블리의 그림일기 blog 판교 카카오프렌즈 판교아지트점 방문후기 감자 추천으로 다녀온 카카오프렌즈 판교아지트점 요새 일만 하느라 어디 다니질 못하니까 포스팅 업로드 할 내용이 없다 (눈물..) \u200b \u200b \u200b \u200b카카오프렌즈 판교아지트점 경기 성남시 분당구 판교역로 166 카카오판교아지트 1층 카카오프렌즈 평일 10:00 - 21:00, 토일 12:00 - 20:00 031-601-7225 존재하지 않는 이미지입니다. 판교 카카오 본사 건물 1층에 있음 ! 오빠랑 항상 주차 편한곳만 돌아다니는데 주차 왕편했다bb 존재하지 않는 이미지입니다. 무드등 졸귀탱이잖아 ? 존재하지 않는 이미지입니다. 에어프라이기 너무 작아서 실용성 없어보였지만 (막말) 라이언 와플기계는 갖고 싶단 말이지 존재하지 않는 이미지입니다. 존재하지 않는 이미지입니다. 에어팟 꽂은 라이언ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ 존재하지 않는 이미지입니다.'}, {'url': 'https://m.blog.naver.com/chjw930928/223188524886', 'content': '블로그 카테고리 이동 아무거나 카카오프렌즈 판교 아지트점, 너무 귀여워 춘식이굿즈 기절 2023. 8. 20. 16:00 안녕하세요 오늘은 판교역 바로 앞에 있는 카카오 판교아지트,  그 안에 있는 카카오프렌즈 스토어를 다녀왔어요! 아지트 건물에 이렇게 이어져 있어요 1층부터 푸릇푸릇.. 춘식이 하이 흑 넘 귀엽.. 미쳐.. 속도가 이제 감당이 안되는 29개월 아가 데리고 가보겠습니다 \u200b  근데 전 사실 튜브가 제일 좋아요(?) \u200b 경기도 성남시 분당구 판교역로 166 카카오판교아지트 1층 카카오프렌즈 #카카오프렌즈 #춘식이 #카카오프렌즈스토어 #카카오프렌즈아지트 #카카오프렌즈판교아지트  \u200b 여름방학이 끝나기 전에 아이랑 가는 곳으로 추천해요 쾌적하고 (실내라서 안더움..굿..) 꽤 커서 시간도 훌훌 잘갑니다 껄껄 카카오프렌즈 판교아지트점 오늘 주말에 다녀왔더니, 사람이 꽤나 있었어요. \u200b안녕하세요 오늘은 판교역 바로 앞에 있는 카카오 판교아지트, 그 안에 있는 카카오프렌즈 스토어를 다녀왔어요! 존재하지 않는 이미지입니다. 아지트 건물에 이렇게 이어져 있어요 1층부터 푸릇푸릇.. 존재하지 않는 이미지입니다. 춘식이 하이 흑 넘 귀엽.. 미쳐.. 존재하지 않는 이미지입니다. 속도가 이제 감당이 안되는 29개월 아가 데리고 가보겠습니다 여름방학이 끝나기 전에 아이랑 가는 곳으로 추천해요 쾌적하고 (실내라서 안더움..굿..) 꽤 커서 시간도 훌훌 잘갑니다 껄껄 카카오프렌즈 판교아지트점 존재하지 않는 이미지입니다. 존재하지 않는 이미지입니다. 오늘 주말에 다녀왔더니, 사람이 꽤나 있었어요.'}, {'url': 'https://blog.naver.com/PostView.naver?blogId=winternew1&amp;logNo=223316189201', 'content': '일상을 여행하는 중 blog 판교 카카오아지트 및 프렌즈샵 판교아지트점 뉴스에서 자주 등장하는 판교 카카오. 출입증이 없어도 일부 공간은 둘러볼 수 있다. 자연 친화 녹색 조경 카카오아지트에서 본 판교역 광장.  카카오아지트에서 본 판교역 광장. 거대한 춘식이, 어피치, 튜브 조르디 빤쥬토끼, 잔망루비, 몰티즈도 있다. 플라워카페 fysd 앞의 라춘(라이언과 춘식이)  알파리움타워 알파돔타워. 카카오게임즈와 카카오 모빌리티, 카카오브레인, 카카오페이손해보험, 그라운드... m.blog.naver.com tags 검색 서재안에 글 53 neighbor ^ activity  더 궁금하신 사항은 고객센터로 문의하시면 자세히 알려드리겠습니다. 수정하신 후 다시 등록해 주세요. 회원님의 안전한 서비스 이용을 위해 비밀번호를 확인해 주세요.naver 블로그. 일상을 여행하는 중. 블로그 검색'}][0m[32;1m[1;3m판교 카카오 프렌즈샵 아지트점의 전화번호는 **031-601-7225** 입니다. 매장은 경기 성남시 분당구 판교역로 166, 카카오판교아지트 1층에 위치해 있습니다. 운영 시간은 평일 10:00 - 21:00, 토일 12:00 - 20:00입니다.[0m
+
+[1m&gt; Finished chain.[0m
+답변: 판교 카카오 프렌즈샵 아지트점의 전화번호는 **031-601-7225** 입니다. 매장은 경기 성남시 분당구 판교역로 166, 카카오판교아지트 1층에 위치해 있습니다. 운영 시간은 평일 10:00 - 21:00, 토일 12:00 - 20:00입니다.
+</pre>
+<h2 id="-메모리-추가하기">④ 메모리 추가하기</h2>
+
+<p>앞서 언급했듯이, 이 에이전트는 상태가 없습니다. 이는 이전 상호작용을 기억하지 않는다는 것을 의미합니다. 이에게 메모리를 부여하기 위해서는 이전 <code class="language-plaintext highlighter-rouge">chat_history</code>를 전달해야 합니다.</p>
+
+<p><strong>[참고]</strong></p>
+
+<p>우리가 사용하는 프롬프트 때문에 <code class="language-plaintext highlighter-rouge">chat_history</code>라고 불러야 합니다. 다른 프롬프트를 사용한다면 <strong>변수 이름을 변경</strong>할 수 있습니다.</p>
+
+<p>함수는 사용자의 입력(<code class="language-plaintext highlighter-rouge">input</code>)과 채팅 기록(<code class="language-plaintext highlighter-rouge">chat_history</code>)을 매개변수로 받습니다. 여기서, <code class="language-plaintext highlighter-rouge">chat_history</code>는 채팅의 첫 번째 메시지를 처리할 때 빈 리스트([])로 전달됩니다. 이는 채팅 세션을 시작할 때 기존의 대화 기록이 없음을 나타냅니다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 채팅의 첫 번째 메시지이므로 chat_history에 빈 리스트를 전달합니다.
+</span><span class="n">response</span> <span class="o">=</span> <span class="n">agent_executor</span><span class="p">.</span><span class="n">invoke</span><span class="p">(</span>
+    <span class="p">{</span><span class="s">"input"</span><span class="p">:</span> <span class="s">"Hi! I'm Teddy. Glad to meet you."</span><span class="p">,</span> <span class="s">"chat_history"</span><span class="p">:</span> <span class="p">[]}</span>
+<span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">'답변: </span><span class="si">{</span><span class="n">response</span><span class="p">[</span><span class="s">"output"</span><span class="p">]</span><span class="si">}</span><span class="s">'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<pre>
+
+
+[1m&gt; Entering new AgentExecutor chain...[0m
+[32;1m[1;3mHi Teddy! It's great to meet you too. How can I assist you today?[0m
+
+[1m&gt; Finished chain.[0m
+답변: Hi Teddy! It's great to meet you too. How can I assist you today?
+</pre>
+<p>이 모듈은 <code class="language-plaintext highlighter-rouge">langchain_core.messages</code>에서 <code class="language-plaintext highlighter-rouge">AIMessage</code>와 <code class="language-plaintext highlighter-rouge">HumanMessage</code> 클래스를 가져옵니다. AI와 인간 간의 메시지 교환을 처리하는 데 사용될 수 있습니다.</p>
+
+<p><code class="language-plaintext highlighter-rouge">AIMessage</code>는 AI가 생성한 메시지를 나타내며, <code class="language-plaintext highlighter-rouge">HumanMessage</code>는 사용자가 입력한 메시지를 나타냅니다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># langchain_core.messages에서 AIMessage와 HumanMessage를 가져옵니다.
+</span><span class="kn">from</span> <span class="nn">langchain_core.messages</span> <span class="kn">import</span> <span class="n">AIMessage</span><span class="p">,</span> <span class="n">HumanMessage</span>
+</code></pre></div></div>
+
+<p>이 함수는 대화 에이전트를 실행하여 사용자와 AI 간의 대화 이력과 새로운 사용자 입력을 처리합니다. <code class="language-plaintext highlighter-rouge">agent_executor.invoke</code> 메소드는 대화 이력(<code class="language-plaintext highlighter-rouge">chat_history</code>)과 사용자의 새로운 입력(<code class="language-plaintext highlighter-rouge">input</code>)을 매개변수로 받습니다. <code class="language-plaintext highlighter-rouge">chat_history</code>는 <code class="language-plaintext highlighter-rouge">HumanMessage</code>와 <code class="language-plaintext highlighter-rouge">AIMessage</code> 객체의 리스트로, 각각 사용자와 AI의 메시지를 나타냅니다. 이 예시에서는 사용자가 “hi! my name is bob”이라고 인사하고, AI가 “Hello Bob! How can I assist you today?”라고 응답한 이후, 사용자가 “what’s my name?”이라고 새로운 질문을 합니다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">response</span> <span class="o">=</span> <span class="n">agent_executor</span><span class="p">.</span><span class="n">invoke</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="s">"chat_history"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="n">HumanMessage</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="s">"Hi! I'm Teddy. Glad to meet you."</span><span class="p">),</span>
+            <span class="n">AIMessage</span><span class="p">(</span>
+                <span class="n">content</span><span class="o">=</span><span class="s">"Hello Teddy! I'm glad to meet you too. How can I assist you today?"</span>
+            <span class="p">),</span>
+        <span class="p">],</span>
+        <span class="s">"input"</span><span class="p">:</span> <span class="s">"What's my name?"</span><span class="p">,</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">'답변: </span><span class="si">{</span><span class="n">response</span><span class="p">[</span><span class="s">"output"</span><span class="p">]</span><span class="si">}</span><span class="s">'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<pre>
+
+
+[1m&gt; Entering new AgentExecutor chain...[0m
+[32;1m[1;3mYour name is Teddy. How can I help you today, Teddy?[0m
+
+[1m&gt; Finished chain.[0m
+답변: Your name is Teddy. How can I help you today, Teddy?
+</pre>
+<p>만약 이 메시지들을 자동으로 추적하고 싶다면, 이를 RunnableWithMessageHistory로 감싸면 됩니다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">langchain_community.chat_message_histories</span> <span class="kn">import</span> <span class="n">ChatMessageHistory</span>
+<span class="kn">from</span> <span class="nn">langchain_core.runnables.history</span> <span class="kn">import</span> <span class="n">RunnableWithMessageHistory</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">ChatMessageHistory</code> 클래스의 인스턴스를 생성하여 <code class="language-plaintext highlighter-rouge">message_history</code> 변수에 할당합니다. 이 인스턴스는 채팅 메시지의 기록을 관리하는 데 사용됩니다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 채팅 메시지 기록을 관리하는 객체를 생성합니다.
+</span><span class="n">message_history</span> <span class="o">=</span> <span class="n">ChatMessageHistory</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">RunnableWithMessageHistory</code> 클래스는 에이전트 실행자(<code class="language-plaintext highlighter-rouge">agent_executor</code>)와 메시지 기록을 관리합니다. 이 클래스는 세션 ID를 기반으로 메시지 기록을 처리하는 람다 함수와, 입력 메시지 및 채팅 기록의 키를 인자로 받습니다.</p>
+
+<p>여기서 세션 ID는 실제로 사용되지 않으며, 단순한 메모리 내 <code class="language-plaintext highlighter-rouge">ChatMessageHistory</code>를 사용하는 예시입니다.</p>
+
+<p>기본적으로 실행 가능 항목은 문자열인 <code class="language-plaintext highlighter-rouge">session_id</code>라는 단일 구성 매개변수를 받습니다.</p>
+
+<p>이 매개변수는 주어진 session_id와 일치하는 새 채팅 메시지 기록을 만들거나 기존 채팅 메시지 기록을 조회하는 데 사용됩니다.</p>
+
+<p>이 경우 호출은 다음과 같습니다.</p>
+
+<p><code class="language-plaintext highlighter-rouge">with_history.invoke(..., config={"configurable": {"session_id": "bar"}})</code>;</p>
+
+<p>예: <code class="language-plaintext highlighter-rouge">{"configurable": {"session_id": "&lt;세션_id&gt;"}}</code>.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">agent_with_chat_history</span> <span class="o">=</span> <span class="n">RunnableWithMessageHistory</span><span class="p">(</span>
+    <span class="n">agent_executor</span><span class="p">,</span>
+    <span class="c1"># 대부분의 실제 시나리오에서 세션 ID가 필요하기 때문에 이것이 필요합니다
+</span>    <span class="c1"># 여기서는 간단한 메모리 내 ChatMessageHistory를 사용하기 때문에 실제로 사용되지 않습니다
+</span>    <span class="k">lambda</span> <span class="n">session_id</span><span class="p">:</span> <span class="n">message_history</span><span class="p">,</span>
+    <span class="c1"># 프롬프트의 질문이 입력되는 key: "input"
+</span>    <span class="n">input_messages_key</span><span class="o">=</span><span class="s">"input"</span><span class="p">,</span>
+    <span class="c1"># 프롬프트의 메시지가 입력되는 key: "chat_history"
+</span>    <span class="n">history_messages_key</span><span class="o">=</span><span class="s">"chat_history"</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">agent_with_chat_history.invoke</code> 함수는 사용자 입력과 설정을 인자로 받아 처리합니다. 이 예제에서는 사용자의 입력(<code class="language-plaintext highlighter-rouge">"hi! I'm bob"</code>)과 설정(<code class="language-plaintext highlighter-rouge">config</code>)을 전달합니다. 설정에는 <code class="language-plaintext highlighter-rouge">session_id</code>가 포함되어 있으나, 이는 간단한 메모리 내 <code class="language-plaintext highlighter-rouge">ChatMessageHistory</code>를 사용하는 예제이므로 실제로는 사용되지 않습니다. 이 코드는 대부분의 실제 상황에서 세션 ID가 필요함을 보여주지만, 특정 구현에서는 그렇지 않을 수 있음을 보여줍니다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">response</span> <span class="o">=</span> <span class="n">agent_with_chat_history</span><span class="p">.</span><span class="n">invoke</span><span class="p">(</span>
+    <span class="p">{</span><span class="s">"input"</span><span class="p">:</span> <span class="s">"Hi! I'm Teddy. Glad to meet you."</span><span class="p">},</span>
+    <span class="c1"># 세션 ID를 설정합니다.
+</span>    <span class="c1"># 여기서는 간단한 메모리 내 ChatMessageHistory를 사용하기 때문에 실제로 사용되지 않습니다
+</span>    <span class="n">config</span><span class="o">=</span><span class="p">{</span><span class="s">"configurable"</span><span class="p">:</span> <span class="p">{</span><span class="s">"session_id"</span><span class="p">:</span> <span class="s">"MyTestSessionID"</span><span class="p">}},</span>
+<span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"답변: </span><span class="si">{</span><span class="n">response</span><span class="p">[</span><span class="s">'output'</span><span class="p">]</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<pre>
+
+
+[1m&gt; Entering new AgentExecutor chain...[0m
+[32;1m[1;3mHi Teddy! It's great to meet you too. How can I assist you today?[0m
+
+[1m&gt; Finished chain.[0m
+답변: Hi Teddy! It's great to meet you too. How can I assist you today?
+</pre>
+<p>이 함수 호출은 <code class="language-plaintext highlighter-rouge">agent_with_chat_history</code> 객체를 사용하여 입력된 질문에 대한 응답을 생성합니다. 입력은 <code class="language-plaintext highlighter-rouge">input</code> 키를 통해 제공되며, 여기서는 “what’s my name?”이 사용됩니다. 또한, <code class="language-plaintext highlighter-rouge">config</code> 매개변수를 통해 추가 설정을 제공할 수 있으며, 이 예제에서는 <code class="language-plaintext highlighter-rouge">session_id</code>를 <code class="language-plaintext highlighter-rouge">&lt;foo&gt;</code>로 설정합니다. 이는 대부분의 실제 시나리오에서 세션 ID가 필요하지만, 이 경우 간단한 메모리 내 <code class="language-plaintext highlighter-rouge">ChatMessageHistory</code>를 사용하기 때문에 실제로는 사용되지 않음을 나타냅니다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">response</span> <span class="o">=</span> <span class="n">agent_with_chat_history</span><span class="p">.</span><span class="n">invoke</span><span class="p">(</span>
+    <span class="p">{</span><span class="s">"input"</span><span class="p">:</span> <span class="s">"What's my name?"</span><span class="p">},</span>
+    <span class="c1"># 세션 ID를 설정합니다.
+</span>    <span class="c1"># 여기서는 간단한 메모리 내 ChatMessageHistory를 사용하기 때문에 실제로 사용되지 않습니다
+</span>    <span class="n">config</span><span class="o">=</span><span class="p">{</span><span class="s">"configurable"</span><span class="p">:</span> <span class="p">{</span><span class="s">"session_id"</span><span class="p">:</span> <span class="s">"MyTestSessionID"</span><span class="p">}},</span>
+<span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"답변: </span><span class="si">{</span><span class="n">response</span><span class="p">[</span><span class="s">'output'</span><span class="p">]</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<pre>
+
+
+[1m&gt; Entering new AgentExecutor chain...[0m
+[32;1m[1;3mYour name is Teddy. How can I help you today, Teddy?[0m
+
+[1m&gt; Finished chain.[0m
+답변: Your name is Teddy. How can I help you today, Teddy?
+</pre>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">response</span> <span class="o">=</span> <span class="n">agent_with_chat_history</span><span class="p">.</span><span class="n">invoke</span><span class="p">(</span>
+    <span class="p">{</span><span class="s">"input"</span><span class="p">:</span> <span class="s">"판교 카카오 프렌즈샵 아지트점의 전화번호를 검색하여 결과를 알려주세요."</span><span class="p">},</span>
+    <span class="c1"># 세션 ID를 설정합니다.
+</span>    <span class="c1"># 여기서는 간단한 메모리 내 ChatMessageHistory를 사용하기 때문에 실제로 사용되지 않습니다
+</span>    <span class="n">config</span><span class="o">=</span><span class="p">{</span><span class="s">"configurable"</span><span class="p">:</span> <span class="p">{</span><span class="s">"session_id"</span><span class="p">:</span> <span class="s">"MyTestSessionID"</span><span class="p">}},</span>
+<span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"답변: </span><span class="si">{</span><span class="n">response</span><span class="p">[</span><span class="s">'output'</span><span class="p">]</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<pre>
+
+
+[1m&gt; Entering new AgentExecutor chain...[0m
+[32;1m[1;3m
+Invoking: `tavily_search_results_json` with `{'query': '판교 카카오 프렌즈샵 아지트점 전화번호'}`
+
+
+[0m[36;1m[1;3m[{'url': 'https://m.blog.naver.com/hj961030/222923648353', 'content': '블로그 카테고리 이동 ♥n2u1_늘이의 여행일기♥ 카카오프렌즈 판교 아지트점 판교의 카카오프렌즈를 소개합니다. 2022. 11. 8. 21:39 카카오프렌즈 판교 아지트점 문구, 펜시 \u200b  \u200b 카카오프렌즈 판교 아지트점은 2022년 11월 07일 바로 어제 오픈을 한 따끈따근한 곳이랍니다!!! 입구에 발을 들이자마자 보이는 건 아주 아주 커다란 춘식이에요~!!  \u200b 모두 모두 카카오프렌즈 판교 아지트점에서 만나요-! 경기도 성남시 분당구 판교역로 166 \u200b ♥n2u1_늘이의 여행일기♥ 이 블로그 경기도 카테고리 글 카테고리 이 블로그 경기도 카테고리 글  아참-! 판교 아지트점에서 숨은 라이언 찾기 이벤트도 진행하고 있으니 참여하면 좋겠죠?!! 그럼 오늘은 여기까지 소개를 드리도록 하겠습니다! 직접 보면 더 예쁜 카카오프렌즈 판교 아지트점 \u200b2022. 11. 8. 21:39 이웃추가 존재하지 않는 이미지입니다. 카카오프렌즈 판교 아지트점 문구, 펜시 주소 : 경기 성남시 분당구 판교역로 166 1층 시간 : 월 - 금 10:00 - 21:00 / 토 - 일 12:00 - 20:00 주차장 : 지하 주차장이 있어요! 카카오아지트는 회차 20분 무료, 기본 30분에 1,000원 입니다! 판교역 4번출구에서 걸어서 1분 거리에 위치해요! 카카오프렌즈 판교 아지트점을 방문해야하는 이유-! 01. 어제 오픈한 따끈한 신상 매장이에요! 02. 가격에 상관없이 구매만 하면 춘식이 얼굴 풍선을 받을 수 있어요! (11월 7일 부터 소진시까지)'}, {'url': 'https://blog.naver.com/PostView.naver?blogId=mmno&amp;logNo=223315998458', 'content': '\u200b \u200b 경기도 가볼 만한 곳 카카오 프렌즈 판교 아지트  검색 블로그 경기도 가볼 만한 곳 카카오 프렌즈 판교 아지트점 방문기 \u200b 경기도 가볼 만한 곳 판교 카카오 빌딩 투어 카카오 아지트 위치 주소 : 경기도 성남시 판교역로 166 \u200b  \u200b \u200b 경기도 성남시 분당구 판교역로 166 카카오판교아지트 1층 카카오프렌즈 저녁 먹어주고 맥주 한잔 마실때 배안부르게 자꾸만 손이가는 먹태 고소한 마요네즈 청양고추 간장 소스랑 ... blog.naver.com  드디어 도착한 카카오 프렌즈 판교 아지트. 입구부터 캐릭터가 우릴 반겨 주더군요. 안쪽으로 들어가면 캐릭터 문구 용품 리빙 용품 옷도 보이고요 잘못도 보이더군요 정말 볼거리 가득하고 살 거리 그득한 쇼핑경기도 가볼 만한 곳 판교 카카오 본사 빌딩 투어 카카오 본사 위치 주소 : 경기도 성남시 판교역로 160 안...'}, {'url': 'https://blog.naver.com/PostView.naver?blogId=0_0hy&amp;logNo=222982732699', 'content': '\u200b \u200b \u200b \u200b 카카오프렌즈 판교아지트점 경기 성남시 분당구 판교역로 166 카카오판교아지트 1층 카카오프렌즈 평일 10:00 - 21:00, 토일 12:00 - 20:00 031-601-7225  031-601-7225 판교 카카오 본사 건물 1층에 있음 ! 오빠랑 항상 주차 편한곳만 돌아다니는데 주차 왕편했다bb \u200b \u200b 무드등 졸귀탱이잖아 ? \u200b  \u200b \u200b \u200b \u200b 지도첨부 경기도 성남시 분당구 판교역로 166 카카오판교아지트 1층 카카오프렌즈 물건 구매시, 주차 1시간 무료 ! 판교역 4번출구에서 가까우니 대중교통도 좋을듯 하다  하블리의 그림일기 blog 판교 카카오프렌즈 판교아지트점 방문후기 감자 추천으로 다녀온 카카오프렌즈 판교아지트점 요새 일만 하느라 어디 다니질 못하니까 포스팅 업로드 할 내용이 없다 (눈물..) \u200b \u200b \u200b \u200b카카오프렌즈 판교아지트점 경기 성남시 분당구 판교역로 166 카카오판교아지트 1층 카카오프렌즈 평일 10:00 - 21:00, 토일 12:00 - 20:00 031-601-7225 존재하지 않는 이미지입니다. 판교 카카오 본사 건물 1층에 있음 ! 오빠랑 항상 주차 편한곳만 돌아다니는데 주차 왕편했다bb 존재하지 않는 이미지입니다. 무드등 졸귀탱이잖아 ? 존재하지 않는 이미지입니다. 에어프라이기 너무 작아서 실용성 없어보였지만 (막말) 라이언 와플기계는 갖고 싶단 말이지 존재하지 않는 이미지입니다. 존재하지 않는 이미지입니다. 에어팟 꽂은 라이언ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ 존재하지 않는 이미지입니다.'}, {'url': 'https://m.blog.naver.com/celina_827/222924602339', 'content': '판교에 드디어 카카오 프렌즈샵이 카카오 본사 아지트 건물 1층에 오픈 했어요!! \u200b 들어가는 입구는 많지만 지금 설명하는 방향은.... 흐음.... 4번출구에서부터 시작 입니다 ㅎㅎ  사원증한 프렌즈들 너무 귀엽다!!! 너무 귀여운 카카오 속 세상이예요ㅠㅠ \u200b 경기도 성남시 분당구 판교역로 166 💬카카오프렌즈샵 아지트점은 판교역 1번 출구, 4번 출구를 이용하셔도 되고,  블로그 카테고리 이동 셀리나의 DAILY EPISODE [판교] 카카오(본사) 아지트에도 사내 카카오 프렌즈샵이 오픈 완료 2022. 11. 9. 22:16 판교에 드디어 카카오 프렌즈샵이  카카오프렌즈 문구세트도 증정하고, 선착순이겠지만 춘식이 풍선도 준다고 해요◡̈ 판교에 프렌즈샵 방문했다는걸 인증하는듯 다들 퇴근길에 춘식이 하나씩 들고 가시더라구요ㅎㅎㅎ 그 모습들도 귀여움 ㅠㅠ \u200b9. 22:16 이웃추가 위치 카카오프렌즈 판교아지트점 판교에 드디어 카카오 프렌즈샵이 카카오 본사 아지트 건물 1층에 오픈 했어요!! 들어가는 입구는 많지만 지금 설명하는 방향은.... 흐음.... 4번출구에서부터 시작 입니다 ㅎㅎ 존재하지 않는 이미지입니다. 저 완전 친절했죠? ٩ (•̤̀ᵕ•̤́๑)ᵍᵒᵒᵈᵎᵎ 존재하지 않는 이미지입니다. 존재하지 않는 이미지입니다. 아지트 건물로 들어가면 저 귀여운 춘식이가 길을 안내해 줍니다 ̈ 존재하지 않는 이미지입니다. 새로 생긴듯한 카카오 쇼핑 라이브 스튜디오?를 지나면 존재하지 않는 이미지입니다. 카카오 프렌즈샵이 나옵니다!! 들어가자마자 나오는 대왕 춘식이!!!! 뚜둥'}, {'url': 'https://m.blog.naver.com/chjw930928/223188524886', 'content': '블로그 카테고리 이동 아무거나 카카오프렌즈 판교 아지트점, 너무 귀여워 춘식이굿즈 기절 2023. 8. 20. 16:00 안녕하세요 오늘은 판교역 바로 앞에 있는 카카오 판교아지트,  그 안에 있는 카카오프렌즈 스토어를 다녀왔어요! 아지트 건물에 이렇게 이어져 있어요 1층부터 푸릇푸릇.. 춘식이 하이 흑 넘 귀엽.. 미쳐.. 속도가 이제 감당이 안되는 29개월 아가 데리고 가보겠습니다 \u200b  근데 전 사실 튜브가 제일 좋아요(?) \u200b 경기도 성남시 분당구 판교역로 166 카카오판교아지트 1층 카카오프렌즈 #카카오프렌즈 #춘식이 #카카오프렌즈스토어 #카카오프렌즈아지트 #카카오프렌즈판교아지트  \u200b 여름방학이 끝나기 전에 아이랑 가는 곳으로 추천해요 쾌적하고 (실내라서 안더움..굿..) 꽤 커서 시간도 훌훌 잘갑니다 껄껄 카카오프렌즈 판교아지트점 오늘 주말에 다녀왔더니, 사람이 꽤나 있었어요. \u200b안녕하세요 오늘은 판교역 바로 앞에 있는 카카오 판교아지트, 그 안에 있는 카카오프렌즈 스토어를 다녀왔어요! 존재하지 않는 이미지입니다. 아지트 건물에 이렇게 이어져 있어요 1층부터 푸릇푸릇.. 존재하지 않는 이미지입니다. 춘식이 하이 흑 넘 귀엽.. 미쳐.. 존재하지 않는 이미지입니다. 속도가 이제 감당이 안되는 29개월 아가 데리고 가보겠습니다 여름방학이 끝나기 전에 아이랑 가는 곳으로 추천해요 쾌적하고 (실내라서 안더움..굿..) 꽤 커서 시간도 훌훌 잘갑니다 껄껄 카카오프렌즈 판교아지트점 존재하지 않는 이미지입니다. 존재하지 않는 이미지입니다. 오늘 주말에 다녀왔더니, 사람이 꽤나 있었어요.'}][0m[32;1m[1;3m판교 카카오 프렌즈샵 아지트점의 전화번호는 **031-601-7225**입니다. 위치는 경기도 성남시 분당구 판교역로 166, 카카오판교아지트 1층에 있습니다. 운영 시간은 평일 10:00 - 21:00, 토일 12:00 - 20:00입니다. 방문하시기 전에 운영 시간이나 기타 사항을 확인하시려면 전화로 문의하시는 것이 좋습니다.[0m
+
+[1m&gt; Finished chain.[0m
+답변: 판교 카카오 프렌즈샵 아지트점의 전화번호는 **031-601-7225**입니다. 위치는 경기도 성남시 분당구 판교역로 166, 카카오판교아지트 1층에 있습니다. 운영 시간은 평일 10:00 - 21:00, 토일 12:00 - 20:00입니다. 방문하시기 전에 운영 시간이나 기타 사항을 확인하시려면 전화로 문의하시는 것이 좋습니다.
+</pre>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">response</span> <span class="o">=</span> <span class="n">agent_with_chat_history</span><span class="p">.</span><span class="n">invoke</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="s">"input"</span><span class="p">:</span> <span class="s">"YouTube 2024년부터 AI 생성콘텐츠 표시 의무화에 대한 내용을 PDF 문서에서 알려줘"</span>
+    <span class="p">},</span>
+    <span class="c1"># 세션 ID를 설정합니다.
+</span>    <span class="c1"># 여기서는 간단한 메모리 내 ChatMessageHistory를 사용하기 때문에 실제로 사용되지 않습니다
+</span>    <span class="n">config</span><span class="o">=</span><span class="p">{</span><span class="s">"configurable"</span><span class="p">:</span> <span class="p">{</span><span class="s">"session_id"</span><span class="p">:</span> <span class="s">"MyTestSessionID"</span><span class="p">}},</span>
+<span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"답변: </span><span class="si">{</span><span class="n">response</span><span class="p">[</span><span class="s">'output'</span><span class="p">]</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<pre>
+
+
+[1m&gt; Entering new AgentExecutor chain...[0m
+[32;1m[1;3m
+Invoking: `pdf_search` with `{'query': 'YouTube 2024년 AI 생성콘텐츠 표시 의무화'}`
+
+
+[0m[33;1m[1;3mSPRi AI Brief |  
+2023-12 월호
+14유튜브 , 2024년부터 AI 생성 콘텐츠 표시 의무화 
+n유튜브가 몇 달 안에 생성 AI를 사용한 콘텐츠에 AI 라벨 표시를 의무화하기로 했으며 , 이를 
+준수하지 않는 콘텐츠는 삭제하고 크리에이터에 대한 수익 배분도 중단할 수 있다고 설명
+n유튜브는 AI 생성 콘텐츠가 신원 파악이 가능한 개인을 모방한 경우 개인정보 침해 신고 
+절차에 따라 콘텐츠 삭제 요청도 받을 계획KEY Contents
+£유튜브 , 생성 AI 콘텐츠에 AI 라벨 표시 안 하면 콘텐츠 삭제
+n유튜브가 2023 년 11월 14일 공식 블로그를 통해 몇 달 안에 생성 AI를 사용한 콘텐츠에 AI 
+라벨을 표시하는 새로운 규칙을 시행한다고 발표 
+∙실제로 일어나지 않은 사건을 사실적으로 묘사하거나 실제로 하지 않은 말이나 행동을 보여주는 콘텐츠와 
+같이 AI 도구를 사용해 사실적으로 변경되거나 합성된 콘텐츠에는 AI 라벨을 표시 필요
+∙유튜브는 이러한 규칙이 선거나 분쟁 상황, 공중 보건, 공직자 관련 문제와 같이 민감한 주제를 다루는 
+콘텐츠에서 특히 중요하다고 강조했으며 , 크리에이터가 AI로 제작한 콘텐츠에 AI 라벨을 표시하지 않으면 
+해당 콘텐츠는 삭제되고 광고 수익을 배분하는 유튜브 파트너 프로그램도 정지될 수 있음
+∙유튜브는 두 가지 방식으로 AI를 이용한 콘텐츠의 변경이나 합성 여부를 시청자에게 전달할 계획으로 
+동영상 설명 패널에 라벨을 표시하는 방식이 기본이며 , 민감한 주제를 다루는 특정 유형의 콘텐츠는 동영상 
+플레이어에 더욱 눈에 띄는 라벨을 적용 
+∙유튜브는 커뮤니티 정책에 위반되는 일부 합성 콘텐츠에 대해서는 라벨 지정 여부와 관계없이 삭제할 
+방침으로 , 가령 사실적인 폭력을 보여주는 합성 동영상이 시청자에게 충격이나 혐오감을 줄 수 있다면 
+삭제될 수 있음
+£유튜브 , 특정인을 모방한 AI 생성 콘텐츠에 대한 삭제 요청에도 대응 계획
+
+삭제될 수 있음
+£유튜브 , 특정인을 모방한 AI 생성 콘텐츠에 대한 삭제 요청에도 대응 계획
+n유튜브는 몇 달 내에 신원 파악이 가능한 개인의 얼굴이나 음성을 모방한 AI 생성 콘텐츠에 대하
+여 개인정보 침해 신고 절차를 마련해 삭제 요청을 받을 계획  
+∙단, 모든 콘텐츠가 삭제 대상은 아니며 유튜브는 콘텐츠가 패러디나 풍자인지 , 해당 영상에서 삭제 요청을 
+한 특정인을 식별할 수 있는지 , 공직자나 유명인이 등장하는지 등 다양한 요소를 고려할 예정
+∙유튜브는 음반사가 아티스트의 고유한 노래나 목소리를 모방한 AI 생성 음악에 대하여 삭제를 요청할 수 
+있는 기능도 도입할 방침
+☞ 출처 : Youtube, Our approach to responsible AI innovation, 2023.11.14.
+
+▹ 구글, 앤스로픽에 20억 달러 투자로 생성 AI 협력 강화 ················································ 11
+   ▹ IDC, 2027 년 AI 소프트웨어 매출 2,500 억 달러 돌파 전망··········································· 12
+   ▹ 빌 게이츠 , AI 에이전트로 인한 컴퓨터 사용의 패러다임 변화 전망································ 13
+   ▹ 유튜브 , 2024 년부터 AI 생성 콘텐츠 표시 의무화 ···························································· 14
+ 3. 기술/연구
+   ▹ 영국 과학혁신기술부 , AI 안전 연구소 설립 발표······························································ 15
+   ▹ 구글 딥마인드 , 범용 AI 모델의 기능과 동작에 대한 분류 체계 발표······························ 16
+   ▹ 갈릴레오의 LLM 환각 지수 평가에서 GPT-4 가 가장 우수 ··········································· 17
+   
+ 4. 인력/교육     
+   ▹ 영국 옥스퍼드 인터넷 연구소 , AI 기술자의 임금이 평균 21% 높아······························· 18
+   
+   
+ 
+Ⅱ. 주요 행사
+   ▹CES 2024 ····························································································································· 19
+
+SPRi AI Brief |  
+2023-12 월호
+4미국 법원, 예술가들이 생성 AI 기업에 제기한 저작권 소송 기각
+n미국 캘리포니아 북부지방법원은 미드저니 , 스태빌리티 AI, 디비언트아트를 대상으로 예술가 
+3인이 제기한 저작권 침해 소송을 기각
+n법원은 기각 이유로 고소장에 제시된 상당수 작품이 저작권청에 등록되지 않았으며 , AI로 
+생성된 이미지와 특정 작품 간 유사성을 입증하기 어렵다는 점을 제시 KEY Contents
+£예술가들의 AI 저작권 침해 소송, 저작권 미등록과 증거불충분으로 기각
+n미국 캘리포니아 북부지방법원의 윌리엄 오릭(W illiam Orrick) 판사는 2023년 10월 30일 미드저니
+(M idjourney),  스태빌리티 AI(Stability AI), 디비언트아트 (DeviantArt) 에 제기된 저작권 침해 소송을 기각 
+∙2023 년 1월 예술가 사라 앤더슨 (Sarah Anderson), 캘리 맥커넌 (Kelly McKernan), 칼라 
+오르티즈 (Karla Ortiz) 는 이미지 생성 AI 서비스를 개발한 3개 기업을 상대로 저작권 침해 소송을 제기
+∙예술가들은 3개 기업이 AI 모델을 학습시키기 위해 원작자 동의 없이 작품을 학습 데이터셋에 
+포함하여 저작권을 침해했다고 주장했으며 , 법원은 지난 4월 피소 기업들이 제출한 기각 신청을 
+수용해 소송을 기각 
+n오릭 판사는 판결문에서 소송을 기각한 핵심 이유로 예술가들의 저작권 미등록을 제시
+∙판결문은 소송을 제기한 캘리 맥커넌과 칼라 오르티즈가 미국 저작권청에 예술 작품에 대한 저작권을 
+제출하지 않았다는 점을 지적했으며 , 사라 앤더슨은 고소장에 인용된 수백 개의 작품 중 16개 작품에 
+대해서만 저작권을 보유
+n판결문은 또한 생성 AI 모델 훈련에 사용된 모든 이미지에 저작권이 있다거나 , 생성 AI로 만든 
+이미지가 저작물을 이용해 훈련되었으므로 저작물의 파생 이미지라는 주장은 개연성이  부족하다고  
+지적[0m[32;1m[1;3m유튜브는 2024년부터 생성 AI를 사용한 콘텐츠에 AI 라벨 표시를 의무화하기로 결정했습니다. 이 규칙을 준수하지 않는 콘텐츠는 삭제될 수 있으며, 크리에이터에 대한 수익 배분도 중단될 수 있습니다. 유튜브는 AI 생성 콘텐츠가 신원 파악이 가능한 개인을 모방한 경우, 개인정보 침해 신고 절차에 따라 콘텐츠 삭제 요청을 받을 계획입니다.
+
+유튜브는 2023년 11월 14일 공식 블로그를 통해 이러한 새로운 규칙을 발표했습니다. AI 도구를 사용해 사실적으로 변경되거나 합성된 콘텐츠, 예를 들어 실제로 일어나지 않은 사건을 사실적으로 묘사하거나 실제로 하지 않은 말이나 행동을 보여주는 콘텐츠에는 AI 라벨을 표시해야 합니다. 이 규칙은 선거나 분쟁 상황, 공중 보건, 공직자 관련 문제와 같이 민감한 주제를 다루는 콘텐츠에서 특히 중요하다고 강조되었습니다.
+
+유튜브는 두 가지 방식으로 AI를 이용한 콘텐츠의 변경이나 합성 여부를 시청자에게 전달할 계획입니다. 기본적으로 동영상 설명 패널에 라벨을 표시하며, 민감한 주제를 다루는 특정 유형의 콘텐츠는 동영상 플레이어에 더욱 눈에 띄는 라벨을 적용할 예정입니다. 커뮤니티 정책에 위반되는 일부 합성 콘텐츠는 라벨 지정 여부와 관계없이 삭제될 수 있습니다.
+
+또한, 유튜브는 몇 달 내에 신원 파악이 가능한 개인의 얼굴이나 음성을 모방한 AI 생성 콘텐츠에 대하여 개인정보 침해 신고 절차를 마련해 삭제 요청을 받을 계획입니다. 모든 콘텐츠가 삭제 대상은 아니며, 유튜브는 콘텐츠가 패러디나 풍자인지, 해당 영상에서 삭제 요청을 한 특정인을 식별할 수 있는지, 공직자나 유명인이 등장하는지 등 다양한 요소를 고려할 예정입니다.[0m
+
+[1m&gt; Finished chain.[0m
+답변: 유튜브는 2024년부터 생성 AI를 사용한 콘텐츠에 AI 라벨 표시를 의무화하기로 결정했습니다. 이 규칙을 준수하지 않는 콘텐츠는 삭제될 수 있으며, 크리에이터에 대한 수익 배분도 중단될 수 있습니다. 유튜브는 AI 생성 콘텐츠가 신원 파악이 가능한 개인을 모방한 경우, 개인정보 침해 신고 절차에 따라 콘텐츠 삭제 요청을 받을 계획입니다.
+
+유튜브는 2023년 11월 14일 공식 블로그를 통해 이러한 새로운 규칙을 발표했습니다. AI 도구를 사용해 사실적으로 변경되거나 합성된 콘텐츠, 예를 들어 실제로 일어나지 않은 사건을 사실적으로 묘사하거나 실제로 하지 않은 말이나 행동을 보여주는 콘텐츠에는 AI 라벨을 표시해야 합니다. 이 규칙은 선거나 분쟁 상황, 공중 보건, 공직자 관련 문제와 같이 민감한 주제를 다루는 콘텐츠에서 특히 중요하다고 강조되었습니다.
+
+유튜브는 두 가지 방식으로 AI를 이용한 콘텐츠의 변경이나 합성 여부를 시청자에게 전달할 계획입니다. 기본적으로 동영상 설명 패널에 라벨을 표시하며, 민감한 주제를 다루는 특정 유형의 콘텐츠는 동영상 플레이어에 더욱 눈에 띄는 라벨을 적용할 예정입니다. 커뮤니티 정책에 위반되는 일부 합성 콘텐츠는 라벨 지정 여부와 관계없이 삭제될 수 있습니다.
+
+또한, 유튜브는 몇 달 내에 신원 파악이 가능한 개인의 얼굴이나 음성을 모방한 AI 생성 콘텐츠에 대하여 개인정보 침해 신고 절차를 마련해 삭제 요청을 받을 계획입니다. 모든 콘텐츠가 삭제 대상은 아니며, 유튜브는 콘텐츠가 패러디나 풍자인지, 해당 영상에서 삭제 요청을 한 특정인을 식별할 수 있는지, 공직자나 유명인이 등장하는지 등 다양한 요소를 고려할 예정입니다.
+</pre>
+
+<h2 id="-전체-템플릿-코드">📍 전체 템플릿 코드</h2>
+
+<blockquote>
+  <p>다음의 추적 링크에서 자세한 단계별 수행 결과를 확인할 수 있습니다</p>
+</blockquote>
+
+<p><a href="https://smith.langchain.com/public/39d5cc05-e9c2-4d9e-8326-25f47136715d/r">LangSmith 추적</a></p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 필요한 모듈 import
+</span><span class="kn">from</span> <span class="nn">langchain_community.tools.tavily_search</span> <span class="kn">import</span> <span class="n">TavilySearchResults</span>
+<span class="kn">from</span> <span class="nn">langchain.text_splitter</span> <span class="kn">import</span> <span class="n">RecursiveCharacterTextSplitter</span>
+<span class="kn">from</span> <span class="nn">langchain_community.vectorstores</span> <span class="kn">import</span> <span class="n">FAISS</span>
+<span class="kn">from</span> <span class="nn">langchain_openai</span> <span class="kn">import</span> <span class="n">OpenAIEmbeddings</span>
+<span class="kn">from</span> <span class="nn">langchain.document_loaders</span> <span class="kn">import</span> <span class="n">PyPDFLoader</span>
+<span class="kn">from</span> <span class="nn">langchain.tools.retriever</span> <span class="kn">import</span> <span class="n">create_retriever_tool</span>
+<span class="kn">from</span> <span class="nn">langchain_openai</span> <span class="kn">import</span> <span class="n">ChatOpenAI</span>
+<span class="kn">from</span> <span class="nn">langchain</span> <span class="kn">import</span> <span class="n">hub</span>
+<span class="kn">from</span> <span class="nn">langchain.agents</span> <span class="kn">import</span> <span class="n">create_openai_functions_agent</span><span class="p">,</span> <span class="n">AgentExecutor</span>
+<span class="kn">from</span> <span class="nn">langchain_community.chat_message_histories</span> <span class="kn">import</span> <span class="n">ChatMessageHistory</span>
+<span class="kn">from</span> <span class="nn">langchain_core.runnables.history</span> <span class="kn">import</span> <span class="n">RunnableWithMessageHistory</span>
+
+<span class="c1">########## 1. 도구를 정의합니다 ##########
+</span>
+<span class="c1">### 1-1. Search 도구 ###
+# TavilySearchResults 클래스의 인스턴스를 생성합니다
+# k=5은 검색 결과를 5개까지 가져오겠다는 의미입니다
+</span><span class="n">search</span> <span class="o">=</span> <span class="n">TavilySearchResults</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="c1">### 1-2. PDF 문서 검색 도구 (Retriever) ###
+# PDF 파일 로드. 파일의 경로 입력
+</span><span class="n">loader</span> <span class="o">=</span> <span class="n">PyPDFLoader</span><span class="p">(</span><span class="s">"data/SPRI_AI_Brief_2023년12월호_F.pdf"</span><span class="p">)</span>
+
+<span class="c1"># 텍스트 분할기를 사용하여 문서를 분할합니다.
+</span><span class="n">text_splitter</span> <span class="o">=</span> <span class="n">RecursiveCharacterTextSplitter</span><span class="p">(</span><span class="n">chunk_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">chunk_overlap</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+
+<span class="c1"># 문서를 로드하고 분할합니다.
+</span><span class="n">split_docs</span> <span class="o">=</span> <span class="n">loader</span><span class="p">.</span><span class="n">load_and_split</span><span class="p">(</span><span class="n">text_splitter</span><span class="p">)</span>
+
+<span class="c1"># VectorStore를 생성합니다.
+</span><span class="n">vector</span> <span class="o">=</span> <span class="n">FAISS</span><span class="p">.</span><span class="n">from_documents</span><span class="p">(</span><span class="n">split_docs</span><span class="p">,</span> <span class="n">OpenAIEmbeddings</span><span class="p">())</span>
+
+<span class="c1"># Retriever를 생성합니다.
+</span><span class="n">retriever</span> <span class="o">=</span> <span class="n">vector</span><span class="p">.</span><span class="n">as_retriever</span><span class="p">()</span>
+
+<span class="c1"># langchain 패키지의 tools 모듈에서 retriever 도구를 생성
+</span><span class="n">retriever_tool</span> <span class="o">=</span> <span class="n">create_retriever_tool</span><span class="p">(</span>
+    <span class="n">retriever</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s">"pdf_search"</span><span class="p">,</span>
+    <span class="c1"># 도구에 대한 설명을 자세히 기입해야 합니다!!!
+</span>    <span class="n">description</span><span class="o">=</span><span class="s">"2023년 12월 AI 관련 정보를 PDF 문서에서 검색합니다. '2023년 12월 AI 산업동향' 과 관련된 질문은 이 도구를 사용해야 합니다!"</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1">### 1-3. tools 리스트에 도구 목록을 추가합니다 ###
+# tools 리스트에 search와 retriever_tool을 추가합니다.
+</span><span class="n">tools</span> <span class="o">=</span> <span class="p">[</span><span class="n">search</span><span class="p">,</span> <span class="n">retriever_tool</span><span class="p">]</span>
+
+<span class="c1">########## 2. LLM 을 정의합니다 ##########
+# LLM 모델을 생성합니다.
+</span><span class="n">llm</span> <span class="o">=</span> <span class="n">ChatOpenAI</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s">"gpt-4-turbo-preview"</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1">########## 3. Prompt 를 정의합니다 ##########
+</span>
+<span class="c1"># hub에서 prompt를 가져옵니다 - 이 부분을 수정할 수 있습니다!
+</span><span class="n">prompt</span> <span class="o">=</span> <span class="n">hub</span><span class="p">.</span><span class="n">pull</span><span class="p">(</span><span class="s">"hwchase17/openai-functions-agent"</span><span class="p">)</span>
+
+<span class="c1">########## 4. Agent 를 정의합니다 ##########
+</span>
+<span class="c1"># OpenAI 함수 기반 에이전트를 생성합니다.
+# llm, tools, prompt를 인자로 사용합니다.
+</span><span class="n">agent</span> <span class="o">=</span> <span class="n">create_openai_functions_agent</span><span class="p">(</span><span class="n">llm</span><span class="p">,</span> <span class="n">tools</span><span class="p">,</span> <span class="n">prompt</span><span class="p">)</span>
+
+<span class="c1">########## 5. AgentExecutor 를 정의합니다 ##########
+</span>
+<span class="c1"># AgentExecutor 클래스를 사용하여 agent와 tools를 설정하고, 상세한 로그를 출력하도록 verbose를 True로 설정합니다.
+</span><span class="n">agent_executor</span> <span class="o">=</span> <span class="n">AgentExecutor</span><span class="p">(</span><span class="n">agent</span><span class="o">=</span><span class="n">agent</span><span class="p">,</span> <span class="n">tools</span><span class="o">=</span><span class="n">tools</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="c1">########## 6. 채팅 기록을 수행하는 메모리를 추가합니다. ##########
+</span>
+<span class="c1"># 채팅 메시지 기록을 관리하는 객체를 생성합니다.
+</span><span class="n">message_history</span> <span class="o">=</span> <span class="n">ChatMessageHistory</span><span class="p">()</span>
+
+<span class="c1"># 채팅 메시지 기록이 추가된 에이전트를 생성합니다.
+</span><span class="n">agent_with_chat_history</span> <span class="o">=</span> <span class="n">RunnableWithMessageHistory</span><span class="p">(</span>
+    <span class="n">agent_executor</span><span class="p">,</span>
+    <span class="c1"># 대부분의 실제 시나리오에서 세션 ID가 필요하기 때문에 이것이 필요합니다
+</span>    <span class="c1"># 여기서는 간단한 메모리 내 ChatMessageHistory를 사용하기 때문에 실제로 사용되지 않습니다
+</span>    <span class="k">lambda</span> <span class="n">session_id</span><span class="p">:</span> <span class="n">message_history</span><span class="p">,</span>
+    <span class="c1"># 프롬프트의 질문이 입력되는 key: "input"
+</span>    <span class="n">input_messages_key</span><span class="o">=</span><span class="s">"input"</span><span class="p">,</span>
+    <span class="c1"># 프롬프트의 메시지가 입력되는 key: "chat_history"
+</span>    <span class="n">history_messages_key</span><span class="o">=</span><span class="s">"chat_history"</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1">########## 7. 질의-응답 테스트를 수행합니다. ##########
+</span>
+<span class="c1"># 질의에 대한 답변을 출력합니다.
+</span><span class="n">response</span> <span class="o">=</span> <span class="n">agent_with_chat_history</span><span class="p">.</span><span class="n">invoke</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="s">"input"</span><span class="p">:</span> <span class="s">"YouTube 2024년부터 AI 생성콘텐츠 표시 의무화에 대한 내용을 PDF 문서에서 알려줘"</span>
+    <span class="p">},</span>
+    <span class="c1"># 세션 ID를 설정합니다.
+</span>    <span class="c1"># 여기서는 간단한 메모리 내 ChatMessageHistory를 사용하기 때문에 실제로 사용되지 않습니다
+</span>    <span class="n">config</span><span class="o">=</span><span class="p">{</span><span class="s">"configurable"</span><span class="p">:</span> <span class="p">{</span><span class="s">"session_id"</span><span class="p">:</span> <span class="s">"MyTestSessionID"</span><span class="p">}},</span>
+<span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"답변: </span><span class="si">{</span><span class="n">response</span><span class="p">[</span><span class="s">'output'</span><span class="p">]</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<pre>
+
+
+[1m&gt; Entering new AgentExecutor chain...[0m
+[32;1m[1;3m
+Invoking: `pdf_search` with `{'query': 'YouTube 2024년 AI 생성콘텐츠 표시 의무화'}`
+
+
+[0m[33;1m[1;3mSPRi AI Brief |  
+2023-12 월호
+14유튜브 , 2024년부터 AI 생성 콘텐츠 표시 의무화 
+n유튜브가 몇 달 안에 생성 AI를 사용한 콘텐츠에 AI 라벨 표시를 의무화하기로 했으며 , 이를 
+준수하지 않는 콘텐츠는 삭제하고 크리에이터에 대한 수익 배분도 중단할 수 있다고 설명
+n유튜브는 AI 생성 콘텐츠가 신원 파악이 가능한 개인을 모방한 경우 개인정보 침해 신고 
+절차에 따라 콘텐츠 삭제 요청도 받을 계획KEY Contents
+£유튜브 , 생성 AI 콘텐츠에 AI 라벨 표시 안 하면 콘텐츠 삭제
+n유튜브가 2023 년 11월 14일 공식 블로그를 통해 몇 달 안에 생성 AI를 사용한 콘텐츠에 AI 
+라벨을 표시하는 새로운 규칙을 시행한다고 발표 
+∙실제로 일어나지 않은 사건을 사실적으로 묘사하거나 실제로 하지 않은 말이나 행동을 보여주는 콘텐츠와 
+같이 AI 도구를 사용해 사실적으로 변경되거나 합성된 콘텐츠에는 AI 라벨을 표시 필요
+∙유튜브는 이러한 규칙이 선거나 분쟁 상황, 공중 보건, 공직자 관련 문제와 같이 민감한 주제를 다루는 
+콘텐츠에서 특히 중요하다고 강조했으며 , 크리에이터가 AI로 제작한 콘텐츠에 AI 라벨을 표시하지 않으면 
+해당 콘텐츠는 삭제되고 광고 수익을 배분하는 유튜브 파트너 프로그램도 정지될 수 있음
+∙유튜브는 두 가지 방식으로 AI를 이용한 콘텐츠의 변경이나 합성 여부를 시청자에게 전달할 계획으로 
+동영상 설명 패널에 라벨을 표시하는 방식이 기본이며 , 민감한 주제를 다루는 특정 유형의 콘텐츠는 동영상 
+플레이어에 더욱 눈에 띄는 라벨을 적용 
+∙유튜브는 커뮤니티 정책에 위반되는 일부 합성 콘텐츠에 대해서는 라벨 지정 여부와 관계없이 삭제할 
+방침으로 , 가령 사실적인 폭력을 보여주는 합성 동영상이 시청자에게 충격이나 혐오감을 줄 수 있다면 
+삭제될 수 있음
+£유튜브 , 특정인을 모방한 AI 생성 콘텐츠에 대한 삭제 요청에도 대응 계획
+
+삭제될 수 있음
+£유튜브 , 특정인을 모방한 AI 생성 콘텐츠에 대한 삭제 요청에도 대응 계획
+n유튜브는 몇 달 내에 신원 파악이 가능한 개인의 얼굴이나 음성을 모방한 AI 생성 콘텐츠에 대하
+여 개인정보 침해 신고 절차를 마련해 삭제 요청을 받을 계획  
+∙단, 모든 콘텐츠가 삭제 대상은 아니며 유튜브는 콘텐츠가 패러디나 풍자인지 , 해당 영상에서 삭제 요청을 
+한 특정인을 식별할 수 있는지 , 공직자나 유명인이 등장하는지 등 다양한 요소를 고려할 예정
+∙유튜브는 음반사가 아티스트의 고유한 노래나 목소리를 모방한 AI 생성 음악에 대하여 삭제를 요청할 수 
+있는 기능도 도입할 방침
+☞ 출처 : Youtube, Our approach to responsible AI innovation, 2023.11.14.
+
+▹ 구글, 앤스로픽에 20억 달러 투자로 생성 AI 협력 강화 ················································ 11
+   ▹ IDC, 2027 년 AI 소프트웨어 매출 2,500 억 달러 돌파 전망··········································· 12
+   ▹ 빌 게이츠 , AI 에이전트로 인한 컴퓨터 사용의 패러다임 변화 전망································ 13
+   ▹ 유튜브 , 2024 년부터 AI 생성 콘텐츠 표시 의무화 ···························································· 14
+ 3. 기술/연구
+   ▹ 영국 과학혁신기술부 , AI 안전 연구소 설립 발표······························································ 15
+   ▹ 구글 딥마인드 , 범용 AI 모델의 기능과 동작에 대한 분류 체계 발표······························ 16
+   ▹ 갈릴레오의 LLM 환각 지수 평가에서 GPT-4 가 가장 우수 ··········································· 17
+   
+ 4. 인력/교육     
+   ▹ 영국 옥스퍼드 인터넷 연구소 , AI 기술자의 임금이 평균 21% 높아······························· 18
+   
+   
+ 
+Ⅱ. 주요 행사
+   ▹CES 2024 ····························································································································· 19
+
+SPRi AI Brief |  
+2023-12 월호
+4미국 법원, 예술가들이 생성 AI 기업에 제기한 저작권 소송 기각
+n미국 캘리포니아 북부지방법원은 미드저니 , 스태빌리티 AI, 디비언트아트를 대상으로 예술가 
+3인이 제기한 저작권 침해 소송을 기각
+n법원은 기각 이유로 고소장에 제시된 상당수 작품이 저작권청에 등록되지 않았으며 , AI로 
+생성된 이미지와 특정 작품 간 유사성을 입증하기 어렵다는 점을 제시 KEY Contents
+£예술가들의 AI 저작권 침해 소송, 저작권 미등록과 증거불충분으로 기각
+n미국 캘리포니아 북부지방법원의 윌리엄 오릭(W illiam Orrick) 판사는 2023년 10월 30일 미드저니
+(M idjourney),  스태빌리티 AI(Stability AI), 디비언트아트 (DeviantArt) 에 제기된 저작권 침해 소송을 기각 
+∙2023 년 1월 예술가 사라 앤더슨 (Sarah Anderson), 캘리 맥커넌 (Kelly McKernan), 칼라 
+오르티즈 (Karla Ortiz) 는 이미지 생성 AI 서비스를 개발한 3개 기업을 상대로 저작권 침해 소송을 제기
+∙예술가들은 3개 기업이 AI 모델을 학습시키기 위해 원작자 동의 없이 작품을 학습 데이터셋에 
+포함하여 저작권을 침해했다고 주장했으며 , 법원은 지난 4월 피소 기업들이 제출한 기각 신청을 
+수용해 소송을 기각 
+n오릭 판사는 판결문에서 소송을 기각한 핵심 이유로 예술가들의 저작권 미등록을 제시
+∙판결문은 소송을 제기한 캘리 맥커넌과 칼라 오르티즈가 미국 저작권청에 예술 작품에 대한 저작권을 
+제출하지 않았다는 점을 지적했으며 , 사라 앤더슨은 고소장에 인용된 수백 개의 작품 중 16개 작품에 
+대해서만 저작권을 보유
+n판결문은 또한 생성 AI 모델 훈련에 사용된 모든 이미지에 저작권이 있다거나 , 생성 AI로 만든 
+이미지가 저작물을 이용해 훈련되었으므로 저작물의 파생 이미지라는 주장은 개연성이  부족하다고  
+지적[0m[32;1m[1;3m2024년부터 YouTube는 생성 AI를 사용한 콘텐츠에 AI 라벨 표시를 의무화할 예정입니다. 이 규칙을 준수하지 않는 콘텐츠는 삭제될 수 있으며, 크리에이터에 대한 수익 배분도 중단될 수 있습니다. YouTube는 AI 생성 콘텐츠가 신원 파악이 가능한 개인을 모방한 경우, 개인정보 침해 신고 절차에 따라 콘텐츠 삭제 요청을 받을 계획입니다.
+
+새로운 규칙에 따르면, 실제로 일어나지 않은 사건을 사실적으로 묘사하거나 실제로 하지 않은 말이나 행동을 보여주는 콘텐츠와 같이 AI 도구를 사용해 사실적으로 변경되거나 합성된 콘텐츠에는 AI 라벨을 표시해야 합니다. YouTube는 이러한 규칙이 선거나 분쟁 상황, 공중 보건, 공직자 관련 문제와 같이 민감한 주제를 다루는 콘텐츠에서 특히 중요하다고 강조했습니다.
+
+AI를 이용한 콘텐츠의 변경이나 합성 여부를 시청자에게 전달하기 위해 YouTube는 두 가지 방식을 계획하고 있습니다. 기본적으로 동영상 설명 패널에 라벨을 표시하며, 민감한 주제를 다루는 특정 유형의 콘텐츠는 동영상 플레이어에 더욱 눈에 띄는 라벨을 적용할 예정입니다. 커뮤니티 정책에 위반되는 일부 합성 콘텐츠는 라벨 지정 여부와 관계없이 삭제될 수 있습니다.
+
+또한, YouTube는 몇 달 내에 신원 파악이 가능한 개인의 얼굴이나 음성을 모방한 AI 생성 콘텐츠에 대하여 개인정보 침해 신고 절차를 마련해 삭제 요청을 받을 계획입니다. 모든 콘텐츠가 삭제 대상은 아니며, 콘텐츠가 패러디나 풍자인지, 해당 영상에서 삭제 요청을 한 특정인을 식별할 수 있는지, 공직자나 유명인이 등장하는지 등 다양한 요소를 고려할 예정입니다. YouTube는 음반사가 아티스트의 고유한 노래나 목소리를 모방한 AI 생성 음악에 대하여 삭제를 요청할 수 있는 기능도 도입할 방침입니다.[0m
+
+[1m&gt; Finished chain.[0m
+답변: 2024년부터 YouTube는 생성 AI를 사용한 콘텐츠에 AI 라벨 표시를 의무화할 예정입니다. 이 규칙을 준수하지 않는 콘텐츠는 삭제될 수 있으며, 크리에이터에 대한 수익 배분도 중단될 수 있습니다. YouTube는 AI 생성 콘텐츠가 신원 파악이 가능한 개인을 모방한 경우, 개인정보 침해 신고 절차에 따라 콘텐츠 삭제 요청을 받을 계획입니다.
+
+새로운 규칙에 따르면, 실제로 일어나지 않은 사건을 사실적으로 묘사하거나 실제로 하지 않은 말이나 행동을 보여주는 콘텐츠와 같이 AI 도구를 사용해 사실적으로 변경되거나 합성된 콘텐츠에는 AI 라벨을 표시해야 합니다. YouTube는 이러한 규칙이 선거나 분쟁 상황, 공중 보건, 공직자 관련 문제와 같이 민감한 주제를 다루는 콘텐츠에서 특히 중요하다고 강조했습니다.
+
+AI를 이용한 콘텐츠의 변경이나 합성 여부를 시청자에게 전달하기 위해 YouTube는 두 가지 방식을 계획하고 있습니다. 기본적으로 동영상 설명 패널에 라벨을 표시하며, 민감한 주제를 다루는 특정 유형의 콘텐츠는 동영상 플레이어에 더욱 눈에 띄는 라벨을 적용할 예정입니다. 커뮤니티 정책에 위반되는 일부 합성 콘텐츠는 라벨 지정 여부와 관계없이 삭제될 수 있습니다.
+
+또한, YouTube는 몇 달 내에 신원 파악이 가능한 개인의 얼굴이나 음성을 모방한 AI 생성 콘텐츠에 대하여 개인정보 침해 신고 절차를 마련해 삭제 요청을 받을 계획입니다. 모든 콘텐츠가 삭제 대상은 아니며, 콘텐츠가 패러디나 풍자인지, 해당 영상에서 삭제 요청을 한 특정인을 식별할 수 있는지, 공직자나 유명인이 등장하는지 등 다양한 요소를 고려할 예정입니다. YouTube는 음반사가 아티스트의 고유한 노래나 목소리를 모방한 AI 생성 음악에 대하여 삭제를 요청할 수 있는 기능도 도입할 방침입니다.
+</pre>
+<p>마무리입니다!</p>
+
+<p>이번 튜토리얼에서는 우리는 간단한 에이전트를 만드는 방법을 다뤘습니다.</p>
+
+<p>에이전트는 복잡한 주제이며 배울 것이 많습니다! 개념 가이드, 다양한 유형의 에이전트, 맞춤형 도구를 만드는 방법 등 더 많은 자료를 찾으려면 <a href="https://github.com/teddylee777/langchain-kr/tree/main/08-Agent">한국어 튜토리얼(Agent)</a> 를 참고해 주세요!</p>
+
+<h2 id="reference">Reference</h2>
+
+<p>본 튜토리얼은 LangChain 튜토리얼 노트북 파일을 참조하여 작성하였습니다.</p>
+
+<ul>
+  <li>본 문서의 원 저작권자는 <strong>langchain-ai</strong> 이며, 코드는 <code class="language-plaintext highlighter-rouge">MIT License</code> 에 따라 사용이 허가된 파일입니다.</li>
+  <li><a href="https://github.com/langchain-ai/">원문</a> 바로가기</li>
+</ul>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> 태그: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#agent" class="page__taxonomy-item p-category" rel="tag">Agent</a><span class="sep">, </span>
+    
+      <a href="/tags/#api-key" class="page__taxonomy-item p-category" rel="tag">API KEY</a><span class="sep">, </span>
+    
+      <a href="/tags/#faiss" class="page__taxonomy-item p-category" rel="tag">FAISS</a><span class="sep">, </span>
+    
+      <a href="/tags/#langchain" class="page__taxonomy-item p-category" rel="tag">LangChain</a><span class="sep">, </span>
+    
+      <a href="/tags/#langsmith" class="page__taxonomy-item p-category" rel="tag">LangSmith</a><span class="sep">, </span>
+    
+      <a href="/tags/#memory" class="page__taxonomy-item p-category" rel="tag">memory</a><span class="sep">, </span>
+    
+      <a href="/tags/#openai" class="page__taxonomy-item p-category" rel="tag">OpenAI</a><span class="sep">, </span>
+    
+      <a href="/tags/#python" class="page__taxonomy-item p-category" rel="tag">Python</a><span class="sep">, </span>
+    
+      <a href="/tags/#retriever" class="page__taxonomy-item p-category" rel="tag">Retriever</a><span class="sep">, </span>
+    
+      <a href="/tags/#tavily-search" class="page__taxonomy-item p-category" rel="tag">Tavily Search</a><span class="sep">, </span>
+    
+      <a href="/tags/#tools" class="page__taxonomy-item p-category" rel="tag">tools</a><span class="sep">, </span>
+    
+      <a href="/tags/#%EA%B2%80%EC%83%89%EB%8F%84%EA%B5%AC" class="page__taxonomy-item p-category" rel="tag">검색도구</a><span class="sep">, </span>
+    
+      <a href="/tags/#%EB%9E%AD%EC%B2%B4%EC%9D%B8" class="page__taxonomy-item p-category" rel="tag">랭체인</a><span class="sep">, </span>
+    
+      <a href="/tags/#%EC%97%90%EC%9D%B4%EC%A0%84%ED%8A%B8" class="page__taxonomy-item p-category" rel="tag">에이전트</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> 카테고리: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#langchain" class="page__taxonomy-item p-category" rel="tag">langchain</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> 업데이트:</strong> <time class="dt-published" datetime="2024-02-09T00:00:00+00:00">2024년 02월 09일</time></p>
+
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">공유하기</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=%5BLangChain%5D+%EC%97%90%EC%9D%B4%EC%A0%84%ED%8A%B8%28Agent%29%EC%99%80+%EB%8F%84%EA%B5%AC%28tools%29%EB%A5%BC+%ED%99%9C%EC%9A%A9%ED%95%9C+%EC%A7%80%EB%8A%A5%ED%98%95+%EA%B2%80%EC%83%89+%EC%8B%9C%EC%8A%A4%ED%85%9C+%EA%B5%AC%EC%B6%95+%EA%B0%80%EC%9D%B4%EB%93%9C%20https%3A%2F%2Fteddylee777.github.io%2Flangchain%2Flangchain-agent%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fteddylee777.github.io%2Flangchain%2Flangchain-agent%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fteddylee777.github.io%2Flangchain%2Flangchain-agent%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/langchain/rag-tutorial/" class="pagination--pager" title="LangChain RAG 파헤치기: 문서 기반 QA 시스템 설계 방법 - 심화편
+">이전</a>
+    
+    
+      <a href="/openai/openai-assistant-tutorial/" class="pagination--pager" title="[Assistants API] Code Interpreter, Retrieval, Functions 활용법
+">다음</a>
+    
+  </nav>
+
+    </div>
+
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">댓글남기기</h4>
+      <section id="disqus_thread"></section>
+    
+</div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h2 class="page__related-title">참고</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/poetry/poetry-tutorial/" rel="permalink">poetry 의 거의 모든것 (튜토리얼)
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2024-03-30T00:00:00+00:00">2024년 03월 30일</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+        
+          5 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Python 개발에 있어서 poetry는 매우 강력한 도구로, 프로젝트의 의존성 관리와 패키지 배포를 간소화하는 데 큰 도움을 줍니다. 지금부터 poetry 활용 튜토리얼을 살펴 보겠습니다.
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/langgraph/langgraph-agentic-rag/" rel="permalink">LangGraph Retrieval Agent를 활용한 동적 문서 검색 및 처리
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2024-03-06T00:00:00+00:00">2024년 03월 06일</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+        
+          10 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">LangGraph Retrieval Agent는 언어 처리, AI 모델 통합, 데이터베이스 관리, 그래프 기반 데이터 처리 등 다양한 기능을 제공하여 언어 기반 AI 애플리케이션 개발에 필수적인 도구입니다.
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/openai/openai-assistant-tutorial/" rel="permalink">[Assistants API] Code Interpreter, Retrieval, Functions 활용법
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2024-02-13T00:00:00+00:00">2024년 02월 13일</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+        
+          35 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">OpenAI의 새로운 Assistants API는 대화와 더불어 강력한 도구 접근성을 제공합니다. 본 튜토리얼은 OpenAI Assistants API를 활용하는 내용을 다룹니다. 특히, Assistant API 가 제공하는 도구인 Code Interpreter, Retrieval...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/langchain/rag-tutorial/" rel="permalink">LangChain RAG 파헤치기: 문서 기반 QA 시스템 설계 방법 - 심화편
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2024-02-06T00:00:00+00:00">2024년 02월 06일</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+        
+          22 분 소요
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">LangChain의 RAG 시스템을 통해 문서(PDF, txt, 웹페이지 등)에 대한 질문-답변을 찾는 과정을 정리하였습니다.
+
+</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>팔로우:</strong></li>
+    
+
+    
+      
+        
+          <li><a href="https://www.youtube.com/c/teddynote" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-youtube" aria-hidden="true"></i> YouTube</a></li>
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/teddylee777" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+          <li><a href="https://instagram.com/teddynote" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-instagram" aria-hidden="true"></i> Instagram</a></li>
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> 피드</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2024 테디노트. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XX8G0ZET3T"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-XX8G0ZET3T', { 'anonymize_ip': false});
+</script>
+
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://teddylee777.github.io/langchain/langchain-agent/";  /* Replace PAGE_URL with your page's canonical URL variable */
+      this.page.identifier = "/langchain/langchain-agent"; /* Replace PAGE_IDENTIFIER with your page's unique identifier variable */
+    };
+    (function() { /* DON'T EDIT BELOW THIS LINE */
+      var d = document, s = d.createElement('script');
+      s.src = 'https://https-teddylee777-github-io.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+
+
+  </body>
+</html>

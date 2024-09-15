@@ -12,9 +12,9 @@
 <meta name="description" content="     .custom {         background-color: #008d8d;         color: white;         padding: 0.25em 0.5…">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="위키독스">
-<meta property="og:title" content="03. OpenAI API 사용(GPT-4o 멀티모달)">
+<meta property="og:title" content="04. OpenAI API 사용(GPT-4o 멀티모달)">
 <meta property="og:description" content="     .custom {         background-color: #008d8d;         color: white;         padding: 0.25em 0.5…">
-<meta property="og:image" content="https://wikidocs.net/images/book/langchain-note_vK7AYH8_FG1lT63_Cku4I60_1lMKdvo_Kwg4Zmu_oE1mjY6_zUttX9t_fdzK55Z_paWa_KCbBwtA.png">
+<meta property="og:image" content="https://wikidocs.net/images/book/langchain-note_vK7AYH8_FG1lT63_Cku4I60_1lMKdvo_Kwg4Zmu_oE1mjY6_zUttX9t_fdzK55Z_paWa_vQKeAyT.png">
 <meta property="og:url" content="https://wikidocs.net/233343">
 
     <link rel="shortcut icon" type="image/x-icon" href="/static/img/favicon.ico">
@@ -22,12 +22,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap">
-    <title>03. OpenAI API 사용(GPT-4o 멀티모달) - &lt;랭체인LangChain 노트&gt; - LangChain 한국어 튜토리얼🇰🇷</title>
+    <title>04. OpenAI API 사용(GPT-4o 멀티모달) - &lt;랭체인LangChain 노트&gt; - LangChain 한국어 튜토리얼🇰🇷</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     
 
     
-    <link type="text/css" id="theme-stylesheet" href="/static/book/css/style_stack.css?v=11" rel="stylesheet"  media="screen" />
+    <link type="text/css" id="main-stylesheet" href="/static/book/css/style_stack.css?v=13" rel="stylesheet"  media="screen" />
     
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
@@ -50,12 +50,20 @@
     }
     </script>
     
-    
+
+<!-- 자동광고 -->
+
+<!-- 포인트 광고 -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9470517771012578" crossorigin="anonymous"></script>
+
+
+
+
 
 <link type="text/css" href="/static/apprise/apprise.min.css" rel="stylesheet"  />
 
-<link type="text/css" id="theme-stylesheet" href="/static/book/css/markdown_stack.css?v=8" rel="stylesheet" />
-<link rel="stylesheet" id="theme-stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/default.min.css">
+<link type="text/css" id="markdown-stylesheet" href="/static/book/css/markdown_stack.css?v=13" rel="stylesheet" />
+<link rel="stylesheet" id="highlight-stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/default.min.css">
 
 <link type="text/css" href="/static/treeview/bootstrap-treeview.min.css" rel="stylesheet" />
 <link type="text/css" href="/static/book/css/copycode.css" rel="stylesheet" />
@@ -181,7 +189,7 @@ $(document).ready(function () {
         }catch(e) {
         }
     });
-    var is_mobile = "False";
+    var is_mobile = "True";
     let _trigger = 'click';  // focus(다른 곳 클릭시 팝업 닫힘), click 
     let _hide = 0;  // focus일 때는 200이 적당
     if (is_mobile == "True") {
@@ -342,19 +350,39 @@ function report_modal(comment_id) {
     $("#comment_id").val(comment_id);
     $('#reportModal').modal('show')
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    var page = document.querySelector('.page');
+    var adContainers = document.querySelectorAll('.ad-container');
+    
+    function checkWidth() {
+        var pageWidth = page.offsetWidth;
+        adContainers.forEach(function(container) {
+            var secondAd = container.querySelector('.second-ad');
+            var firstAd = container.querySelector('.first-ad');
+            if (secondAd && firstAd) {
+                var containerWidth = container.offsetWidth;
+                var firstAdWidth = firstAd.offsetWidth;
+                var secondAdWidth = secondAd.offsetWidth;
+                
+                if (containerWidth < firstAdWidth + secondAdWidth + 50) {
+                    secondAd.style.display = 'none';
+                } else {
+                    secondAd.style.display = 'block';
+                }
+            }
+        });
+    }
+    
+    // 초기 실행
+    checkWidth();
+    
+    // 창 크기가 변경될 때마다 실행
+    // window.addEventListener('resize', checkWidth);
+});
 </script>
 
 
-    <script type="text/javascript">
-      var _gaq = _gaq || [];
-      _gaq.push(['_setAccount', 'UA-2686629-3']);
-      _gaq.push(['_trackPageview']);
-      (function() {
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-      })();
-    </script>
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-6N5MJRGLWG"></script>
     <script>
@@ -366,27 +394,7 @@ function report_modal(comment_id) {
 </head>
 <body>
 
-    <!-- PC -->
-
-    
-        <!-- 위키독스 포인트 광고 -->
-        <!-- 오른쪽 플로팅 고정광고 시작-->
-        <aside id="asideRight" class="asideRight">
-            <div id="chaseRight" style="top:20px;">
-                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9470517771012578" crossorigin="anonymous"></script>
-                <!-- wikidocs_sidebar -->
-                <ins class="adsbygoogle"
-                    style="display:inline-block;width:200px;height:600px"
-                    data-ad-client="ca-pub-9470517771012578"
-                    data-ad-slot="3449798337"
-                    data-ad-channel="6628864207"></ins>
-                <script>
-                    (adsbygoogle = window.adsbygoogle || []).push({});
-                </script>
-            </div>
-        </aside>
-        <!-- 오른쪽 플로팅 고정광고 끝 -->
-    
+<!-- PC -->
 
 
 
@@ -401,6 +409,18 @@ function report_modal(comment_id) {
 <div class="row">
     <div class="col-sm-3 sidebar" style="padding:0;margin:0;overflow-x: hidden;">
         
+        <div class="row" style="display:none;">
+            <div class="col-xs-12" style="border-bottom:solid 1px #ddd;">
+                <button id="toggle_toc_btn" class="btn btn-sm btn-default" style="margin:10px;">목차보기</button>
+                <label for="toc_on" class="small">
+                    <input type="radio" id="toc_on" name="toc_on_off" value="show"> Show
+                </label>
+                <label for="toc_off" class="small">
+                    <input type="radio" id="toc_off" name="toc_on_off" value="hide"> Hide
+                </label>
+            </div>
+        </div>
+        
         <div class="toc toc-checker">
             <div class="row">
                 <div class="col-xs-12" style="padding:0;">
@@ -410,13 +430,6 @@ function report_modal(comment_id) {
                             <ul id="search-results" class="dropdown-menu" aria-labelledby="kw"></ul>
                         </div>
                         <div class="pull-right">
-                            
-                            <button class="btn btn-xs btn-default find-btn" style="margin-top:12px;">
-                                <i class="glyphicon glyphicon-search" title="찾기"></i>
-                            </button>
-                            <button class="btn btn-xs btn-default menu_link menu-toggle" style="margin-right:20px;margin-top:12px;">
-                                <i class="glyphicon glyphicon-menu-hamburger" title="메뉴"></i>
-                            </button>
                             
                         </div>
                     </div>
@@ -442,62 +455,72 @@ function report_modal(comment_id) {
                     </span>
                 </a>
                 
-                <a href="javascript:page(233342)" class="list-group-item ">
+                <a href="javascript:page(257836)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="01. OpenAI API 키 발급 및 테스트">
+                          title="01. 설치 영상보고 따라하기">
                         <span style="padding-left:20px">
                         
-                        01. OpenAI API 키 발급 및 테스트
+                        01. 설치 영상보고 따라하기
+                        </span>
+                    </span>
+                </a>
+                
+                <a href="javascript:page(233342)" class="list-group-item ">
+                    <span style="white-space:nowrap;overflow:hidden;display:block;"
+                          title="02. OpenAI API 키 발급 및 테스트">
+                        <span style="padding-left:20px">
+                        
+                        02. OpenAI API 키 발급 및 테스트
                         </span>
                     </span>
                 </a>
                 
                 <a href="javascript:page(250954)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="02. LangSmith 추적 설정">
+                          title="03. LangSmith 추적 설정">
                         <span style="padding-left:20px">
                         
-                        02. LangSmith 추적 설정
+                        03. LangSmith 추적 설정
                         </span>
                     </span>
                 </a>
                 
                 <a href="javascript:page(233343)" class="list-group-item active">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="03. OpenAI API 사용(GPT-4o 멀티모달)">
+                          title="04. OpenAI API 사용(GPT-4o 멀티모달)">
                         <span style="padding-left:20px">
                         
-                        03. OpenAI API 사용(GPT-4o 멀티모달)
+                        04. OpenAI API 사용(GPT-4o 멀티모달)
                         </span>
                     </span>
                 </a>
                 
                 <a href="javascript:page(233344)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="04. LangChain Expression Language(LCEL)">
+                          title="05. LangChain Expression Language(LCEL)">
                         <span style="padding-left:20px">
                         
-                        04. LangChain Expression Language(LCEL)
+                        05. LangChain Expression Language(LCEL)
                         </span>
                     </span>
                 </a>
                 
                 <a href="javascript:page(233345)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="05. LCEL 인터페이스">
+                          title="06. LCEL 인터페이스">
                         <span style="padding-left:20px">
                         
-                        05. LCEL 인터페이스
+                        06. LCEL 인터페이스
                         </span>
                     </span>
                 </a>
                 
                 <a href="javascript:page(233346)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="06. Runnable">
+                          title="07. Runnable">
                         <span style="padding-left:20px">
                         
-                        06. Runnable
+                        07. Runnable
                         </span>
                     </span>
                 </a>
@@ -1224,10 +1247,10 @@ function report_modal(comment_id) {
                 
                 <a href="javascript:page(234016)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="01. 벡터저장소 지원 검색기(VectorStore-backed Retriever)">
+                          title="01. 벡터스토어 기반 검색기(VectorStore-backed Retriever)">
                         <span style="padding-left:20px">
                         
-                        01. 벡터저장소 지원 검색기(VectorStore-backed Retriever)
+                        01. 벡터스토어 기반 검색기(VectorStore-backed Retriever)
                         </span>
                     </span>
                 </a>
@@ -1444,70 +1467,70 @@ function report_modal(comment_id) {
                 
                 <a href="javascript:page(235580)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="01. RunnablePassthrough: 데이터 전달">
+                          title="01. RunnablePassthrough">
                         <span style="padding-left:20px">
                         
-                        01. RunnablePassthrough: 데이터 전달
+                        01. RunnablePassthrough
                         </span>
                     </span>
                 </a>
                 
                 <a href="javascript:page(235884)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="02. Runnable 구조(그래프) 확인">
+                          title="02. Runnable 구조(그래프) 검토">
                         <span style="padding-left:20px">
                         
-                        02. Runnable 구조(그래프) 확인
+                        02. Runnable 구조(그래프) 검토
                         </span>
                     </span>
                 </a>
                 
                 <a href="javascript:page(235705)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="03. RunnableLambda: 사용자 정의 함수">
+                          title="03. RunnableLambda">
                         <span style="padding-left:20px">
                         
-                        03. RunnableLambda: 사용자 정의 함수
+                        03. RunnableLambda
                         </span>
                     </span>
                 </a>
                 
                 <a href="javascript:page(235882)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="04. RunnableBranch: 라우팅(Routing)">
+                          title="04. LLM 체인 라우팅(RunnableLambda, RunnableBranch)">
                         <span style="padding-left:20px">
                         
-                        04. RunnableBranch: 라우팅(Routing)
+                        04. LLM 체인 라우팅(RunnableLambda, RunnableBranch)
                         </span>
                     </span>
                 </a>
                 
                 <a href="javascript:page(235883)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="05. RunnableParallel: 병렬 처리">
+                          title="05. RunnableParallel">
                         <span style="padding-left:20px">
                         
-                        05. RunnableParallel: 병렬 처리
+                        05. RunnableParallel
                         </span>
                     </span>
                 </a>
                 
                 <a href="javascript:page(235704)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="06. configurable_fields, configurable_alternatives">
+                          title="06. 동적 속성 지정(configurable_fields, configurable_alternatives)">
                         <span style="padding-left:20px">
                         
-                        06. configurable_fields, configurable_alternatives
+                        06. 동적 속성 지정(configurable_fields, configurable_alternatives)
                         </span>
                     </span>
                 </a>
                 
                 <a href="javascript:page(235703)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="07. @chain 데코레이터로 Runnable 생성">
+                          title="07. @chain 데코레이터로 Runnable 구성">
                         <span style="padding-left:20px">
                         
-                        07. @chain 데코레이터로 Runnable 생성
+                        07. @chain 데코레이터로 Runnable 구성
                         </span>
                     </span>
                 </a>
@@ -1582,6 +1605,16 @@ function report_modal(comment_id) {
                     </span>
                 </a>
                 
+                <a href="javascript:page(256983)" class="list-group-item ">
+                    <span style="white-space:nowrap;overflow:hidden;display:block;"
+                          title="03. 구조화된 출력 체인(with_structered_output)">
+                        <span style="padding-left:20px">
+                        
+                        03. 구조화된 출력 체인(with_structered_output)
+                        </span>
+                    </span>
+                </a>
+                
                 <a href="javascript:page(233782)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
                           title="CH15 에이전트(Agent)">
@@ -1612,22 +1645,12 @@ function report_modal(comment_id) {
                     </span>
                 </a>
                 
-                <a href="javascript:page(233783)" class="list-group-item ">
-                    <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="CH16 파인튜닝(Fine Tuning)">
-                        <span style="padding-left:0px">
-                        
-                        CH16 파인튜닝(Fine Tuning)
-                        </span>
-                    </span>
-                </a>
-                
                 <a href="javascript:page(233785)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="CH17 LangGraph">
+                          title="CH16 LangGraph">
                         <span style="padding-left:0px">
                         
-                        CH17 LangGraph
+                        CH16 LangGraph
                         </span>
                     </span>
                 </a>
@@ -1642,12 +1665,6 @@ function report_modal(comment_id) {
                     </span>
                 </a>
                 
-            </div>
-        </div>
-        
-        <div class="row toc-footer">
-            <div class="small" style="border-top:solid 1px #ccc;padding:15px 15px 30px 15px;font-family:consolas;">
-                <a href="/" style="padding-left:15px;">Published with WikiDocs</a>
             </div>
         </div>
         
@@ -1719,6 +1736,26 @@ $(document).ready(function () {
         }
     });
     
+    $("input[name=toc_on_off]").on("click", function() {
+        var result = $(this).val();
+        if (typeof(Storage) !== "undefined") {
+            localStorage.toc = result;
+        }
+    });
+    if (typeof(Storage) !== "undefined") {
+        if (localStorage.getItem("toc") === null) {  // init value
+            localStorage.toc = "hide";
+        }
+        if(localStorage.toc == "hide") {
+            $('#toc_off').prop('checked', true);
+            $(".toc-checker").hide();
+        }else {
+            $('#toc_on').prop('checked', true);
+            $(".toc-checker").removeClass("hide");
+            $(".toc-checker").show();
+        }
+    }
+    
     $("#load_content").show();
 });
 
@@ -1753,7 +1790,7 @@ function page(no) {
     $("#load_content").load(url, function(responseTxt, statusTxt, xhr){
         if(statusTxt == "success") {
             $("#load_content").scrollTop(0);
-            window.history.pushState("object or string", "03. OpenAI API 사용(GPT-4o 멀티모달)", "/"+no);
+            window.history.pushState("object or string", "04. OpenAI API 사용(GPT-4o 멀티모달)", "/"+no);
         }
         if(statusTxt == "error") {
             alert("Error: " + xhr.status + ": " + xhr.statusText);
@@ -1883,12 +1920,16 @@ $(document).ready(function() {
         
         <li><small><a href="/233341">CH01 LangChain 시작하기</a></small></li>
         
-        <li><small><a href="/233343">03. OpenAI API 사용(GPT-4o…</a></small></li>
+        <li><small><a href="/233343">04. OpenAI API 사용(GPT-4o…</a></small></li>
         
     </ol>
     
     <ol class="breadcrumb pull-right">
         
+<li>
+    <a href="/257903" class="btn btn-xs btn-danger" style="color:#fff"><i class="glyphicon glyphicon-gift"></i> 도서 증정 이벤트 !!</a>
+</li>
+
 
         
         <li>
@@ -1899,12 +1940,32 @@ $(document).ready(function() {
 </div>
 
 <h1 class="page-subject">
-    03. OpenAI API 사용(GPT-4o 멀티모달)
-    
-        
+    04. OpenAI API 사용(GPT-4o 멀티모달)
     
 </h1>
 <!-- google adsense -->
+<!-- PC -->
+
+
+<!-- Mobile -->
+
+    
+        <div style="margin:20px 0;">
+            <!-- 위키독스 포인트 광고 -->
+            <!-- 위키독스모바일2020 -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9470517771012578" crossorigin="anonymous"></script>
+<ins class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-9470517771012578"
+        data-ad-slot="4465552259"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
+<script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+        </div>
+    
+
 
 <!-- google adsense -->
 <div class="page-content tex2jax_process">
@@ -2233,32 +2294,30 @@ stream_response(answer)
 </div>
 <div class="muted text-right" style="font-size: 0.9em;margin:10px 0;">
     
-    마지막 편집일시 : 2024년 6월 18일 1:19 오전
+    마지막 편집일시 : 2024년 9월 5일 9:17 오전
     
 </div>
 <!-- google adsense -->
 <!-- PC -->
 
+<!-- Mobile -->
+
     
-        <div style="margin:30px 0;">
+        <div style="margin:20px 0;">
             <!-- 위키독스 포인트 광고 -->
-            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9470517771012578"
-                    crossorigin="anonymous"></script>
-            <!-- 위키독스 일반 -->
-            <ins class="adsbygoogle"
-                    style="display:block"
-                    data-ad-client="ca-pub-9470517771012578"
-                    data-ad-slot="9169493836"
-                    data-ad-format="auto"
-                    data-ad-channel="6628864207"
-                    data-full-width-responsive="true"></ins>
-            <script>
-                    (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
+            <!-- 위키독스모바일2020 -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9470517771012578" crossorigin="anonymous"></script>
+<ins class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-9470517771012578"
+        data-ad-slot="4465552259"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
+<script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
         </div>
     
-
-<!-- Mobile -->
 
 
 <!-- google adsense -->
@@ -2287,10 +2346,10 @@ stream_response(answer)
     <div class="pull-left">
         <ul>
             
-                <li><strong>이전글</strong> : <a href="javascript:page(250954)">02. LangSmith 추적 설정</a></li>
+                <li><strong>이전글</strong> : <a href="javascript:page(250954)">03. LangSmith 추적 설정</a></li>
             
             
-                <li><strong>다음글</strong> : <a href="javascript:page(233344)">04. LangChain Expression Language(LCEL)</a></li>
+                <li><strong>다음글</strong> : <a href="javascript:page(233344)">05. LangChain Expression Language(LCEL)</a></li>
             
         </ul>
     </div>
@@ -2301,13 +2360,11 @@ stream_response(answer)
 
 
 
+<a href="#" class="btn btn-primary toc-to mobile-toc">
+    <span class="glyphicon glyphicon-list"></span>
+    목차보기
+</a>
 
-<a id="toggle-theme" class="label label-default dark_btn" data-toggle="popover" data-placement="left" data-content="다크모드">
-    <span class="glyphicon glyphicon-adjust"></span>
-</a>
-<a href="#top" class="label label-default back-to-top" data-toggle="popover" data-placement="left" data-content="맨위로">
-    <span class="glyphicon glyphicon-arrow-up"></span>
-</a>
 
 <!-- 책갈피 모달 -->
 <div class="modal fade" id="bookmarkModal" tabindex="-1" role="dialog" aria-labelledby="bookmarkModalLabel">
@@ -2328,7 +2385,7 @@ stream_response(answer)
     </div>
 </div>
 <script>
-var is_mobile = "False";
+var is_mobile = "True";
 $(document).ready(function () {
     if (is_mobile == "True") {
         if($(window).width() >= 768) {
@@ -2395,6 +2452,7 @@ $(document).ready(function () {
     });
 
     // 다크모드 토글 버튼 클릭 이벤트 처리
+    /*
     $('#toggle-theme').click(function(e) {
         const urlParams = new URLSearchParams(window.location.search);
         
@@ -2402,6 +2460,7 @@ $(document).ready(function () {
         
         window.location.search = urlParams.toString();
     });
+    */
 
     $('[data-toggle="popover"]').popover({
         trigger: 'hover', // 마우스를 올렸을 때 popover 표시
@@ -2415,7 +2474,7 @@ function deleteBookmark(bookmarkId) {
             url: '/bookmark/delete/' + bookmarkId + '/',
             type: 'POST',
             data: {
-                'csrfmiddlewaretoken': 'pV2zZLIBb16EFuLJNrXH8Y1BkWpXKhYPEOois2LJj3s9jWDi1FahHFqpQkIbD9vx'
+                'csrfmiddlewaretoken': 'vEwoW6d1jrJzr3D3AhQyW80sBA9bLdvMxwX5QRdpm5N2rLoJWl1ZUhjRSQPnHPND'
             },
             success: function(response) {
                 $('#bookmarkModal .modal-body').html(response);
@@ -2427,6 +2486,72 @@ function deleteBookmark(bookmarkId) {
         });
     }
 }
+
+$(document).ready(function() {
+    // 현재 다크모드 상태 확인
+    let isDarkMode = false;
+
+    // 다크모드 토글 함수
+    function toggleDarkMode() {
+        isDarkMode = !isDarkMode;
+        updateTheme();
+        saveDarkModePreference();
+    }
+
+    // 테마 업데이트 함수
+    function updateTheme() {
+        const mainStylesheet = $('#main-stylesheet');
+        const markdownStylesheet = $('#markdown-stylesheet');
+        const highlightStylesheet = $('#highlight-stylesheet');
+
+        if (isDarkMode) {
+            mainStylesheet.attr('href', "/static/book/css/style_stack_dark.css?v=13");
+            markdownStylesheet.attr('href', "/static/book/css/markdown_stack_dark.css?v=13");
+            highlightStylesheet.attr('href', "//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/atom-one-dark.min.css");
+        } else {
+            mainStylesheet.attr('href', "/static/book/css/style_stack.css?v=13");
+            markdownStylesheet.attr('href', "/static/book/css/markdown_stack.css?v=13");
+            highlightStylesheet.attr('href', "//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/default.min.css");
+        }
+    }
+
+    // Ajax를 사용하여 다크모드 설정 저장
+    function saveDarkModePreference() {
+        $.ajax({
+            url: '/set_darkmode/',  // Django URL을 여기에 지정
+            method: 'POST',
+            data: {
+                'darkmode': isDarkMode ? 'on' : 'off'
+            },
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')  // CSRF 토큰
+            }
+        });
+    }
+
+    // CSRF 토큰을 쿠키에서 가져오는 함수
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // 토글 버튼 클릭 이벤트
+    $('#toggle-theme').click(toggleDarkMode);
+
+    // 초기 테마 설정
+    // updateTheme();
+});
+
 </script>
     
 

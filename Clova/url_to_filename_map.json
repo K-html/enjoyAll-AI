@@ -1,9 +1,7 @@
 {
-    "https://wikidocs.net/233341": "233341.html",
-    "https://wikidocs.net/233342": "233342.html",
-    "https://wikidocs.net/250954": "250954.html",
-    "https://wikidocs.net/233343": "233343.html",
-    "https://wikidocs.net/233344": "233344.html",
-    "https://wikidocs.net/233345": "233345.html",
-    "https://wikidocs.net/233346": "233346.html"
+    "https://teddylee777.github.io/poetry/poetry-tutorial/": "poetry.html",
+    "https://teddylee777.github.io/langchain/langchain-agent/": "langchain.html",
+    "https://teddylee777.github.io/langchain/summarize-chain/": "langchain.html",
+    "https://teddylee777.github.io/langchain/rag-naver-news-qa/": "langchain.html",
+    "https://teddylee777.github.io/openai/openai-models/": "openai.html"
 }

@@ -12,22 +12,22 @@
 <meta name="description" content="     .custom {         background-color: #008d8d;         color: white;         padding: 0.25em 0.5…">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="위키독스">
-<meta property="og:title" content="01. OpenAI API 키 발급 및 테스트">
+<meta property="og:title" content="05. LangChain Expression Language(LCEL)">
 <meta property="og:description" content="     .custom {         background-color: #008d8d;         color: white;         padding: 0.25em 0.5…">
-<meta property="og:image" content="https://wikidocs.net/images/book/langchain-note_vK7AYH8_FG1lT63_Cku4I60_1lMKdvo_Kwg4Zmu_oE1mjY6_zUttX9t_fdzK55Z_paWa_KCbBwtA.png">
-<meta property="og:url" content="https://wikidocs.net/233342">
+<meta property="og:image" content="https://wikidocs.net/images/book/langchain-note_vK7AYH8_FG1lT63_Cku4I60_1lMKdvo_Kwg4Zmu_oE1mjY6_zUttX9t_fdzK55Z_paWa_vQKeAyT.png">
+<meta property="og:url" content="https://wikidocs.net/233344">
 
     <link rel="shortcut icon" type="image/x-icon" href="/static/img/favicon.ico">
     <link rel="canonical" href="https://wikidocs.net/book/1">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap">
-    <title>01. OpenAI API 키 발급 및 테스트 - &lt;랭체인LangChain 노트&gt; - LangChain 한국어 튜토리얼🇰🇷</title>
+    <title>05. LangChain Expression Language(LCEL) - &lt;랭체인LangChain 노트&gt; - LangChain 한국어 튜토리얼🇰🇷</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     
 
     
-    <link type="text/css" id="theme-stylesheet" href="/static/book/css/style_stack.css?v=11" rel="stylesheet"  media="screen" />
+    <link type="text/css" id="main-stylesheet" href="/static/book/css/style_stack.css?v=13" rel="stylesheet"  media="screen" />
     
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
@@ -50,12 +50,20 @@
     }
     </script>
     
-    
+
+<!-- 자동광고 -->
+
+<!-- 포인트 광고 -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9470517771012578" crossorigin="anonymous"></script>
+
+
+
+
 
 <link type="text/css" href="/static/apprise/apprise.min.css" rel="stylesheet"  />
 
-<link type="text/css" id="theme-stylesheet" href="/static/book/css/markdown_stack.css?v=8" rel="stylesheet" />
-<link rel="stylesheet" id="theme-stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/default.min.css">
+<link type="text/css" id="markdown-stylesheet" href="/static/book/css/markdown_stack.css?v=13" rel="stylesheet" />
+<link rel="stylesheet" id="highlight-stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/default.min.css">
 
 <link type="text/css" href="/static/treeview/bootstrap-treeview.min.css" rel="stylesheet" />
 <link type="text/css" href="/static/book/css/copycode.css" rel="stylesheet" />
@@ -181,7 +189,7 @@ $(document).ready(function () {
         }catch(e) {
         }
     });
-    var is_mobile = "False";
+    var is_mobile = "True";
     let _trigger = 'click';  // focus(다른 곳 클릭시 팝업 닫힘), click 
     let _hide = 0;  // focus일 때는 200이 적당
     if (is_mobile == "True") {
@@ -342,19 +350,39 @@ function report_modal(comment_id) {
     $("#comment_id").val(comment_id);
     $('#reportModal').modal('show')
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    var page = document.querySelector('.page');
+    var adContainers = document.querySelectorAll('.ad-container');
+    
+    function checkWidth() {
+        var pageWidth = page.offsetWidth;
+        adContainers.forEach(function(container) {
+            var secondAd = container.querySelector('.second-ad');
+            var firstAd = container.querySelector('.first-ad');
+            if (secondAd && firstAd) {
+                var containerWidth = container.offsetWidth;
+                var firstAdWidth = firstAd.offsetWidth;
+                var secondAdWidth = secondAd.offsetWidth;
+                
+                if (containerWidth < firstAdWidth + secondAdWidth + 50) {
+                    secondAd.style.display = 'none';
+                } else {
+                    secondAd.style.display = 'block';
+                }
+            }
+        });
+    }
+    
+    // 초기 실행
+    checkWidth();
+    
+    // 창 크기가 변경될 때마다 실행
+    // window.addEventListener('resize', checkWidth);
+});
 </script>
 
 
-    <script type="text/javascript">
-      var _gaq = _gaq || [];
-      _gaq.push(['_setAccount', 'UA-2686629-3']);
-      _gaq.push(['_trackPageview']);
-      (function() {
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-      })();
-    </script>
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-6N5MJRGLWG"></script>
     <script>
@@ -366,27 +394,7 @@ function report_modal(comment_id) {
 </head>
 <body>
 
-    <!-- PC -->
-
-    
-        <!-- 위키독스 포인트 광고 -->
-        <!-- 오른쪽 플로팅 고정광고 시작-->
-        <aside id="asideRight" class="asideRight">
-            <div id="chaseRight" style="top:20px;">
-                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9470517771012578" crossorigin="anonymous"></script>
-                <!-- wikidocs_sidebar -->
-                <ins class="adsbygoogle"
-                    style="display:inline-block;width:200px;height:600px"
-                    data-ad-client="ca-pub-9470517771012578"
-                    data-ad-slot="3449798337"
-                    data-ad-channel="6628864207"></ins>
-                <script>
-                    (adsbygoogle = window.adsbygoogle || []).push({});
-                </script>
-            </div>
-        </aside>
-        <!-- 오른쪽 플로팅 고정광고 끝 -->
-    
+<!-- PC -->
 
 
 
@@ -401,6 +409,18 @@ function report_modal(comment_id) {
 <div class="row">
     <div class="col-sm-3 sidebar" style="padding:0;margin:0;overflow-x: hidden;">
         
+        <div class="row" style="display:none;">
+            <div class="col-xs-12" style="border-bottom:solid 1px #ddd;">
+                <button id="toggle_toc_btn" class="btn btn-sm btn-default" style="margin:10px;">목차보기</button>
+                <label for="toc_on" class="small">
+                    <input type="radio" id="toc_on" name="toc_on_off" value="show"> Show
+                </label>
+                <label for="toc_off" class="small">
+                    <input type="radio" id="toc_off" name="toc_on_off" value="hide"> Hide
+                </label>
+            </div>
+        </div>
+        
         <div class="toc toc-checker">
             <div class="row">
                 <div class="col-xs-12" style="padding:0;">
@@ -410,13 +430,6 @@ function report_modal(comment_id) {
                             <ul id="search-results" class="dropdown-menu" aria-labelledby="kw"></ul>
                         </div>
                         <div class="pull-right">
-                            
-                            <button class="btn btn-xs btn-default find-btn" style="margin-top:12px;">
-                                <i class="glyphicon glyphicon-search" title="찾기"></i>
-                            </button>
-                            <button class="btn btn-xs btn-default menu_link menu-toggle" style="margin-right:20px;margin-top:12px;">
-                                <i class="glyphicon glyphicon-menu-hamburger" title="메뉴"></i>
-                            </button>
                             
                         </div>
                     </div>
@@ -442,62 +455,72 @@ function report_modal(comment_id) {
                     </span>
                 </a>
                 
-                <a href="javascript:page(233342)" class="list-group-item active">
+                <a href="javascript:page(257836)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="01. OpenAI API 키 발급 및 테스트">
+                          title="01. 설치 영상보고 따라하기">
                         <span style="padding-left:20px">
                         
-                        01. OpenAI API 키 발급 및 테스트
+                        01. 설치 영상보고 따라하기
+                        </span>
+                    </span>
+                </a>
+                
+                <a href="javascript:page(233342)" class="list-group-item ">
+                    <span style="white-space:nowrap;overflow:hidden;display:block;"
+                          title="02. OpenAI API 키 발급 및 테스트">
+                        <span style="padding-left:20px">
+                        
+                        02. OpenAI API 키 발급 및 테스트
                         </span>
                     </span>
                 </a>
                 
                 <a href="javascript:page(250954)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="02. LangSmith 추적 설정">
+                          title="03. LangSmith 추적 설정">
                         <span style="padding-left:20px">
                         
-                        02. LangSmith 추적 설정
+                        03. LangSmith 추적 설정
                         </span>
                     </span>
                 </a>
                 
                 <a href="javascript:page(233343)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="03. OpenAI API 사용(GPT-4o 멀티모달)">
+                          title="04. OpenAI API 사용(GPT-4o 멀티모달)">
                         <span style="padding-left:20px">
                         
-                        03. OpenAI API 사용(GPT-4o 멀티모달)
+                        04. OpenAI API 사용(GPT-4o 멀티모달)
                         </span>
                     </span>
                 </a>
                 
-                <a href="javascript:page(233344)" class="list-group-item ">
+                <a href="javascript:page(233344)" class="list-group-item active">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="04. LangChain Expression Language(LCEL)">
+                          title="05. LangChain Expression Language(LCEL)">
                         <span style="padding-left:20px">
                         
-                        04. LangChain Expression Language(LCEL)
+                        05. LangChain Expression Language(LCEL)
                         </span>
                     </span>
                 </a>
                 
                 <a href="javascript:page(233345)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="05. LCEL 인터페이스">
+                          title="06. LCEL 인터페이스">
                         <span style="padding-left:20px">
                         
-                        05. LCEL 인터페이스
+                        06. LCEL 인터페이스
                         </span>
                     </span>
                 </a>
                 
                 <a href="javascript:page(233346)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="06. Runnable">
+                          title="07. Runnable">
                         <span style="padding-left:20px">
                         
-                        06. Runnable
+                        07. Runnable
                         </span>
                     </span>
                 </a>
@@ -1224,10 +1247,10 @@ function report_modal(comment_id) {
                 
                 <a href="javascript:page(234016)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="01. 벡터저장소 지원 검색기(VectorStore-backed Retriever)">
+                          title="01. 벡터스토어 기반 검색기(VectorStore-backed Retriever)">
                         <span style="padding-left:20px">
                         
-                        01. 벡터저장소 지원 검색기(VectorStore-backed Retriever)
+                        01. 벡터스토어 기반 검색기(VectorStore-backed Retriever)
                         </span>
                     </span>
                 </a>
@@ -1444,70 +1467,70 @@ function report_modal(comment_id) {
                 
                 <a href="javascript:page(235580)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="01. RunnablePassthrough: 데이터 전달">
+                          title="01. RunnablePassthrough">
                         <span style="padding-left:20px">
                         
-                        01. RunnablePassthrough: 데이터 전달
+                        01. RunnablePassthrough
                         </span>
                     </span>
                 </a>
                 
                 <a href="javascript:page(235884)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="02. Runnable 구조(그래프) 확인">
+                          title="02. Runnable 구조(그래프) 검토">
                         <span style="padding-left:20px">
                         
-                        02. Runnable 구조(그래프) 확인
+                        02. Runnable 구조(그래프) 검토
                         </span>
                     </span>
                 </a>
                 
                 <a href="javascript:page(235705)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="03. RunnableLambda: 사용자 정의 함수">
+                          title="03. RunnableLambda">
                         <span style="padding-left:20px">
                         
-                        03. RunnableLambda: 사용자 정의 함수
+                        03. RunnableLambda
                         </span>
                     </span>
                 </a>
                 
                 <a href="javascript:page(235882)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="04. RunnableBranch: 라우팅(Routing)">
+                          title="04. LLM 체인 라우팅(RunnableLambda, RunnableBranch)">
                         <span style="padding-left:20px">
                         
-                        04. RunnableBranch: 라우팅(Routing)
+                        04. LLM 체인 라우팅(RunnableLambda, RunnableBranch)
                         </span>
                     </span>
                 </a>
                 
                 <a href="javascript:page(235883)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="05. RunnableParallel: 병렬 처리">
+                          title="05. RunnableParallel">
                         <span style="padding-left:20px">
                         
-                        05. RunnableParallel: 병렬 처리
+                        05. RunnableParallel
                         </span>
                     </span>
                 </a>
                 
                 <a href="javascript:page(235704)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="06. configurable_fields, configurable_alternatives">
+                          title="06. 동적 속성 지정(configurable_fields, configurable_alternatives)">
                         <span style="padding-left:20px">
                         
-                        06. configurable_fields, configurable_alternatives
+                        06. 동적 속성 지정(configurable_fields, configurable_alternatives)
                         </span>
                     </span>
                 </a>
                 
                 <a href="javascript:page(235703)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="07. @chain 데코레이터로 Runnable 생성">
+                          title="07. @chain 데코레이터로 Runnable 구성">
                         <span style="padding-left:20px">
                         
-                        07. @chain 데코레이터로 Runnable 생성
+                        07. @chain 데코레이터로 Runnable 구성
                         </span>
                     </span>
                 </a>
@@ -1582,6 +1605,16 @@ function report_modal(comment_id) {
                     </span>
                 </a>
                 
+                <a href="javascript:page(256983)" class="list-group-item ">
+                    <span style="white-space:nowrap;overflow:hidden;display:block;"
+                          title="03. 구조화된 출력 체인(with_structered_output)">
+                        <span style="padding-left:20px">
+                        
+                        03. 구조화된 출력 체인(with_structered_output)
+                        </span>
+                    </span>
+                </a>
+                
                 <a href="javascript:page(233782)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
                           title="CH15 에이전트(Agent)">
@@ -1612,22 +1645,12 @@ function report_modal(comment_id) {
                     </span>
                 </a>
                 
-                <a href="javascript:page(233783)" class="list-group-item ">
-                    <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="CH16 파인튜닝(Fine Tuning)">
-                        <span style="padding-left:0px">
-                        
-                        CH16 파인튜닝(Fine Tuning)
-                        </span>
-                    </span>
-                </a>
-                
                 <a href="javascript:page(233785)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="CH17 LangGraph">
+                          title="CH16 LangGraph">
                         <span style="padding-left:0px">
                         
-                        CH17 LangGraph
+                        CH16 LangGraph
                         </span>
                     </span>
                 </a>
@@ -1642,12 +1665,6 @@ function report_modal(comment_id) {
                     </span>
                 </a>
                 
-            </div>
-        </div>
-        
-        <div class="row toc-footer">
-            <div class="small" style="border-top:solid 1px #ccc;padding:15px 15px 30px 15px;font-family:consolas;">
-                <a href="/" style="padding-left:15px;">Published with WikiDocs</a>
             </div>
         </div>
         
@@ -1719,6 +1736,26 @@ $(document).ready(function () {
         }
     });
     
+    $("input[name=toc_on_off]").on("click", function() {
+        var result = $(this).val();
+        if (typeof(Storage) !== "undefined") {
+            localStorage.toc = result;
+        }
+    });
+    if (typeof(Storage) !== "undefined") {
+        if (localStorage.getItem("toc") === null) {  // init value
+            localStorage.toc = "hide";
+        }
+        if(localStorage.toc == "hide") {
+            $('#toc_off').prop('checked', true);
+            $(".toc-checker").hide();
+        }else {
+            $('#toc_on').prop('checked', true);
+            $(".toc-checker").removeClass("hide");
+            $(".toc-checker").show();
+        }
+    }
+    
     $("#load_content").show();
 });
 
@@ -1753,7 +1790,7 @@ function page(no) {
     $("#load_content").load(url, function(responseTxt, statusTxt, xhr){
         if(statusTxt == "success") {
             $("#load_content").scrollTop(0);
-            window.history.pushState("object or string", "01. OpenAI API 키 발급 및 테스트", "/"+no);
+            window.history.pushState("object or string", "05. LangChain Expression Language(LCEL)", "/"+no);
         }
         if(statusTxt == "error") {
             alert("Error: " + xhr.status + ": " + xhr.statusText);
@@ -1883,12 +1920,16 @@ $(document).ready(function() {
         
         <li><small><a href="/233341">CH01 LangChain 시작하기</a></small></li>
         
-        <li><small><a href="/233342">01. OpenAI API 키 발급 및 테스트</a></small></li>
+        <li><small><a href="/233344">05. LangChain Expression…</a></small></li>
         
     </ol>
     
     <ol class="breadcrumb pull-right">
         
+<li>
+    <a href="/257903" class="btn btn-xs btn-danger" style="color:#fff"><i class="glyphicon glyphicon-gift"></i> 도서 증정 이벤트 !!</a>
+</li>
+
 
         
         <li>
@@ -1899,12 +1940,32 @@ $(document).ready(function() {
 </div>
 
 <h1 class="page-subject">
-    01. OpenAI API 키 발급 및 테스트
-    
-        
+    05. LangChain Expression Language(LCEL)
     
 </h1>
 <!-- google adsense -->
+<!-- PC -->
+
+
+<!-- Mobile -->
+
+    
+        <div style="margin:20px 0;">
+            <!-- 위키독스 포인트 광고 -->
+            <!-- 위키독스모바일2020 -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9470517771012578" crossorigin="anonymous"></script>
+<ins class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-9470517771012578"
+        data-ad-slot="4465552259"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
+<script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+        </div>
+    
+
 
 <!-- google adsense -->
 <div class="page-content tex2jax_process">
@@ -1927,100 +1988,238 @@ $(document).ready(function() {
     }
 </style>
 
-<h2 id="openai-api">OpenAI API 키 발급 및 설정</h2>
-<p>1) OpenAI API 키 발급</p>
-<p><strong>OpenAI API 웹사이트에 접속</strong>합니다.</p>
-<ul>
-<li>링크: <a href="https://platform.openai.com/docs/overview">https://platform.openai.com/docs/overview</a></li>
-</ul>
-<p>우측 상단 <strong>"Sign Up"</strong> 을 눌러 <strong>회원가입을 진행</strong>합니다.
-(만약, 이미 가입되어 있는 상태라면 <strong>"Log in" 버튼을 눌러 로그인</strong> 합니다.</p>
-<p><img alt="" src="https://wikidocs.net/images/page/233342/capture-20240611-114944.png" /></p>
-<p>우측 상단 <strong>톱니바퀴(Setting) 를 눌러 설정</strong>으로 이동합니다.</p>
-<p><img alt="" src="https://wikidocs.net/images/page/233342/capture-20240611-115127.png" /></p>
-<p>왼쪽 <strong>"Billing"</strong> 메뉴에서 <strong>"Payment methods"</strong> 를 클릭하여 <strong>신용카드를 등록</strong> 합니다.</p>
-<p><img alt="" src="https://wikidocs.net/images/page/233342/capture-20240611-115218.png" /></p>
-<p>신용카드를 등록했다면 아래와 같이 등록된 신용카드가 목록에 나타납니다.</p>
-<p><img alt="" src="https://wikidocs.net/images/page/233342/capture-20240611-115316.png" /></p>
-<p><strong>"Add to credit balance"</strong> 버튼을 눌러 사용할만큼의 미화(달러) 를 입력합니다.</p>
-<p><img alt="" src="https://wikidocs.net/images/page/233342/capture-20240611-115442.png" /></p>
-<p>금액은 <strong>$5</strong> 부터 추가가 가능합니다. (즉, 최소결제금액인 $5 이상은 결제를 해야 합니다)</p>
-<p>금액을 입력한 후 <strong>"Continue"</strong> 를 눌러 결제를 진행합니다.</p>
-<p><img alt="" src="https://wikidocs.net/images/page/233342/capture-20240611-115549.png" /></p>
-<p>왼쪽의 <strong>"Limits"</strong> 탭에서 월간 사용한도를 설정할 수 있습니다.</p>
-<ul>
-<li><strong>"Set a monthly budge"</strong>: 월간 사용한도를 지정합니다. 이 금액에 도달하면 더이상 과금하지 않고 API 는 사용을 멈춥니다.</li>
-<li><strong>"Set an email notification threshold"</strong>: 이메일이 발송되는 요금을 지정할 수 있습니다. 이 금액에 도달하면 이메일이 발송됩니다.</li>
-</ul>
-<p><img alt="" src="https://wikidocs.net/images/page/233342/capture-20240611-115735.png" /></p>
-<p>우측 <strong>프로필 이미지</strong> 클릭 - <strong>"Your profile"</strong></p>
-<p><img alt="" src="https://wikidocs.net/images/page/233342/capture-20240611-212254.png" /></p>
-<p><strong>API Key 관리 메뉴</strong> 로 접속합니다.</p>
-<ul>
-<li><a href="https://platform.openai.com/api-keys">https://platform.openai.com/api-keys</a></li>
-</ul>
-<p><strong>"Create new secret key"</strong> 를 클릭합니다.</p>
-<p><img alt="" src="https://wikidocs.net/images/page/233342/capture-20240611-212634.png" /></p>
-<p><strong>Name</strong> 과 <strong>프로젝트</strong> 를 입력합니다. (별도 생성한 프로젝트가 없다면 Default project 를 설정합니다)</p>
-<p><img alt="" src="https://wikidocs.net/images/page/233342/capture-20240611-212716.png" /></p>
-<p>우측 <strong>"Copy"</strong> 버튼을 눌러 키를 복사합니다.</p>
-<p><strong>주의!!!</strong> </p>
-<ul>
-<li>키가 유출되면 다른 사람이 내 API KEY 를 사용하여 GPT 를 사용할 수 있으며, 결제는 제 지갑에서 결제됩니다. </li>
-<li>절대  <strong>키는 타인에게 공유하지 마시고, 안전한 곳에 보관</strong> 하세요! (암호라고 생각하세요)</li>
-</ul>
-<p><img alt="" src="https://wikidocs.net/images/page/233342/capture-20240611-212824.png" /></p>
-<p>2) <code>.env</code> 파일 설정</p>
-<ol>
-<li>프로젝트 루트 디렉토리에 <code>.env</code> 파일을 생성합니다.</li>
-<li><code>.env</code> 파일에 <code>OPENAI_API_KEY=방금복사한 키를 입력</code> 한 뒤 Ctrl + S 를 눌러 저장하고 파일을 닫습니다.</li>
-</ol>
-<p><img alt="" src="https://wikidocs.net/images/page/233342/capture-20240611-213141.png" /></p>
-<pre><code class="language-python"># LangChain 업데이트
-!pip install -r https://raw.githubusercontent.com/teddylee777/langchain-kr/main/requirements.txt
-</code></pre>
+<h2 id="_1">기본 예시: 프롬프트 + 모델 + 출력 파서</h2>
+<p>가장 기본적이고 일반적인 사용 사례는 prompt 템플릿과 모델을 함께 연결하는 것입니다. 이것이 어떻게 작동하는지 보기 위해, 각 나라별 수도를 물어보는 Chain을 생성해 보겠습니다.</p>
 <pre><code class="language-python"># API KEY를 환경변수로 관리하기 위한 설정 파일
-# 설치: pip install python-dotenv
 from dotenv import load_dotenv
 
 # API KEY 정보로드
 load_dotenv()
 </code></pre>
 <pre class="custom">True</pre>
-<p>API Key 가 잘 설정되었는지 확인합니다.</p>
-<pre><code class="language-python">import os
 
-print(f&quot;[API KEY]\n{os.environ['OPENAI_API_KEY']}&quot;)
+<pre><code class="language-python"># LangSmith 추적을 설정합니다. https://smith.langchain.com
+# !pip install -qU langchain-teddynote
+from langchain_teddynote import logging
+
+# 프로젝트 이름을 입력합니다.
+logging.langsmith(&quot;CH01-Basic&quot;)
 </code></pre>
+<pre class="custom">LangSmith 추적을 시작합니다.
+[프로젝트명]
+CH01-Basic
+</pre>
+<h2 id="_2">프롬프트 템플릿의 활용</h2>
+<p><code>PromptTemplate</code></p>
+<ul>
+<li>사용자의 입력 변수를 사용하여 완전한 프롬프트 문자열을 만드는 데 사용되는 템플릿입니다</li>
+<li>사용법</li>
+<li><code>template</code>: 템플릿 문자열입니다. 이 문자열 내에서 중괄호 <code>{}</code>는 변수를 나타냅니다.</li>
+<li><code>input_variables</code>: 중괄호 안에 들어갈 변수의 이름을 리스트로 정의합니다.</li>
+</ul>
+<p><code>input_variables</code></p>
+<ul>
+<li>input_variables는 PromptTemplate에서 사용되는 변수의 이름을 정의하는 리스트입니다.</li>
+</ul>
+<pre><code class="language-python">from langchain_teddynote.messages import stream_response  # 스트리밍 출력
+from langchain_core.prompts import PromptTemplate
+</code></pre>
+<p><code>from_template()</code> 메소드를 사용하여 PromptTemplate 객체 생성</p>
+<pre><code class="language-python"># template 정의
+template = &quot;{country}의 수도는 어디인가요?&quot;
+
+# from_template 메소드를 이용하여 PromptTemplate 객체 생성
+prompt_template = PromptTemplate.from_template(template)
+prompt_template
+</code></pre>
+<pre class="custom">PromptTemplate(input_variables=['country'], template='{country}의 수도는 어디인가요?')</pre>
+
+<pre><code class="language-python"># prompt 생성
+prompt = prompt_template.format(country=&quot;대한민국&quot;)
+prompt
+</code></pre>
+<pre class="custom">'대한민국의 수도는 어디인가요?'</pre>
+
+<pre><code class="language-python"># prompt 생성
+prompt = prompt_template.format(country=&quot;미국&quot;)
+prompt
+</code></pre>
+<pre class="custom">'미국의 수도는 어디인가요?'</pre>
+
+<pre><code class="language-python">from langchain_openai import ChatOpenAI
+
+model = ChatOpenAI(
+    model=&quot;gpt-3.5-turbo&quot;,
+    max_tokens=2048,
+    temperature=0.1,
+)
+</code></pre>
+<h2 id="chain">Chain 생성</h2>
+<h3 id="lcellangchain-expression-language">LCEL(LangChain Expression Language)</h3>
+<p><img alt="" src="https://wikidocs.net/images/page/233344/lcel.png" /></p>
+<p>여기서 우리는 LCEL을 사용하여 다양한 구성 요소를 단일 체인으로 결합합니다</p>
+<pre><code>chain = prompt | model | output_parser
+</code></pre>
+<p><code>|</code> 기호는 <a href="https://en.wikipedia.org/wiki/Pipeline_(Unix)">unix 파이프 연산자</a>와 유사하며, 서로 다른 구성 요소를 연결하고 한 구성 요소의 출력을 다음 구성 요소의 입력으로 전달합니다.</p>
+<p>이 체인에서 사용자 입력은 프롬프트 템플릿으로 전달되고, 그런 다음 프롬프트 템플릿 출력은 모델로 전달됩니다. 각 구성 요소를 개별적으로 살펴보면 무슨 일이 일어나고 있는지 이해할 수 있습니다.</p>
+<pre><code class="language-python"># prompt 를 PromptTemplate 객체로 생성합니다.
+prompt = PromptTemplate.from_template(&quot;{topic} 에 대해 쉽게 설명해주세요.&quot;)
+
+model = ChatOpenAI()
+
+chain = prompt | model
+</code></pre>
+<h3 id="invoke">invoke() 호출</h3>
+<ul>
+<li>python 딕셔너리 형태로 입력값을 전달합니다.(키: 값)</li>
+<li>invoke() 함수 호출 시, 입력값을 전달합니다.</li>
+</ul>
+<pre><code class="language-python"># input 딕셔너리에 주제를 '인공지능 모델의 학습 원리'으로 설정합니다.
+input = {&quot;topic&quot;: &quot;인공지능 모델의 학습 원리&quot;}
+</code></pre>
+<pre><code class="language-python"># prompt 객체와 model 객체를 파이프(|) 연산자로 연결하고 invoke 메서드를 사용하여 input을 전달합니다.
+# 이를 통해 AI 모델이 생성한 메시지를 반환합니다.
+chain.invoke(input)
+</code></pre>
+<pre class="custom">AIMessage(content='인공지능 모델의 학습 원리는 데이터를 이용하여 패턴을 학습하는 것입니다. 모델은 입력 데이터를 받아들이고 내부적으로 가중치를 조정하여 원하는 결과를 출력합니다. 학습 과정에서 모델은 입력 데이터와 정답 데이터를 이용하여 오차를 계산하고 이 오차를 최소화하는 방향으로 가중치를 업데이트합니다. 이렇게 반복적으로 학습을 진행하면 모델은 입력 데이터로부터 패턴을 학습하여 정확한 결과를 예측하게 됩니다. 이러한 학습 원리를 통해 인공지능 모델은 데이터를 이용하여 스스로 학습하고 문제를 해결할 수 있습니다.', response_metadata={'token_usage': {'completion_tokens': 214, 'prompt_tokens': 33, 'total_tokens': 247}, 'model_name': 'gpt-3.5-turbo', 'system_fingerprint': None, 'finish_reason': 'stop', 'logprobs': None}, id='run-7f8a08f4-51ba-4d14-b9d2-2e092be3e7aa-0', usage_metadata={'input_tokens': 33, 'output_tokens': 214, 'total_tokens': 247})</pre>
+<p>아래는 스트리밍을 출력하는 예시 입니다.</p>
+<pre><code class="language-python"># 스트리밍 출력을 위한 요청
+answer = chain.stream(input)
+# 스트리밍 출력
+stream_response(answer)
+</code></pre>
+<pre class="custom">인공지능 모델의 학습 원리는 데이터를 입력으로 받아서 패턴을 학습하고 이를 기반으로 예측이나 분류를 수행하는 과정입니다. 
+
+학습 과정은 크게 입력층, 은닉층, 출력층으로 구성된 인공신경망을 사용합니다. 입력층에서 데이터를 받아 은닉층을 거쳐 출력층으로 결과를 출력하는 구조입니다.
+
+이때, 모델은 주어진 데이터를 통해 가중치를 조정하고 오차를 최소화하는 방향으로 학습을 진행합니다. 이를 위해 주어진 데이터에 대해 예측을 수행하고 실제 값과 비교하여 오차를 계산한 후, 이 오차를 줄이기 위해 가중치를 업데이트합니다.
+
+이러한 반복적인 과정을 통해 모델은 데이터 간의 패턴을 학습하고 새로운 데이터에 대해 정확한 예측을 수행할 수 있게 됩니다. 이렇게 학습된 모델은 새로운 데이터에 대해 일반화된 예측을 할 수 있습니다.</pre>
+<h3 id="output-parser">출력파서(Output Parser)</h3>
+<pre><code class="language-python">from langchain_core.output_parsers import StrOutputParser
+
+output_parser = StrOutputParser()
+</code></pre>
+<p>Chain 에 출력파서를 추가합니다.</p>
+<pre><code class="language-python"># 프롬프트, 모델, 출력 파서를 연결하여 처리 체인을 구성합니다.
+chain = prompt | model | output_parser
+</code></pre>
+<pre><code class="language-python"># chain 객체의 invoke 메서드를 사용하여 input을 전달합니다.
+input = {&quot;topic&quot;: &quot;인공지능 모델의 학습 원리&quot;}
+chain.invoke(input)
+</code></pre>
+<pre class="custom">'인공지능 모델의 학습 원리는 데이터를 입력으로 받아서 패턴을 학습하는 것입니다. 모델은 입력 데이터를 받아서 내부적으로 가중치를 조절하면서 원하는 결과를 출력하도록 학습됩니다. 이때, 모델은 입력 데이터와 출력 데이터 간의 관계를 학습하여 새로운 입력 데이터에 대한 출력을 예측할 수 있게 됩니다. 이 과정은 반복적으로 이루어지며, 모델은 학습을 통해 점차적으로 정확도를 향상시킵니다. 이러한 방식으로 인공지능 모델은 주어진 데이터를 기반으로 판단하고 예측하는 능력을 향상시킬 수 있습니다.'</pre>
+
+<pre><code class="language-python"># 스트리밍 출력을 위한 요청
+answer = chain.stream(input)
+# 스트리밍 출력
+stream_response(answer)
+</code></pre>
+<pre class="custom">인공지능 모델의 학습 원리는 데이터를 이용해서 패턴을 학습하는 과정입니다. 먼저 모델은 입력 데이터를 받아서 처리하고, 이때 입력 데이터와 정답 데이터를 비교하여 오차를 계산합니다. 이 오차를 최소화하기 위해 모델은 가중치와 편향을 조정하면서 점차적으로 정확한 패턴을 학습해나갑니다. 이런 과정을 반복하여 모델이 데이터에 대해 정확한 예측을 할 수 있도록 학습시키는 것이 인공지능 모델의 핵심 원리입니다.</pre>
+<h3 id="_3">템플릿을 변경하여 적용</h3>
+<ul>
+<li>아래의 프롬프트 내용을 얼마든지 <strong>변경</strong> 하여 테스트 해볼 수 있습니다.</li>
+<li><code>model_name</code> 역시 변경하여 테스트가 가능합니다.</li>
+</ul>
+<pre><code class="language-python">template = &quot;&quot;&quot;
+당신은 영어를 가르치는 10년차 영어 선생님입니다. 상황에 [FORMAT]에 영어 회화를 작성해 주세요.
+
+상황:
+{question}
+
+FORMAT:
+- 영어 회화:
+- 한글 해석:
+&quot;&quot;&quot;
+
+# 프롬프트 템플릿을 이용하여 프롬프트를 생성합니다.
+prompt = PromptTemplate.from_template(template)
+
+# ChatOpenAI 챗모델을 초기화합니다.
+model = ChatOpenAI(model_name=&quot;gpt-4-turbo&quot;)
+
+# 문자열 출력 파서를 초기화합니다.
+output_parser = StrOutputParser()
+</code></pre>
+<pre><code class="language-python"># 체인을 구성합니다.
+chain = prompt | model | output_parser
+</code></pre>
+<pre><code class="language-python"># 완성된 Chain을 실행하여 답변을 얻습니다.
+# 스트리밍 출력을 위한 요청
+answer = chain.stream({&quot;question&quot;: &quot;저는 식당에 가서 음식을 주문하고 싶어요&quot;})
+# 스트리밍 출력
+stream_response(answer)
+</code></pre>
+<pre class="custom">영어 회화:
+- Hello, could I see the menu, please? 
+- I'd like to order the grilled salmon and a side of mashed potatoes.
+- Could I have a glass of water as well?
+- Thank you!
+
+한글 해석:
+- 안녕하세요, 메뉴판 좀 볼 수 있을까요?
+- 구운 연어와 매시드 포테이토를 주문하고 싶어요.
+- 물 한 잔도 주실 수 있나요?
+- 감사합니다!</pre>
+
+<pre><code class="language-python"># 이번에는 question 을 '미국에서 피자 주문'으로 설정하여 실행합니다.
+# 스트리밍 출력을 위한 요청
+answer = chain.stream({&quot;question&quot;: &quot;미국에서 피자 주문&quot;})
+# 스트리밍 출력
+stream_response(answer)
+</code></pre>
+<pre class="custom">영어 회화:
+- Employee: "Hello, Tony's Pizza. How can I help you?"
+- Customer: "Hi, I'd like to place an order for delivery, please."
+- Employee: "Sure thing! What would you like to order?"
+- Customer: "I'll have a large pepperoni pizza with extra cheese and a side of garlic bread."
+- Employee: "Anything to drink?"
+- Customer: "Yes, a 2-liter bottle of Coke, please."
+- Employee: "Alright, your total comes to $22.50. Can I have your delivery address?"
+- Customer: "It's 742 Evergreen Terrace."
+- Employee: "Thank you. Your order will be there in about 30-45 minutes. Is there anything else I can help you with?"
+- Customer: "No, that's everything. Thank you!"
+- Employee: "Thank you for choosing Tony's Pizza. Have a great day!"
+
+한글 해석:
+- 직원: "안녕하세요, 토니의 피자입니다. 어떻게 도와드릴까요?"
+- 고객: "안녕하세요, 배달 주문하고 싶은데요."
+- 직원: "네, 무엇을 주문하시겠어요?"
+- 고객: "큰 사이즈의 페퍼로니 피자에 치즈 추가하고, 마늘빵 하나 주세요."
+- 직원: "음료는 드릴까요?"
+- 고객: "네, 콜라 2리터 한 병 주세요."
+- 직원: "알겠습니다, 합계는 $22.50입니다. 배달 주소를 알려주시겠어요?"
+- 고객: "742 에버그린 테라스입니다."
+- 직원: "감사합니다. 주문하신 음식은 대략 30-45분 내에 도착할 예정입니다. 다른 도움이 필요하신가요?"
+- 고객: "아니요, 이게 다예요. 감사합니다!"
+- 직원: "토니의 피자를 선택해주셔서 감사합니다. 좋은 하루 되세요!"</pre>
 </div>
 <div class="muted text-right" style="font-size: 0.9em;margin:10px 0;">
     
-    마지막 편집일시 : 2024년 6월 17일 8:24 오후
+    마지막 편집일시 : 2024년 9월 5일 9:18 오전
     
 </div>
 <!-- google adsense -->
 <!-- PC -->
 
+<!-- Mobile -->
+
     
-        <div style="margin:30px 0;">
+        <div style="margin:20px 0;">
             <!-- 위키독스 포인트 광고 -->
-            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9470517771012578"
-                    crossorigin="anonymous"></script>
-            <!-- 위키독스 일반 -->
-            <ins class="adsbygoogle"
-                    style="display:block"
-                    data-ad-client="ca-pub-9470517771012578"
-                    data-ad-slot="9169493836"
-                    data-ad-format="auto"
-                    data-ad-channel="6628864207"
-                    data-full-width-responsive="true"></ins>
-            <script>
-                    (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
+            <!-- 위키독스모바일2020 -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9470517771012578" crossorigin="anonymous"></script>
+<ins class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-9470517771012578"
+        data-ad-slot="4465552259"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
+<script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
         </div>
     
-
-<!-- Mobile -->
 
 
 <!-- google adsense -->
@@ -2049,10 +2248,10 @@ print(f&quot;[API KEY]\n{os.environ['OPENAI_API_KEY']}&quot;)
     <div class="pull-left">
         <ul>
             
-                <li><strong>이전글</strong> : <a href="javascript:page(233341)">CH01 LangChain 시작하기</a></li>
+                <li><strong>이전글</strong> : <a href="javascript:page(233343)">04. OpenAI API 사용(GPT-4o 멀티모달)</a></li>
             
             
-                <li><strong>다음글</strong> : <a href="javascript:page(250954)">02. LangSmith 추적 설정</a></li>
+                <li><strong>다음글</strong> : <a href="javascript:page(233345)">06. LCEL 인터페이스</a></li>
             
         </ul>
     </div>
@@ -2063,13 +2262,11 @@ print(f&quot;[API KEY]\n{os.environ['OPENAI_API_KEY']}&quot;)
 
 
 
+<a href="#" class="btn btn-primary toc-to mobile-toc">
+    <span class="glyphicon glyphicon-list"></span>
+    목차보기
+</a>
 
-<a id="toggle-theme" class="label label-default dark_btn" data-toggle="popover" data-placement="left" data-content="다크모드">
-    <span class="glyphicon glyphicon-adjust"></span>
-</a>
-<a href="#top" class="label label-default back-to-top" data-toggle="popover" data-placement="left" data-content="맨위로">
-    <span class="glyphicon glyphicon-arrow-up"></span>
-</a>
 
 <!-- 책갈피 모달 -->
 <div class="modal fade" id="bookmarkModal" tabindex="-1" role="dialog" aria-labelledby="bookmarkModalLabel">
@@ -2090,7 +2287,7 @@ print(f&quot;[API KEY]\n{os.environ['OPENAI_API_KEY']}&quot;)
     </div>
 </div>
 <script>
-var is_mobile = "False";
+var is_mobile = "True";
 $(document).ready(function () {
     if (is_mobile == "True") {
         if($(window).width() >= 768) {
@@ -2157,6 +2354,7 @@ $(document).ready(function () {
     });
 
     // 다크모드 토글 버튼 클릭 이벤트 처리
+    /*
     $('#toggle-theme').click(function(e) {
         const urlParams = new URLSearchParams(window.location.search);
         
@@ -2164,6 +2362,7 @@ $(document).ready(function () {
         
         window.location.search = urlParams.toString();
     });
+    */
 
     $('[data-toggle="popover"]').popover({
         trigger: 'hover', // 마우스를 올렸을 때 popover 표시
@@ -2177,7 +2376,7 @@ function deleteBookmark(bookmarkId) {
             url: '/bookmark/delete/' + bookmarkId + '/',
             type: 'POST',
             data: {
-                'csrfmiddlewaretoken': 'IsEf6QJluHj8rZb3KNFhv7iYOl1fgKvIO7HIlbI1QcDgGQyTLUsHSXV2yiBcilFV'
+                'csrfmiddlewaretoken': '6ethFf9VrCFxATJi3Jz9R4ggxER30tBirDecn2WyUsxTWNT74kXIx2hkWjLM1M0z'
             },
             success: function(response) {
                 $('#bookmarkModal .modal-body').html(response);
@@ -2189,6 +2388,72 @@ function deleteBookmark(bookmarkId) {
         });
     }
 }
+
+$(document).ready(function() {
+    // 현재 다크모드 상태 확인
+    let isDarkMode = false;
+
+    // 다크모드 토글 함수
+    function toggleDarkMode() {
+        isDarkMode = !isDarkMode;
+        updateTheme();
+        saveDarkModePreference();
+    }
+
+    // 테마 업데이트 함수
+    function updateTheme() {
+        const mainStylesheet = $('#main-stylesheet');
+        const markdownStylesheet = $('#markdown-stylesheet');
+        const highlightStylesheet = $('#highlight-stylesheet');
+
+        if (isDarkMode) {
+            mainStylesheet.attr('href', "/static/book/css/style_stack_dark.css?v=13");
+            markdownStylesheet.attr('href', "/static/book/css/markdown_stack_dark.css?v=13");
+            highlightStylesheet.attr('href', "//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/atom-one-dark.min.css");
+        } else {
+            mainStylesheet.attr('href', "/static/book/css/style_stack.css?v=13");
+            markdownStylesheet.attr('href', "/static/book/css/markdown_stack.css?v=13");
+            highlightStylesheet.attr('href', "//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/default.min.css");
+        }
+    }
+
+    // Ajax를 사용하여 다크모드 설정 저장
+    function saveDarkModePreference() {
+        $.ajax({
+            url: '/set_darkmode/',  // Django URL을 여기에 지정
+            method: 'POST',
+            data: {
+                'darkmode': isDarkMode ? 'on' : 'off'
+            },
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')  // CSRF 토큰
+            }
+        });
+    }
+
+    // CSRF 토큰을 쿠키에서 가져오는 함수
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // 토글 버튼 클릭 이벤트
+    $('#toggle-theme').click(toggleDarkMode);
+
+    // 초기 테마 설정
+    // updateTheme();
+});
+
 </script>
     
 
@@ -2196,12 +2461,12 @@ function deleteBookmark(bookmarkId) {
 </div>
 <div style="display:none" class="prev_next_indicator">
     
-    <a class="prev_icon" href="javascript:page(233341)" role="button">
+    <a class="prev_icon" href="javascript:page(233343)" role="button">
         <span class="glyphicon glyphicon-chevron-left" style="font-size:2em;"></span>
     </a>
 
 
-    <a class="next_icon" href="javascript:page(250954)" role="button">
+    <a class="next_icon" href="javascript:page(233345)" role="button">
         <span class="glyphicon glyphicon-chevron-right" style="font-size:2em;"></span>
     </a>
 
@@ -2218,7 +2483,7 @@ function deleteBookmark(bookmarkId) {
             </div>
             <div class="modal-body">
                 <form class="form" role="form">
-                    <input type="hidden" name="page_id" id="page_id" value="233342" />
+                    <input type="hidden" name="page_id" id="page_id" value="233344" />
                     <div class="form-group">
                         <label class="control-label" for="email">답장받을 이메일 주소</label>
                         <div class="">

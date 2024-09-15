@@ -1,7 +1,5 @@
-https://wikidocs.net/233341
-https://wikidocs.net/233342
-https://wikidocs.net/250954
-https://wikidocs.net/233343
-https://wikidocs.net/233344
-https://wikidocs.net/233345
-https://wikidocs.net/233346
+https://teddylee777.github.io/poetry/poetry-tutorial/
+https://teddylee777.github.io/langchain/langchain-agent/
+https://teddylee777.github.io/langchain/summarize-chain/
+https://teddylee777.github.io/langchain/rag-naver-news-qa/
+https://teddylee777.github.io/openai/openai-models/

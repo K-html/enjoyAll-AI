@@ -9,25 +9,25 @@
     <meta name="google-site-verification" content="mzkAy71X1qQFWihQN535LoiToXg34MUg9nuor7Og9E8" />
     <meta name="naver-site-verification" content="a7b53e9ea172d3cefcc05eaba6ebf7180eca08fa" />
     
-<meta name="description" content="# 🦜️🔗 랭체인 LangChain  `LangChain` 은 언어 모델을 활용해 다양한 애플리케이션을 개발할 수 있는 프레임워크를 말합니다. 이 프레임워크를 통해 언어 모델은 …">
+<meta name="description" content="     .custom {         background-color: #008d8d;         color: white;         padding: 0.25em 0.5…">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="위키독스">
-<meta property="og:title" content="CH01 LangChain 시작하기">
-<meta property="og:description" content="# 🦜️🔗 랭체인 LangChain  `LangChain` 은 언어 모델을 활용해 다양한 애플리케이션을 개발할 수 있는 프레임워크를 말합니다. 이 프레임워크를 통해 언어 모델은 …">
-<meta property="og:image" content="https://wikidocs.net/images/book/langchain-note_vK7AYH8_FG1lT63_Cku4I60_1lMKdvo_Kwg4Zmu_oE1mjY6_zUttX9t_fdzK55Z_paWa_KCbBwtA.png">
-<meta property="og:url" content="https://wikidocs.net/233341">
+<meta property="og:title" content="07. Runnable">
+<meta property="og:description" content="     .custom {         background-color: #008d8d;         color: white;         padding: 0.25em 0.5…">
+<meta property="og:image" content="https://wikidocs.net/images/book/langchain-note_vK7AYH8_FG1lT63_Cku4I60_1lMKdvo_Kwg4Zmu_oE1mjY6_zUttX9t_fdzK55Z_paWa_vQKeAyT.png">
+<meta property="og:url" content="https://wikidocs.net/233346">
 
     <link rel="shortcut icon" type="image/x-icon" href="/static/img/favicon.ico">
     <link rel="canonical" href="https://wikidocs.net/book/1">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap">
-    <title>CH01 LangChain 시작하기 - &lt;랭체인LangChain 노트&gt; - LangChain 한국어 튜토리얼🇰🇷</title>
+    <title>07. Runnable - &lt;랭체인LangChain 노트&gt; - LangChain 한국어 튜토리얼🇰🇷</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     
 
     
-    <link type="text/css" id="theme-stylesheet" href="/static/book/css/style_stack.css?v=11" rel="stylesheet"  media="screen" />
+    <link type="text/css" id="main-stylesheet" href="/static/book/css/style_stack.css?v=13" rel="stylesheet"  media="screen" />
     
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
@@ -50,12 +50,20 @@
     }
     </script>
     
-    
+
+<!-- 자동광고 -->
+
+<!-- 포인트 광고 -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9470517771012578" crossorigin="anonymous"></script>
+
+
+
+
 
 <link type="text/css" href="/static/apprise/apprise.min.css" rel="stylesheet"  />
 
-<link type="text/css" id="theme-stylesheet" href="/static/book/css/markdown_stack.css?v=8" rel="stylesheet" />
-<link rel="stylesheet" id="theme-stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/default.min.css">
+<link type="text/css" id="markdown-stylesheet" href="/static/book/css/markdown_stack.css?v=13" rel="stylesheet" />
+<link rel="stylesheet" id="highlight-stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/default.min.css">
 
 <link type="text/css" href="/static/treeview/bootstrap-treeview.min.css" rel="stylesheet" />
 <link type="text/css" href="/static/book/css/copycode.css" rel="stylesheet" />
@@ -181,7 +189,7 @@ $(document).ready(function () {
         }catch(e) {
         }
     });
-    var is_mobile = "False";
+    var is_mobile = "True";
     let _trigger = 'click';  // focus(다른 곳 클릭시 팝업 닫힘), click 
     let _hide = 0;  // focus일 때는 200이 적당
     if (is_mobile == "True") {
@@ -342,19 +350,39 @@ function report_modal(comment_id) {
     $("#comment_id").val(comment_id);
     $('#reportModal').modal('show')
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    var page = document.querySelector('.page');
+    var adContainers = document.querySelectorAll('.ad-container');
+    
+    function checkWidth() {
+        var pageWidth = page.offsetWidth;
+        adContainers.forEach(function(container) {
+            var secondAd = container.querySelector('.second-ad');
+            var firstAd = container.querySelector('.first-ad');
+            if (secondAd && firstAd) {
+                var containerWidth = container.offsetWidth;
+                var firstAdWidth = firstAd.offsetWidth;
+                var secondAdWidth = secondAd.offsetWidth;
+                
+                if (containerWidth < firstAdWidth + secondAdWidth + 50) {
+                    secondAd.style.display = 'none';
+                } else {
+                    secondAd.style.display = 'block';
+                }
+            }
+        });
+    }
+    
+    // 초기 실행
+    checkWidth();
+    
+    // 창 크기가 변경될 때마다 실행
+    // window.addEventListener('resize', checkWidth);
+});
 </script>
 
 
-    <script type="text/javascript">
-      var _gaq = _gaq || [];
-      _gaq.push(['_setAccount', 'UA-2686629-3']);
-      _gaq.push(['_trackPageview']);
-      (function() {
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-      })();
-    </script>
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-6N5MJRGLWG"></script>
     <script>
@@ -366,27 +394,7 @@ function report_modal(comment_id) {
 </head>
 <body>
 
-    <!-- PC -->
-
-    
-        <!-- 위키독스 포인트 광고 -->
-        <!-- 오른쪽 플로팅 고정광고 시작-->
-        <aside id="asideRight" class="asideRight">
-            <div id="chaseRight" style="top:20px;">
-                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9470517771012578" crossorigin="anonymous"></script>
-                <!-- wikidocs_sidebar -->
-                <ins class="adsbygoogle"
-                    style="display:inline-block;width:200px;height:600px"
-                    data-ad-client="ca-pub-9470517771012578"
-                    data-ad-slot="3449798337"
-                    data-ad-channel="6628864207"></ins>
-                <script>
-                    (adsbygoogle = window.adsbygoogle || []).push({});
-                </script>
-            </div>
-        </aside>
-        <!-- 오른쪽 플로팅 고정광고 끝 -->
-    
+<!-- PC -->
 
 
 
@@ -401,6 +409,18 @@ function report_modal(comment_id) {
 <div class="row">
     <div class="col-sm-3 sidebar" style="padding:0;margin:0;overflow-x: hidden;">
         
+        <div class="row" style="display:none;">
+            <div class="col-xs-12" style="border-bottom:solid 1px #ddd;">
+                <button id="toggle_toc_btn" class="btn btn-sm btn-default" style="margin:10px;">목차보기</button>
+                <label for="toc_on" class="small">
+                    <input type="radio" id="toc_on" name="toc_on_off" value="show"> Show
+                </label>
+                <label for="toc_off" class="small">
+                    <input type="radio" id="toc_off" name="toc_on_off" value="hide"> Hide
+                </label>
+            </div>
+        </div>
+        
         <div class="toc toc-checker">
             <div class="row">
                 <div class="col-xs-12" style="padding:0;">
@@ -410,13 +430,6 @@ function report_modal(comment_id) {
                             <ul id="search-results" class="dropdown-menu" aria-labelledby="kw"></ul>
                         </div>
                         <div class="pull-right">
-                            
-                            <button class="btn btn-xs btn-default find-btn" style="margin-top:12px;">
-                                <i class="glyphicon glyphicon-search" title="찾기"></i>
-                            </button>
-                            <button class="btn btn-xs btn-default menu_link menu-toggle" style="margin-right:20px;margin-top:12px;">
-                                <i class="glyphicon glyphicon-menu-hamburger" title="메뉴"></i>
-                            </button>
                             
                         </div>
                     </div>
@@ -432,7 +445,7 @@ function report_modal(comment_id) {
                     </span>
                 </a>
                 
-                <a href="javascript:page(233341)" class="list-group-item active">
+                <a href="javascript:page(233341)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
                           title="CH01 LangChain 시작하기">
                         <span style="padding-left:0px">
@@ -442,62 +455,72 @@ function report_modal(comment_id) {
                     </span>
                 </a>
                 
-                <a href="javascript:page(233342)" class="list-group-item ">
+                <a href="javascript:page(257836)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="01. OpenAI API 키 발급 및 테스트">
+                          title="01. 설치 영상보고 따라하기">
                         <span style="padding-left:20px">
                         
-                        01. OpenAI API 키 발급 및 테스트
+                        01. 설치 영상보고 따라하기
+                        </span>
+                    </span>
+                </a>
+                
+                <a href="javascript:page(233342)" class="list-group-item ">
+                    <span style="white-space:nowrap;overflow:hidden;display:block;"
+                          title="02. OpenAI API 키 발급 및 테스트">
+                        <span style="padding-left:20px">
+                        
+                        02. OpenAI API 키 발급 및 테스트
                         </span>
                     </span>
                 </a>
                 
                 <a href="javascript:page(250954)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="02. LangSmith 추적 설정">
+                          title="03. LangSmith 추적 설정">
                         <span style="padding-left:20px">
                         
-                        02. LangSmith 추적 설정
+                        03. LangSmith 추적 설정
                         </span>
                     </span>
                 </a>
                 
                 <a href="javascript:page(233343)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="03. OpenAI API 사용(GPT-4o 멀티모달)">
+                          title="04. OpenAI API 사용(GPT-4o 멀티모달)">
                         <span style="padding-left:20px">
                         
-                        03. OpenAI API 사용(GPT-4o 멀티모달)
+                        04. OpenAI API 사용(GPT-4o 멀티모달)
                         </span>
                     </span>
                 </a>
                 
                 <a href="javascript:page(233344)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="04. LangChain Expression Language(LCEL)">
+                          title="05. LangChain Expression Language(LCEL)">
                         <span style="padding-left:20px">
                         
-                        04. LangChain Expression Language(LCEL)
+                        05. LangChain Expression Language(LCEL)
                         </span>
                     </span>
                 </a>
                 
                 <a href="javascript:page(233345)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="05. LCEL 인터페이스">
+                          title="06. LCEL 인터페이스">
                         <span style="padding-left:20px">
                         
-                        05. LCEL 인터페이스
+                        06. LCEL 인터페이스
                         </span>
                     </span>
                 </a>
                 
-                <a href="javascript:page(233346)" class="list-group-item ">
+                <a href="javascript:page(233346)" class="list-group-item active">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="06. Runnable">
+                          title="07. Runnable">
                         <span style="padding-left:20px">
                         
-                        06. Runnable
+                        07. Runnable
                         </span>
                     </span>
                 </a>
@@ -1224,10 +1247,10 @@ function report_modal(comment_id) {
                 
                 <a href="javascript:page(234016)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="01. 벡터저장소 지원 검색기(VectorStore-backed Retriever)">
+                          title="01. 벡터스토어 기반 검색기(VectorStore-backed Retriever)">
                         <span style="padding-left:20px">
                         
-                        01. 벡터저장소 지원 검색기(VectorStore-backed Retriever)
+                        01. 벡터스토어 기반 검색기(VectorStore-backed Retriever)
                         </span>
                     </span>
                 </a>
@@ -1444,70 +1467,70 @@ function report_modal(comment_id) {
                 
                 <a href="javascript:page(235580)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="01. RunnablePassthrough: 데이터 전달">
+                          title="01. RunnablePassthrough">
                         <span style="padding-left:20px">
                         
-                        01. RunnablePassthrough: 데이터 전달
+                        01. RunnablePassthrough
                         </span>
                     </span>
                 </a>
                 
                 <a href="javascript:page(235884)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="02. Runnable 구조(그래프) 확인">
+                          title="02. Runnable 구조(그래프) 검토">
                         <span style="padding-left:20px">
                         
-                        02. Runnable 구조(그래프) 확인
+                        02. Runnable 구조(그래프) 검토
                         </span>
                     </span>
                 </a>
                 
                 <a href="javascript:page(235705)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="03. RunnableLambda: 사용자 정의 함수">
+                          title="03. RunnableLambda">
                         <span style="padding-left:20px">
                         
-                        03. RunnableLambda: 사용자 정의 함수
+                        03. RunnableLambda
                         </span>
                     </span>
                 </a>
                 
                 <a href="javascript:page(235882)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="04. RunnableBranch: 라우팅(Routing)">
+                          title="04. LLM 체인 라우팅(RunnableLambda, RunnableBranch)">
                         <span style="padding-left:20px">
                         
-                        04. RunnableBranch: 라우팅(Routing)
+                        04. LLM 체인 라우팅(RunnableLambda, RunnableBranch)
                         </span>
                     </span>
                 </a>
                 
                 <a href="javascript:page(235883)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="05. RunnableParallel: 병렬 처리">
+                          title="05. RunnableParallel">
                         <span style="padding-left:20px">
                         
-                        05. RunnableParallel: 병렬 처리
+                        05. RunnableParallel
                         </span>
                     </span>
                 </a>
                 
                 <a href="javascript:page(235704)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="06. configurable_fields, configurable_alternatives">
+                          title="06. 동적 속성 지정(configurable_fields, configurable_alternatives)">
                         <span style="padding-left:20px">
                         
-                        06. configurable_fields, configurable_alternatives
+                        06. 동적 속성 지정(configurable_fields, configurable_alternatives)
                         </span>
                     </span>
                 </a>
                 
                 <a href="javascript:page(235703)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="07. @chain 데코레이터로 Runnable 생성">
+                          title="07. @chain 데코레이터로 Runnable 구성">
                         <span style="padding-left:20px">
                         
-                        07. @chain 데코레이터로 Runnable 생성
+                        07. @chain 데코레이터로 Runnable 구성
                         </span>
                     </span>
                 </a>
@@ -1582,6 +1605,16 @@ function report_modal(comment_id) {
                     </span>
                 </a>
                 
+                <a href="javascript:page(256983)" class="list-group-item ">
+                    <span style="white-space:nowrap;overflow:hidden;display:block;"
+                          title="03. 구조화된 출력 체인(with_structered_output)">
+                        <span style="padding-left:20px">
+                        
+                        03. 구조화된 출력 체인(with_structered_output)
+                        </span>
+                    </span>
+                </a>
+                
                 <a href="javascript:page(233782)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
                           title="CH15 에이전트(Agent)">
@@ -1612,22 +1645,12 @@ function report_modal(comment_id) {
                     </span>
                 </a>
                 
-                <a href="javascript:page(233783)" class="list-group-item ">
-                    <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="CH16 파인튜닝(Fine Tuning)">
-                        <span style="padding-left:0px">
-                        
-                        CH16 파인튜닝(Fine Tuning)
-                        </span>
-                    </span>
-                </a>
-                
                 <a href="javascript:page(233785)" class="list-group-item ">
                     <span style="white-space:nowrap;overflow:hidden;display:block;"
-                          title="CH17 LangGraph">
+                          title="CH16 LangGraph">
                         <span style="padding-left:0px">
                         
-                        CH17 LangGraph
+                        CH16 LangGraph
                         </span>
                     </span>
                 </a>
@@ -1642,12 +1665,6 @@ function report_modal(comment_id) {
                     </span>
                 </a>
                 
-            </div>
-        </div>
-        
-        <div class="row toc-footer">
-            <div class="small" style="border-top:solid 1px #ccc;padding:15px 15px 30px 15px;font-family:consolas;">
-                <a href="/" style="padding-left:15px;">Published with WikiDocs</a>
             </div>
         </div>
         
@@ -1719,6 +1736,26 @@ $(document).ready(function () {
         }
     });
     
+    $("input[name=toc_on_off]").on("click", function() {
+        var result = $(this).val();
+        if (typeof(Storage) !== "undefined") {
+            localStorage.toc = result;
+        }
+    });
+    if (typeof(Storage) !== "undefined") {
+        if (localStorage.getItem("toc") === null) {  // init value
+            localStorage.toc = "hide";
+        }
+        if(localStorage.toc == "hide") {
+            $('#toc_off').prop('checked', true);
+            $(".toc-checker").hide();
+        }else {
+            $('#toc_on').prop('checked', true);
+            $(".toc-checker").removeClass("hide");
+            $(".toc-checker").show();
+        }
+    }
+    
     $("#load_content").show();
 });
 
@@ -1753,7 +1790,7 @@ function page(no) {
     $("#load_content").load(url, function(responseTxt, statusTxt, xhr){
         if(statusTxt == "success") {
             $("#load_content").scrollTop(0);
-            window.history.pushState("object or string", "CH01 LangChain 시작하기", "/"+no);
+            window.history.pushState("object or string", "07. Runnable", "/"+no);
         }
         if(statusTxt == "error") {
             alert("Error: " + xhr.status + ": " + xhr.statusText);
@@ -1883,10 +1920,16 @@ $(document).ready(function() {
         
         <li><small><a href="/233341">CH01 LangChain 시작하기</a></small></li>
         
+        <li><small><a href="/233346">07. Runnable</a></small></li>
+        
     </ol>
     
     <ol class="breadcrumb pull-right">
         
+<li>
+    <a href="/257903" class="btn btn-xs btn-danger" style="color:#fff"><i class="glyphicon glyphicon-gift"></i> 도서 증정 이벤트 !!</a>
+</li>
+
 
         
         <li>
@@ -1897,95 +1940,274 @@ $(document).ready(function() {
 </div>
 
 <h1 class="page-subject">
-    CH01 LangChain 시작하기
-    
-        
+    07. Runnable
     
 </h1>
 <!-- google adsense -->
+<!-- PC -->
+
+
+<!-- Mobile -->
+
+    
+        <div style="margin:20px 0;">
+            <!-- 위키독스 포인트 광고 -->
+            <!-- 위키독스모바일2020 -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9470517771012578" crossorigin="anonymous"></script>
+<ins class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-9470517771012578"
+        data-ad-slot="4465552259"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
+<script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+        </div>
+    
+
 
 <!-- google adsense -->
 <div class="page-content tex2jax_process">
     
-    <h1 id="langchain">🦜️🔗 랭체인 LangChain</h1>
-<p><code>LangChain</code> 은 언어 모델을 활용해 다양한 애플리케이션을 개발할 수 있는 프레임워크를 말합니다. 이 프레임워크를 통해 언어 모델은 다음과 같은 기능을 수행할 수 있게 됩니다.</p>
-<ul>
-<li>문맥을 인식하는 기능: LangChain은 언어 모델을 다양한 문맥 소스와 연결합니다. 여기에는 프롬프트 지시사항, 소수의 예시, 응답에 근거한 내용 등이 포함됩니다. 이를 통해 언어 모델은 제공된 정보를 기반으로 더 정확하고 관련성 높은 답변을 생성할 수 있습니다.</li>
-<li>추론하는 기능: 또한, 언어 모델은 주어진 문맥을 바탕으로 어떠한 답변을 제공하거나, 어떤 조치를 취해야 할지를 스스로 추론할 수 있습니다. 이는 언어 모델이 단순히 정보를 재생산하는 것을 넘어서, 주어진 상황을 분석하고 적절한 해결책을 제시할 수 있음을 의미합니다.</li>
-</ul>
-<p>LangChain 을 활용하면 이전에 언급한 기능을 바탕으로 <strong>검색 증강 생성(RAG) 어플리케이션 제작</strong>, <strong>구조화된 데이터 분석</strong>, <strong>챗봇</strong> 등을 만들 수 있습니다. </p>
-<p>더 많은 예제는 유튜브 채널 <a href="https://www.youtube.com/channel/UCt2wAAXgm87ACiQnDHQEW6Q">테디노트</a> 에서 확인하실 수 있습니다.</p>
-<h2 id="_1">설치</h2>
-<p>권장하는 파이썬 버전은 <code>3.11</code> 버전입니다.</p>
-<p>pip 를 이용한 설치</p>
-<pre><code class="language-bash">pip install -r https://raw.githubusercontent.com/teddylee777/langchain-kr/main/requirements.txt
+    <style>
+    .custom {
+        background-color: #008d8d;
+        color: white;
+        padding: 0.25em 0.5em 0.25em 0.5em;
+        white-space: pre-wrap;       /* css-3 */
+        white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+        white-space: -pre-wrap;      /* Opera 4-6 */
+        white-space: -o-pre-wrap;    /* Opera 7 */
+        word-wrap: break-word;    
+    }
+
+    pre {
+        background-color: #027c7c;
+        padding-left: 0.5em;
+    }
+</style>
+
+<pre><code class="language-python"># .env 파일을 읽어서 환경변수로 설정
+from dotenv import load_dotenv
+
+# 토큰 정보로드
+load_dotenv()
 </code></pre>
-<p>최소한의 기능만 설치하기 위한 <strong>mini</strong> 버전 (일부 패키지만 설치하는 경우)</p>
-<pre><code class="language-bash">pip install -r https://raw.githubusercontent.com/teddylee777/langchain-kr/main/requirements-mini.txt
+<pre class="custom">True</pre>
+
+<pre><code class="language-python"># LangSmith 추적을 설정합니다. https://smith.langchain.com
+# !pip install -qU langchain-teddynote
+from langchain_teddynote import logging
+
+# 프로젝트 이름을 입력합니다.
+logging.langsmith(&quot;CH01-Basic&quot;)
 </code></pre>
-<h2 id="_2">구성</h2>
-<p>이 프레임워크는 여러 부분으로 구성되어 있습니다.</p>
+<pre class="custom">LangSmith 추적을 시작합니다.
+[프로젝트명]
+CH01-Basic
+</pre>
+<h2 id="_1">데이터를 효과적으로 전달하는 방법</h2>
 <ul>
-<li><strong><a href="https://python.langchain.com/v0.2/docs/introduction/">LangChain 라이브러리</a></strong>: Python 및 JavaScript 라이브러리. 다양한 컴포넌트의 인터페이스와 통합, 이러한 컴포넌트를 체인과 에이전트로 결합하는 기본 런타임, 그리고 즉시 사용 가능한 체인과 에이전트의 구현을 포함합니다.</li>
-<li><strong><a href="https://templates.langchain.com/">LangChain 템플릿</a></strong>: 다양한 작업을 위한 쉽게 배포할 수 있는 참조 아키텍처 모음입니다.</li>
-<li><strong><a href="https://github.com/langchain-ai/langserve">LangServe</a></strong>: LangChain 체인을 REST API로 배포하기 위한 라이브러리입니다.</li>
-<li><strong><a href="https://smith.langchain.com">LangSmith</a></strong>: 어떤 LLM 프레임워크에도 구축된 체인을 디버그, 테스트, 평가, 모니터링할 수 있게 해주며 LangChain과 원활하게 통합되는 개발자 플랫폼입니다.</li>
-<li><strong><a href="https://python.langchain.com/docs/langgraph">LangGraph</a></strong>: LLM을 사용한 상태유지가 가능한 다중 액터 애플리케이션을 구축하기 위한 라이브러리로, LangChain 위에 구축되었으며 LangChain과 함께 사용하도록 설계되었습니다. 여러 계산 단계에서 다중 체인(또는 액터)을 순환 방식으로 조정할 수 있는 능력을 LangChain 표현 언어에 추가합니다.</li>
+<li><code>RunnablePassthrough</code> 는 입력을 변경하지 않거나 추가 키를 더하여 전달할 수 있습니다. </li>
+<li><code>RunnablePassthrough()</code> 가 단독으로 호출되면, 단순히 입력을 받아 그대로 전달합니다.</li>
+<li><code>RunnablePassthrough.assign(...)</code> 방식으로 호출되면, 입력을 받아 assign 함수에 전달된 추가 인수를 추가합니다.</li>
 </ul>
-<h2 id="_3">개발 용이성✨</h2>
-<p><strong>컴포넌트의 조립 및 통합</strong> 🔧</p>
+<h3 id="runnablepassthrough">RunnablePassthrough</h3>
+<pre><code class="language-python">from langchain_core.prompts import PromptTemplate
+from langchain_openai import ChatOpenAI
+
+
+# prompt 와 llm 을 생성합니다.
+prompt = PromptTemplate.from_template(&quot;{num} 의 10배는?&quot;)
+llm = ChatOpenAI(temperature=0)
+
+# chain 을 생성합니다.
+chain = prompt | llm
+</code></pre>
+<p>chain 을 <code>invoke()</code> 하여 실행할 때는 입력 데이터의 타입이 딕셔너리여야 합니다.</p>
+<pre><code class="language-python"># chain 을 실행합니다.
+chain.invoke({&quot;num&quot;: 5})
+</code></pre>
+<pre class="custom">AIMessage(content='50입니다.', response_metadata={'token_usage': {'completion_tokens': 3, 'prompt_tokens': 16, 'total_tokens': 19}, 'model_name': 'gpt-3.5-turbo', 'system_fingerprint': None, 'finish_reason': 'stop', 'logprobs': None}, id='run-29242a8b-01c0-41ad-8f5b-7613e6876dc5-0', usage_metadata={'input_tokens': 16, 'output_tokens': 3, 'total_tokens': 19})</pre>
+<p>하지만, langchain 라이브러리가 업데이트 되면서 1개의 변수만 템플릿에 포함하고 있다면, 값만 전달하는 것도 가능합니다.</p>
+<pre><code class="language-python"># chain 을 실행합니다.
+chain.invoke(5)
+</code></pre>
+<pre class="custom">AIMessage(content='50', response_metadata={'token_usage': {'completion_tokens': 1, 'prompt_tokens': 16, 'total_tokens': 17}, 'model_name': 'gpt-3.5-turbo', 'system_fingerprint': None, 'finish_reason': 'stop', 'logprobs': None}, id='run-44f606db-2437-4d1f-9cee-ddfc69428745-0', usage_metadata={'input_tokens': 16, 'output_tokens': 1, 'total_tokens': 17})</pre>
+<p>아래는 <code>RunnablePassthrough</code> 를 사용한 예제입니다.</p>
+<p><code>RunnablePassthrough</code> 는 <code>runnable</code> 객체이며, <code>runnable</code> 객체는 <code>invoke()</code> 메소드를 사용하여 별도 실행이 가능합니다.</p>
+<pre><code class="language-python">from langchain_core.runnables import RunnablePassthrough
+
+# runnable
+RunnablePassthrough().invoke({&quot;num&quot;: 10})
+</code></pre>
+<pre class="custom">{'num': 10}</pre>
+<p>아래는 <code>RunnablePassthrough</code> 로 체인을 구성하는 예제입니다.</p>
+<pre><code class="language-python">runnable_chain = {&quot;num&quot;: RunnablePassthrough()} | prompt | ChatOpenAI()
+
+# dict 값이 RunnablePassthrough() 로 변경되었습니다.
+runnable_chain.invoke(10)
+</code></pre>
+<pre class="custom">AIMessage(content='100입니다.', response_metadata={'token_usage': {'completion_tokens': 3, 'prompt_tokens': 16, 'total_tokens': 19}, 'model_name': 'gpt-3.5-turbo', 'system_fingerprint': None, 'finish_reason': 'stop', 'logprobs': None}, id='run-66270ca2-4d62-4c71-859b-de6318f29909-0', usage_metadata={'input_tokens': 16, 'output_tokens': 3, 'total_tokens': 19})</pre>
+<p>다음은 <code>RunnablePassthrough.assign()</code> 을 사용하는 경우와 비교한 결과입니다.</p>
+<pre><code class="language-python">RunnablePassthrough().invoke({&quot;num&quot;: 1})
+</code></pre>
+<pre class="custom">{'num': 1}</pre>
+<p><code>RunnablePassthrough.assign()</code></p>
 <ul>
-<li>LangChain은 언어 모델과의 작업을 위한 조립 가능한 도구 및 통합을 제공합니다.</li>
-<li>컴포넌트는 모듈식으로 설계되어, 사용하기 쉽습니다. 이는 개발자가 LangChain 프레임워크를 자유롭게 활용할 수 있게 해줍니다.</li>
+<li>입력 값으로 들어온 값의 key/value 쌍과 새롭게 할당된 key/value 쌍을 합칩니다.</li>
 </ul>
-<p><strong>즉시 사용 가능한 체인</strong> 🚀</p>
-<ul>
-<li>고수준 작업을 수행하기 위한 컴포넌트의 내장 조합을 제공합니다.</li>
-<li>이러한 체인은 개발 과정을 간소화하고 속도를 높여줍니다.</li>
-</ul>
-<h2 id="_4">주요 모듈 📌</h2>
-<p><strong>모델 I/O</strong> 📃</p>
-<ul>
-<li>프롬프트 관리, 최적화 및 LLM과의 일반적인 인터페이스와 작업을 위한 유틸리티를 포함합니다.</li>
-</ul>
-<p><strong>검색</strong> 📚</p>
-<ul>
-<li>'데이터 강화 생성'에 초점을 맞춘 이 모듈은 생성 단계에서 필요한 데이터를 외부 데이터 소스에서 가져오는 작업을 담당합니다.</li>
-</ul>
-<p><strong>에이전트</strong> 🤖</p>
-<ul>
-<li>언어 모델이 어떤 조치를 취할지 결정하고, 해당 조치를 실행하며, 관찰하고, 필요한 경우 반복하는 과정을 포함합니다.</li>
-</ul>
-<p>LangChain을 활용하면, 언어 모델 기반 애플리케이션의 개발을 보다 쉽게 시작할 수 있으며, 필요에 맞게 기능을 맞춤 설정하고, 다양한 데이터 소스와 통합하여 복잡한 작업을 처리할 수 있게 됩니다.</p>
+<pre><code class="language-python"># 입력 키: num, 할당(assign) 키: new_num
+(RunnablePassthrough.assign(new_num=lambda x: x[&quot;num&quot;] * 3)).invoke({&quot;num&quot;: 1})
+</code></pre>
+<pre class="custom">{'num': 1, 'new_num': 3}</pre>
+<h2 id="runnableparallel">RunnableParallel</h2>
+<pre><code class="language-python">from langchain_core.runnables import RunnableParallel
+
+# RunnableParallel 인스턴스를 생성합니다. 이 인스턴스는 여러 Runnable 인스턴스를 병렬로 실행할 수 있습니다.
+runnable = RunnableParallel(
+    # RunnablePassthrough 인스턴스를 'passed' 키워드 인자로 전달합니다. 이는 입력된 데이터를 그대로 통과시키는 역할을 합니다.
+    passed=RunnablePassthrough(),
+    # 'extra' 키워드 인자로 RunnablePassthrough.assign을 사용하여, 'mult' 람다 함수를 할당합니다. 이 함수는 입력된 딕셔너리의 'num' 키에 해당하는 값을 3배로 증가시킵니다.
+    extra=RunnablePassthrough.assign(mult=lambda x: x[&quot;num&quot;] * 3),
+    # 'modified' 키워드 인자로 람다 함수를 전달합니다. 이 함수는 입력된 딕셔너리의 'num' 키에 해당하는 값에 1을 더합니다.
+    modified=lambda x: x[&quot;num&quot;] + 1,
+)
+
+# runnable 인스턴스에 {'num': 1} 딕셔너리를 입력으로 전달하여 invoke 메소드를 호출합니다.
+runnable.invoke({&quot;num&quot;: 1})
+</code></pre>
+<pre class="custom">{'passed': {'num': 1}, 'extra': {'num': 1, 'mult': 3}, 'modified': 2}</pre>
+<p>Chain 도 RunnableParallel 적용할 수 있습니다.</p>
+<pre><code class="language-python">chain1 = (
+    {&quot;country&quot;: RunnablePassthrough()}
+    | PromptTemplate.from_template(&quot;{country} 의 수도는?&quot;)
+    | ChatOpenAI()
+)
+chain2 = (
+    {&quot;country&quot;: RunnablePassthrough()}
+    | PromptTemplate.from_template(&quot;{country} 의 면적은?&quot;)
+    | ChatOpenAI()
+)
+</code></pre>
+<pre><code class="language-python">combined_chain = RunnableParallel(capital=chain1, area=chain2)
+combined_chain.invoke(&quot;대한민국&quot;)
+</code></pre>
+<pre class="custom">{'capital': AIMessage(content='서울입니다.', response_metadata={'token_usage': {'completion_tokens': 5, 'prompt_tokens': 19, 'total_tokens': 24}, 'model_name': 'gpt-3.5-turbo', 'system_fingerprint': None, 'finish_reason': 'stop', 'logprobs': None}, id='run-d9324c24-9670-4430-97d6-1272f5dbe0f2-0', usage_metadata={'input_tokens': 19, 'output_tokens': 5, 'total_tokens': 24}), 'area': AIMessage(content='대한민국의 총 면적은 약 100,363 km²입니다.', response_metadata={'token_usage': {'completion_tokens': 24, 'prompt_tokens': 20, 'total_tokens': 44}, 'model_name': 'gpt-3.5-turbo', 'system_fingerprint': None, 'finish_reason': 'stop', 'logprobs': None}, id='run-f27442a3-fc9c-4d08-9fdf-189c1b4585c8-0', usage_metadata={'input_tokens': 20, 'output_tokens': 24, 'total_tokens': 44})}</pre>
+<h2 id="runnablelambda">RunnableLambda</h2>
+<p>RunnableLambda 를 사용하여 사용자 정의 함수를 맵핑할 수 있습니다.</p>
+<pre><code class="language-python">from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import PromptTemplate
+from langchain_openai import ChatOpenAI
+from datetime import datetime
+
+
+def get_today(a):
+    # 오늘 날짜를 가져오기
+    return datetime.today().strftime(&quot;%b-%d&quot;)
+
+
+# 오늘 날짜를 출력
+get_today(None)
+</code></pre>
+<pre class="custom">'Jun-19'</pre>
+
+<pre><code class="language-python">from langchain_core.runnables import RunnableLambda, RunnablePassthrough
+
+# prompt 와 llm 을 생성합니다.
+prompt = PromptTemplate.from_template(
+    &quot;{today} 가 생일인 유명인 {n} 명을 나열하세요. 생년월일을 표기해 주세요.&quot;
+)
+llm = ChatOpenAI(temperature=0, model_name=&quot;gpt-4o&quot;)
+
+# chain 을 생성합니다.
+chain = (
+    {&quot;today&quot;: RunnableLambda(get_today), &quot;n&quot;: RunnablePassthrough()}
+    | prompt
+    | llm
+    | StrOutputParser()
+)
+</code></pre>
+<pre><code class="language-python"># 출력
+print(chain.invoke(3))
+</code></pre>
+<pre class="custom">다음은 6월 19일이 생일인 몇몇 유명인들입니다:
+
+1. 폴 도노반 (Paul Dano) - 1984년 6월 19일
+2. 디렉 노박 조코비치 (Novak Djokovic) - 1987년 6월 19일
+3. 필리페 쿠티뉴 (Philippe Coutinho) - 1992년 6월 19일
+
+이들은 각각 배우, 테니스 선수, 축구 선수로서 다양한 분야에서 활동하고 있습니다.
+</pre>
+<p><code>itemgetter</code> 를 사용하여 특정 키를 추출합니다.</p>
+<pre><code class="language-python">from operator import itemgetter
+
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.runnables import RunnableLambda
+from langchain_openai import ChatOpenAI
+
+
+# 문장의 길이를 반환하는 함수입니다.
+def length_function(text):
+    return len(text)
+
+
+# 두 문장의 길이를 곱한 값을 반환하는 함수입니다.
+def _multiple_length_function(text1, text2):
+    return len(text1) * len(text2)
+
+
+# _multiple_length_function 함수를 사용하여 두 문장의 길이를 곱한 값을 반환하는 함수입니다.
+def multiple_length_function(_dict):
+    return _multiple_length_function(_dict[&quot;text1&quot;], _dict[&quot;text2&quot;])
+
+
+prompt = ChatPromptTemplate.from_template(&quot;{a} + {b} 는 무엇인가요?&quot;)
+model = ChatOpenAI()
+
+chain1 = prompt | model
+
+chain = (
+    {
+        &quot;a&quot;: itemgetter(&quot;word1&quot;) | RunnableLambda(length_function),
+        &quot;b&quot;: {&quot;text1&quot;: itemgetter(&quot;word1&quot;), &quot;text2&quot;: itemgetter(&quot;word2&quot;)}
+        | RunnableLambda(multiple_length_function),
+    }
+    | prompt
+    | model
+)
+</code></pre>
+<pre><code class="language-python">chain.invoke({&quot;word1&quot;: &quot;hello&quot;, &quot;word2&quot;: &quot;world&quot;})
+</code></pre>
+<pre class="custom">AIMessage(content='5 + 25 = 30입니다.', response_metadata={'token_usage': {'completion_tokens': 9, 'prompt_tokens': 22, 'total_tokens': 31}, 'model_name': 'gpt-3.5-turbo', 'system_fingerprint': None, 'finish_reason': 'stop', 'logprobs': None}, id='run-5db9b475-09ee-4edb-af9d-b37b320bee1e-0', usage_metadata={'input_tokens': 22, 'output_tokens': 9, 'total_tokens': 31})</pre>
 </div>
 <div class="muted text-right" style="font-size: 0.9em;margin:10px 0;">
     
-    마지막 편집일시 : 2024년 7월 16일 2:40 오전
+    마지막 편집일시 : 2024년 9월 5일 9:18 오전
     
 </div>
 <!-- google adsense -->
 <!-- PC -->
 
+<!-- Mobile -->
+
     
-        <div style="margin:30px 0;">
+        <div style="margin:20px 0;">
             <!-- 위키독스 포인트 광고 -->
-            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9470517771012578"
-                    crossorigin="anonymous"></script>
-            <!-- 위키독스 일반 -->
-            <ins class="adsbygoogle"
-                    style="display:block"
-                    data-ad-client="ca-pub-9470517771012578"
-                    data-ad-slot="9169493836"
-                    data-ad-format="auto"
-                    data-ad-channel="6628864207"
-                    data-full-width-responsive="true"></ins>
-            <script>
-                    (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
+            <!-- 위키독스모바일2020 -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9470517771012578" crossorigin="anonymous"></script>
+<ins class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-9470517771012578"
+        data-ad-slot="4465552259"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
+<script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
         </div>
     
-
-<!-- Mobile -->
 
 
 <!-- google adsense -->
@@ -2014,10 +2236,10 @@ $(document).ready(function() {
     <div class="pull-left">
         <ul>
             
-                <li><strong>이전글</strong> : <a href="/book/14314">&lt;랭체인LangChain 노트&gt; - LangChain 한국어 튜토리얼🇰🇷</a></li>
+                <li><strong>이전글</strong> : <a href="javascript:page(233345)">06. LCEL 인터페이스</a></li>
             
             
-                <li><strong>다음글</strong> : <a href="javascript:page(233342)">01. OpenAI API 키 발급 및 테스트</a></li>
+                <li><strong>다음글</strong> : <a href="javascript:page(233347)">CH02 프롬프트(Prompt)</a></li>
             
         </ul>
     </div>
@@ -2028,13 +2250,11 @@ $(document).ready(function() {
 
 
 
+<a href="#" class="btn btn-primary toc-to mobile-toc">
+    <span class="glyphicon glyphicon-list"></span>
+    목차보기
+</a>
 
-<a id="toggle-theme" class="label label-default dark_btn" data-toggle="popover" data-placement="left" data-content="다크모드">
-    <span class="glyphicon glyphicon-adjust"></span>
-</a>
-<a href="#top" class="label label-default back-to-top" data-toggle="popover" data-placement="left" data-content="맨위로">
-    <span class="glyphicon glyphicon-arrow-up"></span>
-</a>
 
 <!-- 책갈피 모달 -->
 <div class="modal fade" id="bookmarkModal" tabindex="-1" role="dialog" aria-labelledby="bookmarkModalLabel">
@@ -2055,7 +2275,7 @@ $(document).ready(function() {
     </div>
 </div>
 <script>
-var is_mobile = "False";
+var is_mobile = "True";
 $(document).ready(function () {
     if (is_mobile == "True") {
         if($(window).width() >= 768) {
@@ -2122,6 +2342,7 @@ $(document).ready(function () {
     });
 
     // 다크모드 토글 버튼 클릭 이벤트 처리
+    /*
     $('#toggle-theme').click(function(e) {
         const urlParams = new URLSearchParams(window.location.search);
         
@@ -2129,6 +2350,7 @@ $(document).ready(function () {
         
         window.location.search = urlParams.toString();
     });
+    */
 
     $('[data-toggle="popover"]').popover({
         trigger: 'hover', // 마우스를 올렸을 때 popover 표시
@@ -2142,7 +2364,7 @@ function deleteBookmark(bookmarkId) {
             url: '/bookmark/delete/' + bookmarkId + '/',
             type: 'POST',
             data: {
-                'csrfmiddlewaretoken': 'hdE3lZCL7jGjS8c9zXbFrAtknGLqlklfPOsaPxvOzXTxnKWjVvX99ox4LzvjXvVy'
+                'csrfmiddlewaretoken': '3aLZRORob1Wera1PmiDTQGtsJfbzoWqzC4korkzYFNnlCuVMmydWTFe0gzrRL3dc'
             },
             success: function(response) {
                 $('#bookmarkModal .modal-body').html(response);
@@ -2154,6 +2376,72 @@ function deleteBookmark(bookmarkId) {
         });
     }
 }
+
+$(document).ready(function() {
+    // 현재 다크모드 상태 확인
+    let isDarkMode = false;
+
+    // 다크모드 토글 함수
+    function toggleDarkMode() {
+        isDarkMode = !isDarkMode;
+        updateTheme();
+        saveDarkModePreference();
+    }
+
+    // 테마 업데이트 함수
+    function updateTheme() {
+        const mainStylesheet = $('#main-stylesheet');
+        const markdownStylesheet = $('#markdown-stylesheet');
+        const highlightStylesheet = $('#highlight-stylesheet');
+
+        if (isDarkMode) {
+            mainStylesheet.attr('href', "/static/book/css/style_stack_dark.css?v=13");
+            markdownStylesheet.attr('href', "/static/book/css/markdown_stack_dark.css?v=13");
+            highlightStylesheet.attr('href', "//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/atom-one-dark.min.css");
+        } else {
+            mainStylesheet.attr('href', "/static/book/css/style_stack.css?v=13");
+            markdownStylesheet.attr('href', "/static/book/css/markdown_stack.css?v=13");
+            highlightStylesheet.attr('href', "//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/default.min.css");
+        }
+    }
+
+    // Ajax를 사용하여 다크모드 설정 저장
+    function saveDarkModePreference() {
+        $.ajax({
+            url: '/set_darkmode/',  // Django URL을 여기에 지정
+            method: 'POST',
+            data: {
+                'darkmode': isDarkMode ? 'on' : 'off'
+            },
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')  // CSRF 토큰
+            }
+        });
+    }
+
+    // CSRF 토큰을 쿠키에서 가져오는 함수
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // 토글 버튼 클릭 이벤트
+    $('#toggle-theme').click(toggleDarkMode);
+
+    // 초기 테마 설정
+    // updateTheme();
+});
+
 </script>
     
 
@@ -2161,12 +2449,12 @@ function deleteBookmark(bookmarkId) {
 </div>
 <div style="display:none" class="prev_next_indicator">
     
-    <a class="prev_icon" href="/book/14314" role="button">
+    <a class="prev_icon" href="javascript:page(233345)" role="button">
         <span class="glyphicon glyphicon-chevron-left" style="font-size:2em;"></span>
     </a>
 
 
-    <a class="next_icon" href="javascript:page(233342)" role="button">
+    <a class="next_icon" href="javascript:page(233347)" role="button">
         <span class="glyphicon glyphicon-chevron-right" style="font-size:2em;"></span>
     </a>
 
@@ -2183,7 +2471,7 @@ function deleteBookmark(bookmarkId) {
             </div>
             <div class="modal-body">
                 <form class="form" role="form">
-                    <input type="hidden" name="page_id" id="page_id" value="233341" />
+                    <input type="hidden" name="page_id" id="page_id" value="233346" />
                     <div class="form-group">
                         <label class="control-label" for="email">답장받을 이메일 주소</label>
                         <div class="">
